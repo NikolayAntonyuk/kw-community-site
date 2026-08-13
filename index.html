@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Каталог спеціалістів громади Kitchener-Waterloo</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>Каталог спеціалістів громади Kitchener-Waterloo</h1>
+    <p class="site-subtitle">
+      Українці Kitchener-Waterloo рекомендують: лікарі, репетитори, майстри краси та інші
+      спеціалісти громади.
+    </p>
+  </header>
+
+  <main>
+    <section class="controls" aria-label="Фільтри каталогу">
+      <div class="search-row">
+        <input
+          type="search"
+          id="search-input"
+          class="search-input"
+          placeholder="Пошук за іменем, описом або підкатегорією…"
+          aria-label="Пошук"
+        />
+        <select id="location-select" class="location-select" aria-label="Локація"></select>
+      </div>
+
+      <div id="category-pills" class="pills" role="group" aria-label="Головні категорії"></div>
+      <div id="subcategory-chips" class="chips" role="group" aria-label="Підкатегорії"></div>
+    </section>
+
+    <p id="status" class="status" aria-live="polite"></p>
+
+    <section id="cards-grid" class="cards-grid" aria-label="Спеціалісти"></section>
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      Дані каталогу оновлюються через громадську модерацію. Побачили помилку чи хочете додати
+      спеціаліста? Зверніться до модераторів громади KW.
+    </p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
