@@ -66,7 +66,7 @@ async function loadApplications() {
           <p><strong>Вебсайт:</strong> ${data.website || '—'}</p>
           <div class="application-actions">
             <button class="btn btn-approve" onclick="window.approveApp('${docSnap.id}')">Підтвердити</button>
-            <button class="btn btn-reject" onclick="window.rejectApp('${docSnap.id}')">Відхилити</button>
+            <button class="btn btn-reject" onclick="window.rejectApp('${docSnap.id}', '${data.email}', '${data.name}')">Відхилити</button>
           </div>
         </div>
       `;
@@ -91,7 +91,7 @@ window.approveApp = async (id) => {
   }
 };
 
-window.rejectApp = async (id) => {
+window.rejectApp = async (id, userEmail, userName) => {
   const reason = prompt("Вкажіть причину відхилення (або залиште порожнім):");
   if (reason === null) return; // Cancelled
   
@@ -100,6 +100,24 @@ window.rejectApp = async (id) => {
       status: "rejected",
       rejectReason: reason
     });
+    
+    // ВАЖЛИВО: Замініть ці константи на ваші справжні ключі EmailJS
+    const EMAILJS_SERVICE_ID = "service_e521b5c";
+    const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID"; // Вставте Template ID
+    const EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY"; // Вставте Public Key
+
+    if (EMAILJS_TEMPLATE_ID !== "YOUR_TEMPLATE_ID" && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: userEmail,
+        to_name: userName,
+        reject_reason: reason || "Не відповідає правилам спільноти."
+      });
+      console.log("Email sent successfully!");
+    } else {
+      console.warn("EmailJS не налаштовано повністю. Лист не відправлено.");
+    }
+
     document.getElementById(`card-${id}`).remove();
     alert("Заявка відхилена.");
   } catch (error) {
