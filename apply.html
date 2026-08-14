@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Подати заявку в Каталог спеціалістів громади KW</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .back-link {
+      display: inline-block;
+      margin: 1rem 0 0 1rem;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+    .back-link:hover,
+    .back-link:focus-visible {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .form-container {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: inherit;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .btn-submit {
+      background-color: #0056b3;
+      color: #fff;
+      border: none;
+      padding: 1rem 1.5rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s;
+    }
+    .btn-submit:hover {
+      background-color: #004494;
+    }
+    .btn-submit:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .form-message {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 4px;
+      display: none;
+    }
+    .form-message.success {
+      display: block;
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .form-message.error {
+      display: block;
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="catalog.html" class="back-link">← Назад до каталогу</a>
+    <h1>Подати заявку в Каталог</h1>
+    <p class="site-subtitle">
+      Заповніть форму нижче, щоб додати свої послуги до каталогу громади Kitchener-Waterloo.
+    </p>
+  </header>
+
+  <main>
+    <div class="form-container">
+      <form id="apply-form">
+        <div class="form-group">
+          <label for="f-email">Ваш Email (не публікується, потрібен для зв'язку) *</label>
+          <input type="email" id="f-email" required />
+        </div>
+        <div class="form-group">
+          <label for="f-name">Ім'я спеціаліста або назва компанії *</label>
+          <input type="text" id="f-name" required />
+        </div>
+        <div class="form-group">
+          <label for="f-category">Головна категорія *</label>
+          <select id="f-category" required>
+            <option value="">Оберіть категорию...</option>
+            <option value="Beauty">Beauty (Краса)</option>
+            <option value="Health">Здоров'я та Медицина</option>
+            <option value="Education">Освіта / Дитсадки / Гуртки</option>
+            <option value="Services">Побутові та інші послуги</option>
+            <option value="Auto">Авто послуги</option>
+            <option value="Legal">Юридичні послуги</option>
+            <option value="Real Estate">Нерухомість</option>
+            <option value="Food">Їжа та Кондитери</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="f-subcategory">Підкатегорія (наприклад: Перукар, Юрист) *</label>
+          <input type="text" id="f-subcategory" required />
+        </div>
+        <div class="form-group">
+          <label for="f-description">Короткий опис послуг *</label>
+          <input type="text" id="f-description" required />
+        </div>
+        <div class="form-group">
+          <label for="f-locationType">Місто (Kitchener, Waterloo, Cambridge, Guelph тощо) *</label>
+          <input type="text" id="f-locationType" required />
+        </div>
+        <div class="form-group">
+          <label for="f-address">Точна адреса (якщо є)</label>
+          <input type="text" id="f-address" />
+        </div>
+        <div class="form-group">
+          <label for="f-phone">Телефон</label>
+          <input type="tel" id="f-phone" />
+        </div>
+        <div class="form-group">
+          <label for="f-telegram">Telegram (лінк або нікнейм)</label>
+          <input type="text" id="f-telegram" />
+        </div>
+        <div class="form-group">
+          <label for="f-instagram">Instagram (лінк)</label>
+          <input type="url" id="f-instagram" />
+        </div>
+        <div class="form-group">
+          <label for="f-facebook">Facebook (лінк)</label>
+          <input type="url" id="f-facebook" />
+        </div>
+        <div class="form-group">
+          <label for="f-website">Вебсайт (лінк)</label>
+          <input type="url" id="f-website" />
+        </div>
+        <div class="form-group">
+          <label for="f-price">Орієнтовна ціна</label>
+          <input type="text" id="f-price" />
+        </div>
+        <div class="form-group">
+          <label for="f-notes">Додаткові нотатки / Опис</label>
+          <textarea id="f-notes"></textarea>
+        </div>
+        <button type="submit" id="submit-btn" class="btn-submit">Відправити заявку</button>
+        <div id="form-message" class="form-message"></div>
+      </form>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      Дані каталогу оновлюються через громадську модерацію.
+    </p>
+  </footer>
+
+  <script type="module" src="js/apply.js"></script>
+</body>
+</html>

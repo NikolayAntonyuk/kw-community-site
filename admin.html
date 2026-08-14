@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Адмін-панель KW Community</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .admin-container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    .auth-section, .dashboard-section {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    .dashboard-section {
+      display: none;
+    }
+    .form-group { margin-bottom: 1rem; }
+    .form-group input {
+      width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px;
+    }
+    .btn {
+      background: #0056b3; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer;
+    }
+    .btn:hover { background: #004494; }
+    
+    .application-card {
+      border: 1px solid #eee;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      background: #fdfdfd;
+    }
+    .application-card h3 { margin-top: 0; }
+    .application-actions {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .btn-approve { background: #28a745; }
+    .btn-approve:hover { background: #218838; }
+    .btn-reject { background: #dc3545; }
+    .btn-reject:hover { background: #c82333; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" style="color:white;text-decoration:none;display:inline-block;margin-left:1rem;margin-top:1rem;">← Головна</a>
+    <h1>Адмін-панель</h1>
+  </header>
+
+  <main class="admin-container">
+    <div id="auth-section" class="auth-section">
+      <h2>Вхід для адміністраторів</h2>
+      <form id="login-form">
+        <div class="form-group">
+          <input type="email" id="admin-email" placeholder="Email" required />
+        </div>
+        <div class="form-group">
+          <input type="password" id="admin-password" placeholder="Пароль" required />
+        </div>
+        <button type="submit" class="btn">Увійти</button>
+        <p id="auth-error" style="color: red; display: none; margin-top: 1rem;"></p>
+      </form>
+    </div>
+
+    <div id="dashboard-section" class="dashboard-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Нові заявки</h2>
+        <button id="logout-btn" class="btn">Вийти</button>
+      </div>
+      <div id="applications-list">
+        Завантаження...
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
