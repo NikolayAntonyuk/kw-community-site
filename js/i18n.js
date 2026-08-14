@@ -29,7 +29,7 @@ const dictionary = {
     "apply_loc": "Локація (Місто)",
     "apply_info": "Опис послуг",
     "apply_submit": "Надіслати заявку",
-    "lang_toggle": "🇺🇸 EN"
+    "lang_toggle": "🇺🇸"
   },
   en: {
     "nav_brand": "Razom KW",
@@ -61,7 +61,7 @@ const dictionary = {
     "apply_loc": "Location (City)",
     "apply_info": "Service Description",
     "apply_submit": "Submit Application",
-    "lang_toggle": "🇺🇦 UA"
+    "lang_toggle": "🇺🇦"
   }
 };
 
