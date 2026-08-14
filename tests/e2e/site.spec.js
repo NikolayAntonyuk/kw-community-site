@@ -13,7 +13,7 @@ async function mockGviz(page) {
 
 test.beforeEach(async ({ page }) => {
   await mockGviz(page);
-  await page.goto("/index.html");
+  await page.goto("/catalog.html");
   await expect(page.locator(".card")).toHaveCount(3);
 });
 
@@ -57,6 +57,16 @@ test("перемикання категорії оновлює набір під
   await expect(page.locator(".chip")).toHaveCount(1);
   await expect(page.locator(".chip")).toHaveText("Репетитори");
 
+  // після вибору лишається тільки активна категорія + кнопка скидання —
+  // решта пілюль зникає, щоб список не виглядав хаотично
+  await expect(page.locator(".pill")).toHaveCount(2);
+  await expect(page.locator(".pill.active")).toHaveText("Освіта");
+  await expect(page.locator(".pill-clear")).toBeVisible();
+
+  await page.locator(".pill-clear").click();
+  await expect(page.locator(".card")).toHaveCount(3);
+  await expect(page.locator(".chip")).toHaveCount(0);
+
   await page.locator(".pill", { hasText: "Краса" }).click();
 
   await expect(page.locator(".card")).toHaveCount(1);
@@ -64,8 +74,8 @@ test("перемикання категорії оновлює набір під
   await expect(page.locator(".chip")).toHaveCount(1);
   await expect(page.locator(".chip")).toHaveText("Перукарі");
 
-  // повторний клік по активній категорії скидає фільтр
-  await page.locator(".pill", { hasText: "Краса" }).click();
+  // повторний клік по активній категорії теж скидає фільтр
+  await page.locator(".pill.active", { hasText: "Краса" }).click();
   await expect(page.locator(".card")).toHaveCount(3);
   await expect(page.locator(".chip")).toHaveCount(0);
 });

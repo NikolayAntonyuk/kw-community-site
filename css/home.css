@@ -1,0 +1,342 @@
+/* Домашня сторінка. Окремий файл від styles.css (каталог), щоб не чіпати
+   верстку/тести каталогу. Ідентичність: цегляна теплота храму з фото +
+   вишиванковий хрестик як сигнатура, а не типовий SaaS-градієнт. */
+
+:root {
+  --color-brick: #8c3a2b;
+  --color-brick-dark: #6c2b20;
+  --color-wheat: #d9a441;
+  --color-ukr-blue: #1f5fa8;
+  --font-display: "Fraunces", Georgia, serif;
+}
+
+body.home {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.25rem;
+  background: #fff;
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(45deg, var(--color-wheat) 50%, var(--color-ukr-blue) 50%);
+  transform: rotate(45deg);
+  border-radius: 2px;
+  flex: none;
+}
+
+.nav-cta {
+  background: var(--color-brick);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s ease;
+}
+
+.nav-cta:hover,
+.nav-cta:focus-visible {
+  background: var(--color-brick-dark);
+}
+
+/* --- Hero --- */
+
+.hero {
+  position: relative;
+  min-height: min(72vh, 620px);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.hero-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 15, 10, 0.15) 0%,
+    rgba(20, 15, 10, 0.35) 55%,
+    rgba(20, 15, 10, 0.82) 100%
+  );
+}
+
+.hero-content {
+  position: relative;
+  color: #fff;
+  padding: 2.5rem 1.5rem 3rem;
+  max-width: 780px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-wheat);
+  margin: 0 0 0.6rem;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  line-height: 1.12;
+  margin: 0 0 0.9rem;
+}
+
+.hero-lede {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0 0 1.6rem;
+}
+
+.hero-button {
+  display: inline-block;
+  background: var(--color-wheat);
+  color: #241a08;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.hero-button:hover,
+.hero-button:focus-visible {
+  background: #eab84f;
+  transform: translateY(-1px);
+}
+
+/* --- About --- */
+
+.about {
+  max-width: 720px;
+  margin: 3.5rem auto;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+.about h2,
+.activity h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.7rem;
+  margin: 0 0 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+.about h2::after,
+.activity h2::after {
+  content: "";
+  display: block;
+  width: 46px;
+  height: 3px;
+  margin: 0.65rem auto 0;
+  background: linear-gradient(90deg, var(--color-wheat), var(--color-ukr-blue));
+  border-radius: 2px;
+}
+
+.about p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+/* --- Activity carousel --- */
+
+.activity {
+  max-width: 1100px;
+  margin: 0 auto 3.5rem;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+.carousel {
+  position: relative;
+  margin-top: 1.5rem;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.activity-card {
+  flex: 0 0 min(280px, 80vw);
+  scroll-snap-align: start;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  text-align: left;
+  text-decoration: none;
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.activity-card img {
+  width: 100%;
+  border-radius: 6px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.activity-card-text {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.activity-card-date {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.activity-card-shot {
+  padding: 0;
+  overflow: hidden;
+}
+
+.activity-card-shot img {
+  aspect-ratio: auto;
+  object-fit: contain;
+  border-radius: var(--radius);
+}
+
+.activity-card-empty {
+  flex: 1 1 100%;
+  align-items: center;
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 2.5rem 1.5rem;
+}
+
+.activity-empty-title {
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 0.4rem;
+}
+
+.carousel-controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.carousel-controls[hidden] {
+  display: none;
+}
+
+.carousel-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.carousel-btn:hover {
+  background: var(--color-bg);
+}
+
+/* --- Footer --- */
+
+.home-footer {
+  text-align: center;
+  padding: 2.5rem 1.5rem 3rem;
+  background: #fff;
+  border-top: 1px solid var(--color-border);
+}
+
+.footer-tagline {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  margin: 0 0 1rem;
+}
+
+.social-links {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem 1.25rem;
+  margin: 0;
+  padding: 0;
+}
+
+.social-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  color: var(--color-text);
+  font-size: 0.92rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.social-links a:hover {
+  border-color: var(--color-ukr-blue);
+  color: var(--color-ukr-blue);
+}
+
+.social-icon {
+  font-size: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-cta,
+  .hero-button {
+    transition: none;
+  }
+}

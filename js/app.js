@@ -42,19 +42,46 @@ function applyFilters() {
   els.statusEl.textContent = `Знайдено: ${filtered.length}`;
 }
 
+function resetCategory() {
+  state.category = "";
+  state.subcategory = "";
+  renderCategoryPills();
+  renderSubcategoryChips();
+  applyFilters();
+}
+
 function renderCategoryPills() {
   const categories = uniqueInOrder(allSpecialists.map((s) => s.category));
   els.categoryPills.innerHTML = "";
+
+  if (state.category) {
+    const activePill = document.createElement("button");
+    activePill.type = "button";
+    activePill.className = "pill active";
+    activePill.dataset.category = state.category;
+    activePill.textContent = state.category;
+    activePill.setAttribute("aria-pressed", "true");
+    activePill.addEventListener("click", resetCategory);
+    els.categoryPills.appendChild(activePill);
+
+    const clearPill = document.createElement("button");
+    clearPill.type = "button";
+    clearPill.className = "pill pill-clear";
+    clearPill.textContent = "✕ Усі категорії";
+    clearPill.addEventListener("click", resetCategory);
+    els.categoryPills.appendChild(clearPill);
+    return;
+  }
+
   categories.forEach((category) => {
     const pill = document.createElement("button");
     pill.type = "button";
     pill.className = "pill";
     pill.dataset.category = category;
     pill.textContent = category;
-    pill.setAttribute("aria-pressed", String(state.category === category));
-    if (state.category === category) pill.classList.add("active");
+    pill.setAttribute("aria-pressed", "false");
     pill.addEventListener("click", () => {
-      state.category = state.category === category ? "" : category;
+      state.category = category;
       state.subcategory = "";
       renderCategoryPills();
       renderSubcategoryChips();

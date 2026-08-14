@@ -84,7 +84,17 @@ main {
   flex: 1;
 }
 
-.pills,
+.pills {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-bottom: 0.4rem;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -101,7 +111,14 @@ main {
   padding: 0.4rem 0.9rem;
   font-size: 0.9rem;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.pill-clear {
+  color: var(--color-text-muted, #666);
+  border-style: dashed;
 }
 
 .pill:hover,
