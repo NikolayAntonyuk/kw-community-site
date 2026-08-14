@@ -83,3 +83,26 @@ function bindCarouselControls() {
 
 renderActivity();
 bindCarouselControls();
+
+// Animations on scroll
+function initScrollAnimations() {
+  const elementsToAnimate = document.querySelectorAll("section");
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+
+  elementsToAnimate.forEach((el) => {
+    el.classList.add("animate-on-scroll");
+    observer.observe(el);
+  });
+}
+
+initScrollAnimations();
