@@ -1,12 +1,54 @@
 import { test, expect } from "@playwright/test";
-import { GVIZ_RESPONSE_TEXT } from "../fixtures/gviz-fixture.js";
+const MOCK_DATA = [
+  {
+    category: "Здоров'я",
+    subcategory: "Лікарі",
+    name: "Dr. Olena Ivanenko",
+    description: "Сімейний лікар, прийом дорослих та дітей",
+    locationType: "Офіс",
+    address: "123 King St W, Kitchener",
+    phone: "+15195550101",
+    instagram: "https://instagram.com/dr_ivanenko",
+    website: "https://ivanenko-clinic.ca",
+    price: "$$",
+    notes: "Приймає нових пацієнтів"
+  },
+  {
+    category: "Освіта",
+    subcategory: "Репетитори",
+    name: "Марія Коваль",
+    description: "Репетитор з математики, підготовка до SAT",
+    locationType: "Онлайн",
+    telegram: "@maria_tutor",
+    price: "$"
+  },
+  {
+    category: "Краса",
+    subcategory: "Перукарі",
+    name: "Salon Kalyna",
+    description: "Стрижки, фарбування, укладки",
+    locationType: "Waterloo",
+    address: "45 Erb St, Waterloo",
+    phone: "+15195550199",
+    facebook: "https://facebook.com/salonkalyna",
+    price: "$$$",
+    notes: "Знижка для нових клієнтів 10%"
+  }
+];
 
 async function mockGviz(page) {
-  await page.route("**/gviz/tq**", (route) =>
+  await page.route("**/data/specialists.json**", (route) =>
     route.fulfill({
       status: 200,
-      contentType: "text/plain;charset=utf-8",
-      body: GVIZ_RESPONSE_TEXT,
+      contentType: "application/json",
+      body: JSON.stringify(MOCK_DATA),
+    })
+  );
+  await page.route("**/*firestore.googleapis.com/**", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify([])
     })
   );
 }
