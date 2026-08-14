@@ -21,9 +21,9 @@
   <nav class="top-nav">
     <a href="index.html" class="brand">
       <span class="brand-mark" aria-hidden="true"></span>
-      Разом KW
+      <span data-i18n="nav_brand">Разом KW</span>
     </a>
-    <a href="catalog.html" class="nav-cta">Каталог спеціалістів</a>
+    <a href="catalog.html" class="nav-cta" data-i18n="nav_catalog">Каталог спеціалістів</a>
   </nav>
 
   <header class="hero">
@@ -36,20 +36,20 @@
     />
     <div class="hero-scrim"></div>
     <div class="hero-content">
-      <p class="hero-eyebrow">Kitchener · Waterloo · Cambridge</p>
-      <h1>Українська громада Waterloo Region</h1>
-      <p class="hero-lede">
+      <p class="hero-eyebrow" data-i18n="hero_eyebrow">Kitchener · Waterloo · Cambridge</p>
+      <h1 data-i18n="hero_title">Українська громада Waterloo Region</h1>
+      <p class="hero-lede" data-i18n="hero_lede">
         Ми — українці, що знайшли дім у Kitchener–Waterloo. Тримаємось разом:
         святкуємо, вчимо дітей мови, підтримуємо ЗСУ й одне одного.
       </p>
-      <a href="catalog.html" class="hero-button">Знайти спеціаліста громади →</a>
+      <a href="catalog.html" class="hero-button" data-i18n="hero_btn">Знайти спеціаліста громади →</a>
     </div>
   </header>
 
   <main>
     <section class="about" aria-labelledby="about-heading">
-      <h2 id="about-heading">Про нас</h2>
-      <p>
+      <h2 id="about-heading" data-i18n="about_title">Про нас</h2>
+      <p data-i18n="about_text">
         Ми — українська громада регіону Ватерлу—Велінтон. Об'єднуємо родини,
         які переїхали до Кітченера, Ватерлу, Кембриджа та околиць,
         підтримуємо культурні традиції, проводимо суботню українську школу,
@@ -60,16 +60,16 @@
     </section>
 
     <section class="school" aria-labelledby="school-heading">
-      <h2 id="school-heading">🇺🇦 Українська школа вихідного дня</h2>
+      <h2 id="school-heading" data-i18n="school_title">🇺🇦 Українська школа вихідного дня</h2>
       <p>
         В регіоні Ватерлу діє суботня українська школа для дітей різного віку. 
-        Тут діти вивчають українську мову, літературу, історію та традиції в дружньому середовищі.
-        <em>[Детальна інформація про розклад, адресу та контакти буде додана незабаром]</em>
+        <span data-i18n="school_text">Тут діти вивчають українську мову, літературу, історію та традиції в дружньому середовищі.</span>
+        <em data-i18n="school_soon">[Детальна інформація про розклад, адресу та контакти буде додана незабаром]</em>
       </p>
     </section>
 
     <section class="activity" aria-labelledby="activity-heading">
-      <h2 id="activity-heading">Що відбувається у громаді</h2>
+      <h2 id="activity-heading" data-i18n="activity_title">Що відбувається у громаді</h2>
       <div class="carousel" id="activity-carousel" data-carousel>
         <div class="carousel-track" id="activity-track"></div>
         <div class="carousel-controls">
@@ -81,7 +81,7 @@
   </main>
 
   <footer class="site-footer home-footer">
-    <p class="footer-tagline">Разом сильніші. Разом — громада.</p>
+    <p class="footer-tagline" data-i18n="footer_tagline">Разом сильніші. Разом — громада.</p>
     <ul class="social-links" aria-label="Соціальні мережі громади">
       <li>
         <a href="https://t.me/razom_waterloo" target="_blank" rel="noopener" aria-label="Telegram-канал">
@@ -107,5 +107,6 @@
   </footer>
 
   <script type="module" src="js/home.js"></script>
+<script src="js/i18n.js"></script>
 </body>
 </html>
