@@ -103,7 +103,7 @@ window.rejectApp = async (id, userEmail, userName) => {
     
     // ВАЖЛИВО: Замініть ці константи на ваші справжні ключі EmailJS
     const EMAILJS_SERVICE_ID = "service_e521b5c";
-    const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID"; // Вставте Template ID
+    const EMAILJS_TEMPLATE_ID = "template_gu2b17w"; // Вставте Template ID
     const EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY"; // Вставте Public Key
 
     if (EMAILJS_TEMPLATE_ID !== "YOUR_TEMPLATE_ID" && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
