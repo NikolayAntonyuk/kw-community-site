@@ -1,34 +1,98 @@
 # KW Community — каталог спеціалістів
 
-Статичний сайт-каталог спеціалістів та сервісів української громади Kitchener-Waterloo-Cambridge-Guelph. Дані читаються живцем з Google Sheets, картки рендеряться на клієнті — жодного бекенду.
+Статичний сайт-каталог спеціалістів та сервісів української громади Kitchener–Waterloo–Cambridge–Guelph.
+Хостинг — GitHub Pages, бекенду немає: дані лежать у репозиторії, а нові заявки й модерація йдуть через Firebase.
 
-## Як це працює
+🔗 Сайт: https://nikolayantonyuk.github.io/kw-community-site/
 
-- Джерело даних — вкладка `Approved` таблиці [NEW Waterloo region specialists](https://docs.google.com/spreadsheets/d/1suR8-8uDklE0gckJFWMaNoUxyhaGypPrxxMnbDlJGjg/edit#gid=675317647).
-- Нові заявки потрапляють у вкладку `Pending`, окремий Apps Script модерує їх у `Approved`.
-- Сайт при кожному відкритті тягне `Approved` через публічний `gviz/tq` JSON-endpoint (без API-ключа) і кешує результат у `sessionStorage` на ~5 хв.
+## Архітектура
 
-**⚠️ Щоб сайт побачив дані:** вкладка `Approved` має бути опублікована через **File → Share → Publish to web** (обрати саме цю вкладку, не весь файл) — інакше `gviz/tq`-endpoint віддає сторінку логіну Google замість JSON.
+| Шар | Реалізація |
+| --- | --- |
+| Каталог (основна база) | `data/specialists.json` у репозиторії |
+| Нові заявки | Firebase Firestore, колекція `pending_specialists` |
+| Авторизація адмінів | Firebase Authentication (Email/Password) |
+| Листи про відхилення | EmailJS |
+| Перенесення схвалених заявок у JSON | GitHub Actions `.github/workflows/sync.yml` (щодня опівночі + вручну) |
+
+Сторінки:
+
+- `index.html` — головна (про громаду, школа, активність)
+- `catalog.html` — каталог з пошуком і фільтрами
+- `apply.html` — форма подачі заявки (пише в Firestore, `status: pending`)
+- `admin.html` — панель модерації (потрібен логін)
+
+## Воркфлоу заявки
+
+1. Спеціаліст заповнює форму на `apply.html` → документ у Firestore зі `status: "pending"`.
+2. Адмін заходить на `admin.html`, бачить чергу, може **Редагувати**, **Підтвердити** (`status: approved`) або **Відхилити** (`status: rejected` + лист через EmailJS).
+3. Схвалені картки одразу видно на сайті — `js/data.js` мерджить статичний JSON із Firestore.
+4. Раз на добу GitHub Action `sync.yml` переносить схвалені записи в `data/specialists.json` і чистить Firestore.
+
+## ⚠️ Що треба увімкнути у Firebase (без цього адмінка й форма не працюють)
+
+У проєкті `kw-community` мають бути активовані два сервіси:
+
+1. **Authentication** — Firebase Console → Build/Authentication → *Get started* → вкладка *Sign-in method* → **Email/Password** → *Enable*.
+   Поки не увімкнено, будь-який вхід повертає `auth/configuration-not-found`, і адмінка каже «невірний пароль» незалежно від пароля.
+2. **Cloud Firestore** — Firebase Console → Firestore Database → *Create database* (режим *Test mode* на старті).
+   Поки не створено, форма заявки не зберігає дані (`PERMISSION_DENIED: Cloud Firestore API has not been used`).
+
+Перевірити стан можна з консолі:
+
+```bash
+# має повернути помилку про невірні креденшели, а НЕ CONFIGURATION_NOT_FOUND
+curl -s -X POST "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=<API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"probe@example.com","password":"whatever12345","returnSecureToken":true}'
+```
+
+### Як додати адміністратора
+
+Firebase Console → Authentication → вкладка **Users** → *Add user* → email + пароль. Ці ж дані використовуються для входу в `admin.html`.
+
+### Секрет для синхронізації
+
+GitHub → Settings → Secrets and variables → Actions → `FIREBASE_SERVICE_ACCOUNT` (весь JSON сервісного акаунта з Firebase → Project settings → Service accounts → *Generate new private key*).
 
 ## Локальна розробка
 
 ```bash
 npm install
-npm run serve   # піднімає сайт на http://localhost:8080
+npm run serve   # сайт на http://localhost:8080
 ```
 
 ## Тести
 
 ```bash
-npm test          # юніт (vitest) + e2e (Playwright), послідовно
-npm run test:unit
-npm run test:e2e
+npm test          # юніт (vitest) + e2e (Playwright)
+npm run test:unit # vitest, tests/unit
+npm run test:e2e  # playwright, tests/e2e
 ```
+
+Покриття e2e: головна й навігація (`home.spec.ts`), каталог/пошук/фільтри (`site.spec.js`),
+форма заявки (`form.spec.ts`), логін і помилки адмінки (`admin.spec.ts`), перемикач мов UA/EN (`i18n.spec.ts`).
+
+Юніт-тести імпортують `js/data.js`, який тягне Firebase SDK з CDN по `https://`. Node такі імпорти не резолвить,
+тому `vitest.config.js` підміняє їх на заглушку `tests/mocks/firebase-stub.js`.
+
+### Звіти
+
+- **GitHub Actions** → останній запуск *Playwright Tests* → секція **Artifacts** → архів `playwright-report` (розпакувати, відкрити `index.html`).
+- Локально: `npx playwright show-report`.
+
+## Багатомовність
+
+`js/i18n.js` тримає словник UA/EN і підміняє вміст елементів з атрибутом `data-i18n`.
+Мова за замовчуванням — українська, вибір зберігається в `localStorage`.
+
+Прапори — **SVG-файли** (`assets/flags/ua.svg`, `assets/flags/us.svg`), а не емоджі:
+емоджі-прапори (🇺🇦/🇺🇸) не рендеряться на Windows і показуються як літери «UA»/«US».
 
 ## Деплой на GitHub Pages
 
 1. Settings → Pages → Source → Deploy from a branch.
-2. Обрати гілку `master` (або `main`), папку `/ (root)`.
-3. Дочекатись білда — сайт зʼявиться на `https://<user>.github.io/kw-community-site/`.
+2. Гілка `master`, папка `/ (root)`.
+3. Після пуша сайт оновлюється за 1–2 хвилини.
 
-Коли зʼявиться свій домен — достатньо додати файл `CNAME` з доменом у корінь репо (або в Settings → Pages → Custom domain), без переробки коду.
+Свій домен — файл `CNAME` у корені репо (або Settings → Pages → Custom domain), код міняти не треба.

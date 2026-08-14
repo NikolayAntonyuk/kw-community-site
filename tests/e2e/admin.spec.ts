@@ -38,11 +38,38 @@ test.describe('Admin Panel E2E', () => {
     });
 
     await page.locator('#login-form button[type="submit"]').click();
-    
+
     // Wait for the error message
     const errorMsg = page.locator('#auth-error');
     await expect(errorMsg).toBeVisible({ timeout: 5000 });
-    // It should contain 'Помилка входу:' based on our update
-    await expect(errorMsg).toContainText('Помилка входу');
+    await expect(errorMsg).toContainText('Невірний email або пароль');
+  });
+
+  test('should explain when Firebase Authentication is not enabled', async ({ page }) => {
+    await page.goto('/admin.html');
+
+    await page.locator('#admin-email').fill('admin@example.com');
+    await page.locator('#admin-password').fill('somepassword123');
+
+    // Саме цю помилку віддає Firebase, поки Authentication не увімкнено в консолі
+    await page.route('https://identitytoolkit.googleapis.com/**', async (route) => {
+      await route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          error: {
+            message: "CONFIGURATION_NOT_FOUND",
+            domain: "global",
+            reason: "invalid"
+          }
+        })
+      });
+    });
+
+    await page.locator('#login-form button[type="submit"]').click();
+
+    const errorMsg = page.locator('#auth-error');
+    await expect(errorMsg).toBeVisible({ timeout: 5000 });
+    await expect(errorMsg).toContainText('Authentication не увімкнено');
   });
 });

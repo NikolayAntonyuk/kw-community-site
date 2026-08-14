@@ -256,3 +256,32 @@ main {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Language toggle (SVG flags — емоджі-прапори не рендеряться на Windows) */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  padding: 4px;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.lang-toggle img {
+  display: block;
+  width: 24px;
+  height: 16px;
+  border-radius: 2px;
+}
+
+.inline-flag {
+  display: inline-block;
+  width: 24px;
+  height: 16px;
+  vertical-align: -1px;
+  border-radius: 2px;
+}
