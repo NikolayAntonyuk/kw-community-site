@@ -11,8 +11,23 @@
     "serve": "http-server . -p 8080 -s"
   },
   "devDependencies": {
-    "@playwright/test": "^1.47.0",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.2.0",
     "http-server": "^14.1.1",
+    "typescript": "^7.0.2",
     "vitest": "^2.1.0"
-  }
+  },
+  "main": "playwright.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikolayantonyuk/kw-community-site.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/nikolayantonyuk/kw-community-site/issues"
+  },
+  "homepage": "https://github.com/nikolayantonyuk/kw-community-site#readme"
 }
