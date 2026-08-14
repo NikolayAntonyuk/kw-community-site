@@ -1,34 +1,58 @@
-# KW Community — каталог спеціалістів
+# KW Community — Каталог спеціалістів (v2.1)
 
-Статичний сайт-каталог спеціалістів та сервісів української громади Kitchener-Waterloo-Cambridge-Guelph. Дані читаються живцем з Google Sheets, картки рендеряться на клієнті — жодного бекенду.
+Статичний сайт-каталог спеціалістів та сервісів української громади Kitchener-Waterloo-Cambridge-Guelph.
 
-## Як це працює
+Сайт працює на статичному хостингу (GitHub Pages) та використовує гібридний підхід до бази даних: статичний JSON для швидкості та Firebase для інтерактивних заявок і модерації.
 
-- Джерело даних — вкладка `Approved` таблиці [NEW Waterloo region specialists](https://docs.google.com/spreadsheets/d/1suR8-8uDklE0gckJFWMaNoUxyhaGypPrxxMnbDlJGjg/edit#gid=675317647).
-- Нові заявки потрапляють у вкладку `Pending`, окремий Apps Script модерує їх у `Approved`.
-- Сайт при кожному відкритті тягне `Approved` через публічний `gviz/tq` JSON-endpoint (без API-ключа) і кешує результат у `sessionStorage` на ~5 хв.
+## 🏗️ Архітектура (Data Flow)
 
-**⚠️ Щоб сайт побачив дані:** вкладка `Approved` має бути опублікована через **File → Share → Publish to web** (обрати саме цю вкладку, не весь файл) — інакше `gviz/tq`-endpoint віддає сторінку логіну Google замість JSON.
+1. **Форма заявки (`apply.html`)**: Користувачі заповнюють форму прямо на сайті. Дані відправляються у базу **Firebase Firestore** (колекція `pending_specialists`).
+2. **Адмін-панель (`admin.html`)**: Захищена авторизацією (Firebase Auth). Адміністратор бачить нові заявки, може редагувати їх і натиснути «Підтвердити» або «Відхилити».
+   - При відхиленні через EmailJS автоматично відправляється лист спеціалісту.
+   - При підтвердженні заявка змінює статус у Firebase.
+3. **Каталог (`catalog.html`)**: Скрипт завантажує основну статичну базу з `data/specialists.json` (надшвидко) та паралельно тягне нові підтверджені заявки з Firebase, миттєво об'єднуючи їх.
+4. **Автоматизація (GitHub Actions)**: Розкладний скрипт регулярно забирає підтверджені заявки з Firebase, додає їх у файл `data/specialists.json` у репозиторії та видаляє з Firebase, щоб сайт залишався статичним і швидким.
 
-## Локальна розробка
+## 💻 Локальна розробка
 
 ```bash
+# Встановлення залежностей
 npm install
-npm run serve   # піднімає сайт на http://localhost:8080
-```
 
-## Тести
+# Запуск локального сервера (порт 8080)
+npm run serve
+```
+Сайт буде доступний за адресою `http://localhost:8080`.
+
+## 🧪 Тестування (Playwright + Allure)
+
+Проєкт покритий E2E тестами за допомогою **Playwright**. Усі тести автоматично проганяються при кожному пуші на GitHub.
+
+### Запуск тестів локально:
 
 ```bash
-npm test          # юніт (vitest) + e2e (Playwright), послідовно
-npm run test:unit
-npm run test:e2e
+# Прогон E2E тестів (у консолі)
+npx playwright test
+
+# Згенерувати та відкрити Allure звіт локально
+npx allure generate allure-results --clean
+npx allure open
 ```
 
-## Деплой на GitHub Pages
+### Структура E2E тестів:
+- `tests/e2e/home.spec.ts`: Перевірка головної сторінки та навігації.
+- `tests/e2e/form.spec.ts`: Перевірка роботи форми заявки (`apply.html`). Мережеві запити до Firebase імітуються (Mocking), щоб не створювати тестові дані в реальній базі.
+- `tests/e2e/admin.spec.ts`: Перевірка адмін-панелі та валідації входу. Запити авторизації імітуються.
 
-1. Settings → Pages → Source → Deploy from a branch.
-2. Обрати гілку `master` (або `main`), папку `/ (root)`.
-3. Дочекатись білда — сайт зʼявиться на `https://<user>.github.io/kw-community-site/`.
+### Allure Reports у GitHub Actions
+При кожному пуші у гілку `master` або `main`, GitHub Actions проганяє тести і автоматично публікує **Allure Report**.
+Звіт можна подивитися на гілці `gh-pages` або за посиланням, згенерованим GitHub Pages (залежить від налаштувань репозиторію, стандартно `https://<user>.github.io/<repo>/`).
 
-Коли зʼявиться свій домен — достатньо додати файл `CNAME` з доменом у корінь репо (або в Settings → Pages → Custom domain), без переробки коду.
+## 🚀 Деплой на GitHub Pages
+
+1. **Сайт**: Розгортається з гілки `master` (або `main`), папка `/ (root)`.
+2. **Allure Звіти**: Розгортаються з гілки `gh-pages` (шлях `allure-history`).
+
+**⚠️ Важливі GitHub Secrets для повноцінної роботи:**
+- `FIREBASE_SERVICE_ACCOUNT`: Сервісний ключ Firebase (JSON) для роботи GitHub Action автоматичної синхронізації (`sync.yml`).
+- `GITHUB_TOKEN`: Потрібен для публікації Allure звітів на гілку `gh-pages` (дозволи на запис мають бути увімкнені у налаштуваннях репозиторію).
