@@ -31,7 +31,7 @@ loginForm.addEventListener("submit", async (e) => {
     await signInWithEmailAndPassword(auth, email, password);
     authError.style.display = "none";
   } catch (error) {
-    authError.textContent = "Невірний email або пароль.";
+    authError.textContent = "Помилка входу: " + error.message;
     authError.style.display = "block";
   }
 });

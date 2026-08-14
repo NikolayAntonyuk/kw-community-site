@@ -1,18 +1,54 @@
 import { test, expect } from "@playwright/test";
-import { GVIZ_RESPONSE_TEXT } from "../fixtures/gviz-fixture.js";
 
-async function mockGviz(page) {
-  await page.route("**/gviz/tq**", (route) =>
+const mockData = [
+  {
+    "category": "Beauty",
+    "subcategory": "Перукар",
+    "name": "Salon Kalyna",
+    "description": "Перукар",
+    "locationType": "Waterloo",
+    "address": "Street, Waterloo",
+    "phone": "+15195550101",
+    "instagram": "https://instagram.com/salonkalyna"
+  },
+  {
+    "category": "Medical",
+    "subcategory": "Дантист",
+    "name": "Dr. Olena Ivanenko",
+    "description": "Стоматологія",
+    "locationType": "Kitchener",
+    "address": "Street, Kitchener",
+    "phone": "+15195550101",
+    "instagram": "https://instagram.com/dr_ivanenko"
+  },
+  {
+    "category": "Освіта",
+    "subcategory": "Репетитори",
+    "name": "Марія Коваль",
+    "description": "Репетитор англійської мови",
+    "locationType": "Kitchener",
+    "address": "Street, Kitchener",
+    "phone": ""
+  }
+];
+
+async function mockDataFetch(page) {
+  await page.route("**/data/specialists.json", (route) =>
     route.fulfill({
       status: 200,
-      contentType: "text/plain;charset=utf-8",
-      body: GVIZ_RESPONSE_TEXT,
+      contentType: "application/json",
+      body: JSON.stringify(mockData),
     })
   );
+  // Block Firebase requests to avoid fetching real pending specialists
+  await page.route("https://firestore.googleapis.com/**", (route) => route.fulfill({
+    status: 400,
+    body: 'mocked'
+  }));
 }
 
 test.beforeEach(async ({ page }) => {
-  await mockGviz(page);
+  await mockDataFetch(page);
   await page.goto("/catalog.html");
   await expect(page.locator(".card")).toHaveCount(3);
 });
@@ -57,8 +93,6 @@ test("перемикання категорії оновлює набір під
   await expect(page.locator(".chip")).toHaveCount(1);
   await expect(page.locator(".chip")).toHaveText("Репетитори");
 
-  // після вибору лишається тільки активна категорія + кнопка скидання —
-  // решта пілюль зникає, щоб список не виглядав хаотично
   await expect(page.locator(".pill")).toHaveCount(2);
   await expect(page.locator(".pill.active")).toHaveText("Освіта");
   await expect(page.locator(".pill-clear")).toBeVisible();
@@ -67,15 +101,14 @@ test("перемикання категорії оновлює набір під
   await expect(page.locator(".card")).toHaveCount(3);
   await expect(page.locator(".chip")).toHaveCount(0);
 
-  await page.locator(".pill", { hasText: "Краса" }).click();
+  await page.locator(".pill", { hasText: "Beauty" }).click();
 
   await expect(page.locator(".card")).toHaveCount(1);
   await expect(page.locator(".card-name")).toHaveText("Salon Kalyna");
   await expect(page.locator(".chip")).toHaveCount(1);
-  await expect(page.locator(".chip")).toHaveText("Перукарі");
+  await expect(page.locator(".chip")).toHaveText("Перукар");
 
-  // повторний клік по активній категорії теж скидає фільтр
-  await page.locator(".pill.active", { hasText: "Краса" }).click();
+  await page.locator(".pill.active", { hasText: "Beauty" }).click();
   await expect(page.locator(".card")).toHaveCount(3);
   await expect(page.locator(".chip")).toHaveCount(0);
 });

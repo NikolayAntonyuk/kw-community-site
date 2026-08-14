@@ -90,13 +90,13 @@ function applyLanguage(lang) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Inject language toggle button in top-nav if exists
-  const nav = document.querySelector('.top-nav');
-  if (nav && !document.getElementById('lang-toggle')) {
+function initLanguageToggle() {
+  const container = document.querySelector('.top-nav') || document.querySelector('.site-header');
+  if (container && !document.getElementById('lang-toggle')) {
     const btn = document.createElement('button');
     btn.id = 'lang-toggle';
-    btn.className = 'nav-cta';
+    // Use nav-cta for top-nav, and btn for site-header
+    btn.className = container.classList.contains('top-nav') ? 'nav-cta' : 'btn';
     btn.style.marginLeft = '10px';
     btn.style.background = 'transparent';
     btn.style.color = 'inherit';
@@ -105,8 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.onclick = () => {
       applyLanguage(currentLang === 'ua' ? 'en' : 'ua');
     };
-    nav.appendChild(btn);
+    container.appendChild(btn);
   }
-  
   applyLanguage(currentLang);
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initLanguageToggle);
+} else {
+  initLanguageToggle();
+}
