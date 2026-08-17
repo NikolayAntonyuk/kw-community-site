@@ -34,7 +34,7 @@ form.addEventListener("submit", async (e) => {
   };
 
   try {
-    await addDoc(collection(db, "pending_specialists"), specialistData);
+    const docRef = await addDoc(collection(db, "pending_specialists"), specialistData);
     
     try {
       const EMAILJS_SERVICE_ID = "service_e521b5c";
@@ -47,7 +47,8 @@ form.addEventListener("submit", async (e) => {
           to_email: ADMIN_EMAILS,
           from_name: specialistData.name,
           category: specialistData.category,
-          message: specialistData.description || "Без додаткового опису"
+          message: specialistData.description || "Без додаткового опису",
+          admin_link: "https://nikolayantonyuk.github.io/kw-community-site/admin.html#card-" + docRef.id
         });
       } else {
         console.warn("EmailJS Template ID для нових заявок не встановлено. Лист адміну не відправлено.");

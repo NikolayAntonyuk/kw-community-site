@@ -95,6 +95,19 @@ async function loadApplications() {
       `;
     });
     applicationsList.innerHTML = html;
+
+    // Scroll to specific application if hash is present
+    if (window.location.hash) {
+      setTimeout(() => {
+        const targetElement = document.querySelector(window.location.hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetElement.style.border = "2px solid #007bff";
+          targetElement.style.boxShadow = "0 0 10px rgba(0,123,255,0.5)";
+        }
+      }, 100); // small delay to ensure DOM is updated
+    }
+
   } catch (error) {
     console.error("Помилка завантаження заявок: ", error);
     applicationsList.innerHTML = "<p style='color:red;'>Помилка завантаження. Перевірте консоль.</p>";
