@@ -19,7 +19,9 @@ function matchesSearch(specialist, search) {
 
 function matchesLocation(specialist, location) {
   if (!location) return true;
-  return (specialist.address || "").toLowerCase().includes(location.toLowerCase());
+  const locLower = location.toLowerCase();
+  return (specialist.address || "").toLowerCase().includes(locLower) ||
+         (specialist.locationType || "").toLowerCase().includes(locLower);
 }
 
 export function filterSpecialists(list, { category, subcategory, search, location } = {}) {
