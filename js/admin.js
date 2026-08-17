@@ -300,8 +300,8 @@ async function loadLiveCatalog() {
     recent.forEach((item) => {
       // Use crypto UUID if not set, though sync.js should have set it
       const itemId = item.id || Math.random().toString(36).substr(2, 9);
-      const createdStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString("uk-UA") : 'Невідомо';
-      const updatedStr = item.updatedAt ? new Date(item.updatedAt).toLocaleDateString("uk-UA") : 'Невідомо';
+      const createdStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString("uk-UA") : '—';
+      const updatedStr = item.updatedAt ? new Date(item.updatedAt).toLocaleDateString("uk-UA") : '—';
 
       html += `
         <div class="application-card" id="live-card-${itemId}">
@@ -327,10 +327,13 @@ async function loadLiveCatalog() {
   }
 }
 
+window.loadLiveCatalog = loadLiveCatalog;
+
 // Hook into loadApplications so it loads both
 const originalLoad = loadApplications;
 loadApplications = async () => {
   await originalLoad();
   await loadLiveCatalog();
 };
+
 

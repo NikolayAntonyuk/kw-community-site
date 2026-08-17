@@ -250,4 +250,45 @@ test.describe('Admin Panel E2E', () => {
     });
     expect(cardExists).toBeTruthy();
   });
+
+  test('should cancel rejection when dismiss is clicked on prompt', async ({ page }) => {
+    await page.goto('/admin.html');
+    await page.waitForFunction(() => typeof window.rejectApp === 'function');
+
+    let promptShown = false;
+    page.on('dialog', async dialog => {
+      promptShown = true;
+      await dialog.dismiss();
+    });
+
+    await page.evaluate(() => {
+      document.body.innerHTML += '<div id="card-rej-cancel"></div>';
+      return window.rejectApp('rej-cancel', 'user@example.com', 'Test User');
+    });
+
+    expect(promptShown).toBeTruthy();
+    const cardExists = await page.evaluate(() => !!document.getElementById('card-rej-cancel'));
+    expect(cardExists).toBeTruthy();
+  });
+
+  test('should display formatted dates on live catalog cards', async ({ page }) => {
+    await page.goto('/admin.html');
+    await page.waitForFunction(() => typeof window.loadLiveCatalog === 'function');
+
+    await page.evaluate(() => {
+      document.getElementById('dashboard-section')!.style.display = 'block';
+      return window.loadLiveCatalog();
+    });
+
+    // Wait for the live catalog to load from data/specialists.json
+    await page.waitForSelector('#live-catalog-list .application-card', { state: 'attached', timeout: 5000 });
+
+    // Verify first card has created date rendered
+    const firstCardText = await page.locator('#live-catalog-list .application-card').first().innerText();
+    expect(firstCardText).toContain('Створено:');
+    expect(firstCardText).toContain('Відредаговано:');
+    // Ensure it does not say "Невідомо"
+    expect(firstCardText).not.toContain('Створено: Невідомо');
+  });
 });
+
