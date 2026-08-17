@@ -96,6 +96,28 @@ function createCard(specialist) {
     card.appendChild(notes);
   }
 
+  const hasDates = specialist.createdAt || specialist.updatedAt;
+  if (hasDates) {
+    const datesEl = document.createElement("p");
+    datesEl.className = "card-dates";
+    datesEl.style.fontSize = "0.8rem";
+    datesEl.style.color = "#6c757d";
+    datesEl.style.marginTop = "1rem";
+    
+    let parts = [];
+    if (specialist.createdAt) {
+      const createdStr = new Date(specialist.createdAt).toLocaleDateString("uk-UA");
+      parts.push(`Додано: ${createdStr}`);
+    }
+    if (specialist.updatedAt) {
+      const updatedStr = new Date(specialist.updatedAt).toLocaleDateString("uk-UA");
+      parts.push(`Оновлено: ${updatedStr}`);
+    }
+    
+    datesEl.textContent = parts.join(" | ");
+    card.appendChild(datesEl);
+  }
+
   return card;
 }
 
