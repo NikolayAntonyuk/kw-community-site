@@ -2,6 +2,7 @@ import admin from "firebase-admin";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from 'url';
+import { randomUUID } from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -46,7 +47,18 @@ async function sync() {
       delete data.status;
       delete data.rejectReason;
       
-      currentData.push(data);
+      // If it doesn't have an ID (shouldn't happen for new, but just in case), add one
+      if (!data.id) {
+        data.id = randomUUID();
+      }
+
+      // Check if it already exists (edit mode)
+      const existingIndex = currentData.findIndex(s => s.id === data.id);
+      if (existingIndex !== -1) {
+        currentData[existingIndex] = { ...currentData[existingIndex], ...data };
+      } else {
+        currentData.push(data);
+      }
       
       // Delete the document from Firebase
       batch.delete(doc.ref);
@@ -55,7 +67,7 @@ async function sync() {
 
     // Write to file
     fs.writeFileSync(DATA_FILE, JSON.stringify(currentData, null, 2));
-    console.log(`Successfully merged ${count} new specialists into specialists.json.`);
+    console.log(`Successfully merged/updated ${count} specialists into specialists.json.`);
 
     // Commit deletion in Firebase
     await batch.commit();

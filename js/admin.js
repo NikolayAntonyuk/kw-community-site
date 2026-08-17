@@ -88,8 +88,8 @@ async function loadApplications() {
           <p><strong>Вебсайт:</strong> <span id="display-web-${docSnap.id}">${data.website || '—'}</span></p>
           <div class="application-actions">
             <button class="btn btn-approve" onclick="window.approveApp('${docSnap.id}')">Підтвердити</button>
-            <button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${docSnap.id}')">Редагувати</button>
-            <button class="btn btn-reject" onclick="window.rejectApp('${docSnap.id}', '${data.email}', '${data.name}')">Відхилити</button>
+            <button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${docSnap.id}', false)">Редагувати</button>
+            <button class="btn btn-reject" onclick="window.rejectApp('${docSnap.id}', '${data.email || ''}', '${data.name}')">Відхилити</button>
           </div>
         </div>
       `;
@@ -105,7 +105,7 @@ async function loadApplications() {
           targetElement.style.border = "2px solid #007bff";
           targetElement.style.boxShadow = "0 0 10px rgba(0,123,255,0.5)";
         }
-      }, 100); // small delay to ensure DOM is updated
+      }, 100);
     }
 
   } catch (error) {
@@ -137,27 +137,33 @@ window.rejectApp = async (id, userEmail, userName) => {
       rejectReason: reason
     });
     
-    // ВАЖЛИВО: Замініть ці константи на ваші справжні ключі EmailJS
     const EMAILJS_SERVICE_ID = "service_e521b5c";
-    const EMAILJS_TEMPLATE_ID = "template_gu2b17w"; // Вставте Template ID
-    const EMAILJS_PUBLIC_KEY = "064MymkRcVYVYhuJE"; // Вставте Public Key
+    const EMAILJS_TEMPLATE_ID = "template_gu2b17w";
+    const EMAILJS_PUBLIC_KEY = "064MymkRcVYVYhuJE";
+    
+    let trimmedEmail = userEmail ? userEmail.trim() : "";
 
-    if (EMAILJS_TEMPLATE_ID !== "YOUR_TEMPLATE_ID" && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
-      emailjs.init(EMAILJS_PUBLIC_KEY);
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        to_email: userEmail,
-        to_name: userName,
-        reject_reason: reason || "Не відповідає правилам спільноти."
-      });
-      console.log("Email sent successfully!");
+    if (!trimmedEmail || !trimmedEmail.includes("@")) {
+      alert("Заявку відхилено. Лист не відправлено, оскільки у спеціаліста немає валідного email.");
     } else {
-      console.warn("EmailJS не налаштовано повністю. Лист не відправлено.");
+      if (EMAILJS_TEMPLATE_ID !== "YOUR_TEMPLATE_ID" && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
+        emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          to_email: trimmedEmail,
+          to_name: userName,
+          reject_reason: reason || "Не відповідає правилам спільноти."
+        });
+        console.log("Email sent successfully to: " + trimmedEmail);
+        alert("Заявка відхилена. Лист успішно відправлено!");
+      } else {
+        console.warn("EmailJS не налаштовано повністю. Лист не відправлено.");
+        alert("Заявка відхилена.");
+      }
     }
-
+    
     document.getElementById(`card-${id}`).remove();
-    alert("Заявка відхилена.");
   } catch (error) {
-    alert("Помилка: " + error.message);
+    alert("Помилка при відхиленні: " + error.message);
   }
 };
 
@@ -167,6 +173,7 @@ const editModalHTML = `
     <div style="background:#fff; max-width:500px; margin:50px auto; padding:2rem; border-radius:8px;">
       <h2>Редагувати заявку</h2>
       <input type="hidden" id="edit-id">
+      <input type="hidden" id="edit-islive">
       <div class="form-group"><label>Ім'я/Назва:</label><input type="text" id="edit-name"></div>
       <div class="form-group"><label>Опис:</label><input type="text" id="edit-desc"></div>
       <div class="form-group"><label>Телефон:</label><input type="text" id="edit-phone"></div>
@@ -180,15 +187,18 @@ const editModalHTML = `
 `;
 document.body.insertAdjacentHTML('beforeend', editModalHTML);
 
-window.editApp = async (id) => {
+window.editApp = async (id, isLive = false) => {
   document.getElementById('edit-id').value = id;
-  document.getElementById('edit-name').value = document.getElementById(`display-name-${id}`).innerText;
-  document.getElementById('edit-desc').value = document.getElementById(`display-desc-${id}`).innerText;
+  document.getElementById('edit-islive').value = isLive ? "true" : "false";
   
-  const phone = document.getElementById(`display-phone-${id}`).innerText;
+  let prefix = isLive ? 'live-' : '';
+  document.getElementById('edit-name').value = document.getElementById(`${prefix}display-name-${id}`).innerText;
+  document.getElementById('edit-desc').value = document.getElementById(`${prefix}display-desc-${id}`).innerText;
+  
+  const phone = document.getElementById(`${prefix}display-phone-${id}`).innerText;
   document.getElementById('edit-phone').value = phone === '—' ? '' : phone;
   
-  const web = document.getElementById(`display-web-${id}`).innerText;
+  const web = document.getElementById(`${prefix}display-web-${id}`).innerText;
   document.getElementById('edit-web').value = web === '—' ? '' : web;
   
   document.getElementById('edit-modal').style.display = 'block';
@@ -196,29 +206,101 @@ window.editApp = async (id) => {
 
 window.saveEdit = async () => {
   const id = document.getElementById('edit-id').value;
+  const isLive = document.getElementById('edit-islive').value === "true";
   const newName = document.getElementById('edit-name').value;
   const newDesc = document.getElementById('edit-desc').value;
   const newPhone = document.getElementById('edit-phone').value;
   const newWeb = document.getElementById('edit-web').value;
   
   try {
-    const docRef = doc(db, "pending_specialists", id);
-    await updateDoc(docRef, {
-      name: newName,
-      description: newDesc,
-      phone: newPhone,
-      website: newWeb
-    });
+    if (isLive) {
+      // Create an edit request in Firebase that sync.js will merge
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(async (firestore) => {
+        await firestore.addDoc(firestore.collection(db, "pending_specialists"), {
+          id: id,
+          name: newName,
+          description: newDesc,
+          phone: newPhone,
+          website: newWeb,
+          status: "approved"
+        });
+      });
+      alert("Зміни збережено в базу! Вони з'являться в каталозі після наступної синхронізації GitHub (за кілька хвилин).");
+    } else {
+      // Update pending doc
+      const docRef = doc(db, "pending_specialists", id);
+      await updateDoc(docRef, {
+        name: newName,
+        description: newDesc,
+        phone: newPhone,
+        website: newWeb
+      });
+      alert("Зміни збережено!");
+    }
     
     // Update UI
-    document.getElementById(`display-name-${id}`).innerText = newName;
-    document.getElementById(`display-desc-${id}`).innerText = newDesc;
-    document.getElementById(`display-phone-${id}`).innerText = newPhone || '—';
-    document.getElementById(`display-web-${id}`).innerText = newWeb || '—';
+    let prefix = isLive ? 'live-' : '';
+    document.getElementById(`${prefix}display-name-${id}`).innerText = newName;
+    document.getElementById(`${prefix}display-desc-${id}`).innerText = newDesc;
+    document.getElementById(`${prefix}display-phone-${id}`).innerText = newPhone || '—';
+    document.getElementById(`${prefix}display-web-${id}`).innerText = newWeb || '—';
     
     document.getElementById('edit-modal').style.display = 'none';
-    alert("Зміни збережено!");
   } catch (error) {
     alert("Помилка: " + error.message);
   }
 };
+
+// --- Live Catalog Fetcher ---
+async function loadLiveCatalog() {
+  const liveList = document.getElementById("live-catalog-list");
+  if (!liveList) return;
+  liveList.innerHTML = "Завантаження каталогу...";
+  
+  try {
+    // Add cache buster to ensure fresh data
+    const res = await fetch(`data/specialists.json?v=${new Date().getTime()}`);
+    if (!res.ok) throw new Error("Failed to fetch catalog");
+    const data = await res.json();
+    
+    if (!data || data.length === 0) {
+      liveList.innerHTML = "<p>Каталог порожній.</p>";
+      return;
+    }
+    
+    // Show only the latest 50 to avoid freezing the browser if catalog gets huge
+    const recent = data.slice(-50).reverse();
+    let html = "";
+    
+    recent.forEach((item) => {
+      // Use crypto UUID if not set, though sync.js should have set it
+      const itemId = item.id || Math.random().toString(36).substr(2, 9);
+      html += `
+        <div class="application-card" id="live-card-${itemId}">
+          <h3><span id="live-display-name-${itemId}">${item.name}</span> <small>(<span id="live-display-cat-${itemId}">${item.category} > ${item.subcategory}</span>)</small></h3>
+          <p><strong>Опис:</strong> <span id="live-display-desc-${itemId}">${item.description || ''}</span></p>
+          <p><strong>Локація:</strong> <span id="live-display-loc-${itemId}">${item.locationType || ''}</span></p>
+          <p><strong>Телефон:</strong> <span id="live-display-phone-${itemId}">${item.phone || '—'}</span></p>
+          <p><strong>Вебсайт:</strong> <span id="live-display-web-${itemId}">${item.website || '—'}</span></p>
+          <div class="application-actions">
+            <button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${itemId}', true)">Редагувати</button>
+          </div>
+        </div>
+      `;
+    });
+    
+    html = `<p><em>Показано останні ${recent.length} записів з каталогу.</em></p>` + html;
+    liveList.innerHTML = html;
+  } catch (error) {
+    console.error("Error loading live catalog:", error);
+    liveList.innerHTML = "<p style='color:red;'>Помилка завантаження каталогу.</p>";
+  }
+}
+
+// Hook into loadApplications so it loads both
+const originalLoad = loadApplications;
+loadApplications = async () => {
+  await originalLoad();
+  await loadLiveCatalog();
+};
+
