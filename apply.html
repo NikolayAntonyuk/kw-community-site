@@ -6,19 +6,6 @@
   <title>Подати заявку в Каталог спеціалістів громади KW</title>
   <link rel="stylesheet" href="css/styles.css" />
   <style>
-    .back-link {
-      display: inline-block;
-      margin: 1rem 0 0 1rem;
-      color: #fff;
-      text-decoration: none;
-      font-size: 0.9rem;
-      opacity: 0.85;
-    }
-    .back-link:hover,
-    .back-link:focus-visible {
-      opacity: 1;
-      text-decoration: underline;
-    }
     .form-container {
       max-width: 600px;
       margin: 2rem auto;
@@ -86,8 +73,15 @@
   </style>
 </head>
 <body>
+  <nav class="top-nav">
+    <a href="index.html" class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span data-i18n="nav_brand">Разом KW</span>
+    </a>
+    <a href="catalog.html" class="nav-cta">← Назад до каталогу</a>
+  </nav>
+
   <header class="site-header">
-    <a href="catalog.html" class="back-link">← Назад до каталогу</a>
     <h1>Подати заявку в Каталог</h1>
     <p class="site-subtitle">
       Заповніть форму нижче, щоб додати свої послуги до каталогу громади Kitchener-Waterloo.
