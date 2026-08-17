@@ -38,16 +38,16 @@ form.addEventListener("submit", async (e) => {
     
     try {
       const EMAILJS_SERVICE_ID = "service_e521b5c";
-      const EMAILJS_TEMPLATE_ID = "YOUR_NEW_APP_TEMPLATE_ID"; // TODO: Додати Template ID для нової заявки
+      const EMAILJS_TEMPLATE_ID = "template_kvwa447";
       const EMAILJS_PUBLIC_KEY = "064MymkRcVYVYhuJE";
 
-      if (window.emailjs && EMAILJS_TEMPLATE_ID !== "YOUR_NEW_APP_TEMPLATE_ID") {
+      if (window.emailjs) {
         emailjs.init(EMAILJS_PUBLIC_KEY);
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
           to_email: ADMIN_EMAILS,
           from_name: specialistData.name,
           category: specialistData.category,
-          message: "Нова заявка очікує на модерацію."
+          message: specialistData.description || "Без додаткового опису"
         });
       } else {
         console.warn("EmailJS Template ID для нових заявок не встановлено. Лист адміну не відправлено.");
