@@ -93,7 +93,7 @@ async function loadApplications() {
             <button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${docSnap.id}', false)">Редагувати</button>
             <button class="btn btn-reject" onclick="window.rejectApp('${docSnap.id}', '${data.email || ''}', '${data.name}')">Відхилити</button>
           </div>
-          <p class="card-admin-dates">Створено: ${createdStr} | Відредаговано: ${updatedStr}</p>
+          <p class="card-admin-dates">ID: ${docSnap.id} | Створено: ${createdStr} | Відредаговано: ${updatedStr}</p>
         </div>
       `;
     });
@@ -278,6 +278,9 @@ window.deleteLiveApp = async (id) => {
 };
 
 // --- Live Catalog Fetcher ---
+let liveCatalogData = [];
+let liveCatalogLimit = 50;
+
 async function loadLiveCatalog() {
   const liveList = document.getElementById("live-catalog-list");
   if (!liveList) return;
@@ -294,39 +297,57 @@ async function loadLiveCatalog() {
       return;
     }
     
-    // Show only the latest 50 to avoid freezing the browser if catalog gets huge
-    const recent = data.slice(-50).reverse();
-    let html = "";
-    
-    recent.forEach((item) => {
-      // Use crypto UUID if not set, though sync.js should have set it
-      const itemId = item.id || Math.random().toString(36).substr(2, 9);
-      const createdStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString("uk-UA") : '—';
-      const updatedStr = item.updatedAt ? new Date(item.updatedAt).toLocaleDateString("uk-UA") : '—';
-
-      html += `
-        <div class="application-card" id="live-card-${itemId}">
-          <h3><span id="live-display-name-${itemId}">${item.name}</span> <small>(<span id="live-display-cat-${itemId}">${item.category} > ${item.subcategory}</span>)</small></h3>
-          <p><strong>Опис:</strong> <span id="live-display-desc-${itemId}">${item.description || ''}</span></p>
-          <p><strong>Локація:</strong> <span id="live-display-loc-${itemId}">${item.locationType || ''}</span></p>
-          <p><strong>Телефон:</strong> <span id="live-display-phone-${itemId}">${item.phone || '—'}</span></p>
-          <p><strong>Вебсайт:</strong> <span id="live-display-web-${itemId}">${item.website || '—'}</span></p>
-          <div class="application-actions">
-            <button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${itemId}', true)">Редагувати</button>
-            <button class="btn btn-reject" onclick="window.deleteLiveApp('${itemId}')">Видалити</button>
-          </div>
-          <p class="card-admin-dates">Створено: ${createdStr} | Відредаговано: ${updatedStr}</p>
-        </div>
-      `;
-    });
-    
-    html = `<p><em>Показано останні ${recent.length} записів з каталогу.</em></p>` + html;
-    liveList.innerHTML = html;
+    // Reverse once so newest is first
+    liveCatalogData = data.reverse();
+    renderLiveCatalog();
   } catch (error) {
     console.error("Error loading live catalog:", error);
     liveList.innerHTML = "<p style='color:red;'>Помилка завантаження каталогу.</p>";
   }
 }
+
+function renderLiveCatalog() {
+  const liveList = document.getElementById("live-catalog-list");
+  if (!liveList) return;
+  
+  const recent = liveCatalogData.slice(0, liveCatalogLimit);
+  let html = "";
+  
+  recent.forEach((item) => {
+    // Use crypto UUID if not set, though sync.js should have set it
+    const itemId = item.id || Math.random().toString(36).substr(2, 9);
+    const createdStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString("uk-UA") : '—';
+    const updatedStr = item.updatedAt ? new Date(item.updatedAt).toLocaleDateString("uk-UA") : '—';
+
+    html += `
+      <div class="application-card" id="live-card-${itemId}">
+        <h3><span id="live-display-name-${itemId}">${item.name}</span> <small>(<span id="live-display-cat-${itemId}">${item.category} > ${item.subcategory}</span>)</small></h3>
+        <p><strong>Опис:</strong> <span id="live-display-desc-${itemId}">${item.description || ''}</span></p>
+        <p><strong>Локація:</strong> <span id="live-display-loc-${itemId}">${item.locationType || ''}</span></p>
+        <p><strong>Телефон:</strong> <span id="live-display-phone-${itemId}">${item.phone || '—'}</span></p>
+        <p><strong>Вебсайт:</strong> <span id="live-display-web-${itemId}">${item.website || '—'}</span></p>
+        <div class="application-actions">
+          <button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${itemId}', true)">Редагувати</button>
+          <button class="btn btn-reject" onclick="window.deleteLiveApp('${itemId}')">Видалити</button>
+        </div>
+        <p class="card-admin-dates">ID: ${itemId} | Створено: ${createdStr} | Відредаговано: ${updatedStr}</p>
+      </div>
+    `;
+  });
+  
+  html = `<p><em>Показано ${recent.length} з ${liveCatalogData.length} записів каталогу.</em></p>` + html;
+  
+  if (liveCatalogLimit < liveCatalogData.length) {
+    html += `<button class="btn" style="display:block; width:100%; margin-top:20px; padding:10px; background:#007bff; color:white; border-radius:5px;" onclick="window.loadMoreLive()">Показати ще 50</button>`;
+  }
+  
+  liveList.innerHTML = html;
+}
+
+window.loadMoreLive = () => {
+  liveCatalogLimit += 50;
+  renderLiveCatalog();
+};
 
 window.loadLiveCatalog = loadLiveCatalog;
 

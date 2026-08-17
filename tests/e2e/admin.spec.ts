@@ -422,5 +422,57 @@ test.describe('Admin Panel E2E', () => {
     const updatedName = await page.evaluate(() => document.getElementById('display-name-edit-accept')?.textContent);
     expect(updatedName).toBe('New Name');
   });
+
+  test('should load 50 items initially and load more when button is clicked', async ({ page }) => {
+    // Generate 60 mock specialists
+    const mockData = Array.from({ length: 60 }, (_, i) => ({
+      id: `mock-id-${i}`,
+      name: `Specialist ${i}`,
+      category: 'Test',
+      subcategory: 'Test',
+      description: 'Desc',
+      locationType: 'Waterloo',
+      phone: '123-456',
+      website: 'example.com',
+      createdAt: '2023-01-01T00:00:00Z',
+      updatedAt: '2023-01-01T00:00:00Z'
+    }));
+
+    await page.route('**/data/specialists.json*', async route => {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify(mockData)
+      });
+    });
+
+    await page.goto('/admin.html');
+    await page.waitForFunction(() => typeof window.loadLiveCatalog === 'function');
+
+    await page.evaluate(() => {
+      document.getElementById('dashboard-section')!.style.display = 'block';
+      return window.loadLiveCatalog();
+    });
+
+    // Wait for the live catalog to load
+    await page.waitForSelector('#live-catalog-list .application-card', { state: 'attached', timeout: 5000 });
+
+    // Initially should be 50 cards
+    const initialCardsCount = await page.locator('#live-catalog-list .application-card').count();
+    expect(initialCardsCount).toBe(50);
+
+    // Button should be visible
+    const loadMoreBtn = page.locator('button:has-text("Показати ще 50")');
+    await expect(loadMoreBtn).toBeVisible();
+
+    // Click it
+    await loadMoreBtn.click();
+
+    // Now should be 60 cards
+    const newCardsCount = await page.locator('#live-catalog-list .application-card').count();
+    expect(newCardsCount).toBe(60);
+
+    // Button should not be visible anymore
+    await expect(page.locator('button:has-text("Показати ще 50")')).not.toBeVisible();
+  });
 });
 
