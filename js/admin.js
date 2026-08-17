@@ -83,7 +83,6 @@ async function loadApplications() {
       html += `
         <div class="application-card" id="card-${docSnap.id}">
           <h3><span id="display-name-${docSnap.id}">${data.name}</span> <small>(<span id="display-cat-${docSnap.id}">${data.category} > ${data.subcategory}</span>)</small></h3>
-          <p><strong>Створено:</strong> ${createdStr} | <strong>Відредаговано:</strong> ${updatedStr}</p>
           <p><strong>Email:</strong> ${data.email}</p>
           <p><strong>Опис:</strong> <span id="display-desc-${docSnap.id}">${data.description}</span></p>
           <p><strong>Локація:</strong> <span id="display-loc-${docSnap.id}">${data.locationType}</span></p>
@@ -94,6 +93,7 @@ async function loadApplications() {
             <button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${docSnap.id}', false)">Редагувати</button>
             <button class="btn btn-reject" onclick="window.rejectApp('${docSnap.id}', '${data.email || ''}', '${data.name}')">Відхилити</button>
           </div>
+          <p class="card-admin-dates">Створено: ${createdStr} | Відредаговано: ${updatedStr}</p>
         </div>
       `;
     });
@@ -307,7 +307,6 @@ async function loadLiveCatalog() {
       html += `
         <div class="application-card" id="live-card-${itemId}">
           <h3><span id="live-display-name-${itemId}">${item.name}</span> <small>(<span id="live-display-cat-${itemId}">${item.category} > ${item.subcategory}</span>)</small></h3>
-          <p><strong>Створено:</strong> ${createdStr} | <strong>Відредаговано:</strong> ${updatedStr}</p>
           <p><strong>Опис:</strong> <span id="live-display-desc-${itemId}">${item.description || ''}</span></p>
           <p><strong>Локація:</strong> <span id="live-display-loc-${itemId}">${item.locationType || ''}</span></p>
           <p><strong>Телефон:</strong> <span id="live-display-phone-${itemId}">${item.phone || '—'}</span></p>
@@ -316,6 +315,7 @@ async function loadLiveCatalog() {
             <button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${itemId}', true)">Редагувати</button>
             <button class="btn btn-reject" onclick="window.deleteLiveApp('${itemId}')">Видалити</button>
           </div>
+          <p class="card-admin-dates">Створено: ${createdStr} | Відредаговано: ${updatedStr}</p>
         </div>
       `;
     });
