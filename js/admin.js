@@ -82,7 +82,7 @@ async function loadApplications() {
       const updatedStr = data.updatedAt && typeof data.updatedAt.toDate === 'function' ? data.updatedAt.toDate().toLocaleDateString("uk-UA") : (data.updatedAt ? new Date(data.updatedAt).toLocaleDateString("uk-UA") : 'Невідомо');
       html += `
         <div class="application-card" id="card-${docSnap.id}">
-          <h3><span id="display-name-${docSnap.id}">${data.name}</span> <small>(<span id="display-cat-${docSnap.id}">${data.category} > ${data.subcategory}</span>)</small></h3>
+          <h3><span style="color:#007bff; font-family:monospace;">#${docSnap.id}</span> <span id="display-name-${docSnap.id}">${data.name}</span> <small>(<span id="display-cat-${docSnap.id}">${data.category} > ${data.subcategory}</span>)</small></h3>
           <p><strong>Email:</strong> ${data.email}</p>
           <p><strong>Опис:</strong> <span id="display-desc-${docSnap.id}">${data.description}</span></p>
           <p><strong>Локація:</strong> <span id="display-loc-${docSnap.id}">${data.locationType}</span></p>
@@ -279,7 +279,9 @@ window.deleteLiveApp = async (id) => {
 
 // --- Live Catalog Fetcher ---
 let liveCatalogData = [];
-let liveCatalogLimit = 50;
+let liveCatalogFiltered = [];
+let liveCatalogPageSize = 50;
+let liveCatalogCurrentPage = 1;
 
 async function loadLiveCatalog() {
   const liveList = document.getElementById("live-catalog-list");
@@ -299,6 +301,12 @@ async function loadLiveCatalog() {
     
     // Reverse once so newest is first
     liveCatalogData = data.reverse();
+    // Assign random ID to any item that missed one
+    liveCatalogData.forEach(item => {
+      if (!item.id) item.id = Math.random().toString(36).substr(2, 9);
+    });
+    
+    liveCatalogFiltered = [...liveCatalogData];
     renderLiveCatalog();
   } catch (error) {
     console.error("Error loading live catalog:", error);
@@ -306,22 +314,75 @@ async function loadLiveCatalog() {
   }
 }
 
+window.filterLiveCatalog = (query) => {
+  liveCatalogCurrentPage = 1;
+  if (!query) {
+    liveCatalogFiltered = [...liveCatalogData];
+  } else {
+    const lower = query.toLowerCase();
+    liveCatalogFiltered = liveCatalogData.filter(item => 
+      (item.name || "").toLowerCase().includes(lower) ||
+      (item.description || "").toLowerCase().includes(lower) ||
+      (item.id || "").toLowerCase().includes(lower) ||
+      (item.category || "").toLowerCase().includes(lower) ||
+      (item.subcategory || "").toLowerCase().includes(lower)
+    );
+  }
+  renderLiveCatalog();
+};
+
+window.prevLivePage = () => {
+  if (liveCatalogCurrentPage > 1) {
+    liveCatalogCurrentPage--;
+    renderLiveCatalog();
+  }
+};
+
+window.nextLivePage = () => {
+  const maxPage = Math.ceil(liveCatalogFiltered.length / liveCatalogPageSize);
+  if (liveCatalogCurrentPage < maxPage) {
+    liveCatalogCurrentPage++;
+    renderLiveCatalog();
+  }
+};
+
 function renderLiveCatalog() {
   const liveList = document.getElementById("live-catalog-list");
   if (!liveList) return;
   
-  const recent = liveCatalogData.slice(0, liveCatalogLimit);
-  let html = "";
+  const start = (liveCatalogCurrentPage - 1) * liveCatalogPageSize;
+  const end = start + liveCatalogPageSize;
+  const recent = liveCatalogFiltered.slice(start, end);
+  
+  const maxPage = Math.ceil(liveCatalogFiltered.length / liveCatalogPageSize) || 1;
+  
+  let html = `
+    <div style="margin-bottom: 20px;">
+      <input type="text" placeholder="🔍 Пошук по каталогу (ім'я, ID, опис, категорія)..." 
+             style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px;"
+             onkeyup="window.filterLiveCatalog(this.value)">
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #f8f9fa; padding: 10px; border-radius: 5px;">
+      <button class="btn" style="flex: 0 0 auto; padding: 8px 20px; background: ${liveCatalogCurrentPage === 1 ? '#ccc' : '#007bff'}" 
+              onclick="window.prevLivePage()" ${liveCatalogCurrentPage === 1 ? 'disabled' : ''}>← Назад</button>
+      <strong>Сторінка ${liveCatalogCurrentPage} з ${maxPage} <span style="font-weight:normal; color:#666;">(Всього: ${liveCatalogFiltered.length})</span></strong>
+      <button class="btn" style="flex: 0 0 auto; padding: 8px 20px; background: ${liveCatalogCurrentPage === maxPage ? '#ccc' : '#007bff'}" 
+              onclick="window.nextLivePage()" ${liveCatalogCurrentPage === maxPage ? 'disabled' : ''}>Далі →</button>
+    </div>
+  `;
+  
+  if (recent.length === 0) {
+    html += "<p>Нічого не знайдено за вашим запитом.</p>";
+  }
   
   recent.forEach((item) => {
-    // Use crypto UUID if not set, though sync.js should have set it
-    const itemId = item.id || Math.random().toString(36).substr(2, 9);
+    const itemId = item.id;
     const createdStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString("uk-UA") : '—';
     const updatedStr = item.updatedAt ? new Date(item.updatedAt).toLocaleDateString("uk-UA") : '—';
 
     html += `
       <div class="application-card" id="live-card-${itemId}">
-        <h3><span id="live-display-name-${itemId}">${item.name}</span> <small>(<span id="live-display-cat-${itemId}">${item.category} > ${item.subcategory}</span>)</small></h3>
+        <h3><span style="color:#007bff; font-family:monospace;">#${itemId}</span> <span id="live-display-name-${itemId}">${item.name}</span> <small>(<span id="live-display-cat-${itemId}">${item.category} > ${item.subcategory}</span>)</small></h3>
         <p><strong>Опис:</strong> <span id="live-display-desc-${itemId}">${item.description || ''}</span></p>
         <p><strong>Локація:</strong> <span id="live-display-loc-${itemId}">${item.locationType || ''}</span></p>
         <p><strong>Телефон:</strong> <span id="live-display-phone-${itemId}">${item.phone || '—'}</span></p>
@@ -335,19 +396,8 @@ function renderLiveCatalog() {
     `;
   });
   
-  html = `<p><em>Показано ${recent.length} з ${liveCatalogData.length} записів каталогу.</em></p>` + html;
-  
-  if (liveCatalogLimit < liveCatalogData.length) {
-    html += `<button class="btn" style="display:block; width:100%; margin-top:20px; padding:10px; background:#007bff; color:white; border-radius:5px;" onclick="window.loadMoreLive()">Показати ще 50</button>`;
-  }
-  
   liveList.innerHTML = html;
 }
-
-window.loadMoreLive = () => {
-  liveCatalogLimit += 50;
-  renderLiveCatalog();
-};
 
 window.loadLiveCatalog = loadLiveCatalog;
 
