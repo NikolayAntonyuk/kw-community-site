@@ -10,7 +10,7 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   
   submitBtn.disabled = true;
-  submitBtn.textContent = "Відправлення...";
+  submitBtn.textContent = window.t ? window.t("apply_sending") : "Відправлення...";
   formMessage.className = "form-message";
   formMessage.textContent = "";
 
@@ -56,15 +56,15 @@ form.addEventListener("submit", async (e) => {
       console.error("Помилка відправки email адміну: ", e);
     }
 
-    formMessage.textContent = "Ваша заявка успішно відправлена та очікує на модерацію!";
+    formMessage.textContent = window.t ? window.t("apply_success") : "Ваша заявка успішно відправлена та очікує на модерацію!";
     formMessage.classList.add("success");
     form.reset();
   } catch (error) {
     console.error("Помилка відправлення заявки: ", error);
-    formMessage.textContent = "Сталася помилка при відправленні. Спробуйте пізніше.";
+    formMessage.textContent = window.t ? window.t("apply_error") : "Сталася помилка при відправленні. Спробуйте пізніше.";
     formMessage.classList.add("error");
   } finally {
     submitBtn.disabled = false;
-    submitBtn.textContent = "Відправити заявку";
+    submitBtn.textContent = window.t ? window.t("apply_submit") : "Відправити заявку";
   }
 });

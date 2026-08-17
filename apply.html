@@ -78,12 +78,12 @@
       <span class="brand-mark" aria-hidden="true"></span>
       <span data-i18n="nav_brand">Разом KW</span>
     </a>
-    <a href="catalog.html" class="nav-cta">← Назад до каталогу</a>
+    <a href="catalog.html" class="nav-cta" data-i18n="nav_catalog_back">← Назад до каталогу</a>
   </nav>
 
   <header class="site-header">
-    <h1>Подати заявку в Каталог</h1>
-    <p class="site-subtitle">
+    <h1 data-i18n="apply_title">Подати заявку в Каталог</h1>
+    <p class="site-subtitle" data-i18n="apply_desc">
       Заповніть форму нижче, щоб додати свої послуги до каталогу громади Kitchener-Waterloo.
     </p>
   </header>
@@ -92,72 +92,72 @@
     <div class="form-container">
       <form id="apply-form">
         <div class="form-group">
-          <label for="f-email">Ваш Email (не публікується, потрібен для зв'язку) *</label>
+          <label for="f-email" data-i18n="apply_email">Ваш Email (не публікується, потрібен для зв'язку) *</label>
           <input type="email" id="f-email" required />
         </div>
         <div class="form-group">
-          <label for="f-name">Ім'я спеціаліста або назва компанії *</label>
+          <label for="f-name" data-i18n="apply_name">Ім'я спеціаліста або назва компанії *</label>
           <input type="text" id="f-name" required />
         </div>
         <div class="form-group">
-          <label for="f-category">Головна категорія *</label>
+          <label for="f-category" data-i18n="apply_cat">Головна категорія *</label>
           <select id="f-category" required>
-            <option value="">Оберіть категорию...</option>
-            <option value="Beauty">Beauty (Краса)</option>
-            <option value="Health">Здоров'я та Медицина</option>
-            <option value="Education">Освіта / Дитсадки / Гуртки</option>
-            <option value="Services">Побутові та інші послуги</option>
-            <option value="Auto">Авто послуги</option>
-            <option value="Legal">Юридичні послуги</option>
-            <option value="Real Estate">Нерухомість</option>
-            <option value="Food">Їжа та Кондитери</option>
+            <option value="" data-i18n="apply_cat_opt_default">Оберіть категорию...</option>
+            <option value="Beauty" data-i18n="apply_cat_opt_beauty">Beauty (Краса)</option>
+            <option value="Health" data-i18n="apply_cat_opt_health">Здоров'я та Медицина</option>
+            <option value="Education" data-i18n="apply_cat_opt_edu">Освіта / Дитсадки / Гуртки</option>
+            <option value="Services" data-i18n="apply_cat_opt_serv">Побутові та інші послуги</option>
+            <option value="Auto" data-i18n="apply_cat_opt_auto">Авто послуги</option>
+            <option value="Legal" data-i18n="apply_cat_opt_legal">Юридичні послуги</option>
+            <option value="Real Estate" data-i18n="apply_cat_opt_real_estate">Нерухомість</option>
+            <option value="Food" data-i18n="apply_cat_opt_food">Їжа та Кондитери</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="f-subcategory">Підкатегорія (наприклад: Перукар, Юрист) *</label>
+          <label for="f-subcategory" data-i18n="apply_subcat">Підкатегорія (наприклад: Перукар, Юрист) *</label>
           <input type="text" id="f-subcategory" required />
         </div>
         <div class="form-group">
-          <label for="f-description">Короткий опис послуг *</label>
+          <label for="f-description" data-i18n="apply_desc_short">Короткий опис послуг *</label>
           <input type="text" id="f-description" required />
         </div>
         <div class="form-group">
-          <label for="f-locationType">Місто (Kitchener, Waterloo, Cambridge, Guelph тощо) *</label>
+          <label for="f-locationType" data-i18n="apply_loc">Місто (Kitchener, Waterloo, Cambridge, Guelph тощо) *</label>
           <input type="text" id="f-locationType" required />
         </div>
         <div class="form-group">
-          <label for="f-address">Точна адреса (якщо є)</label>
+          <label for="f-address" data-i18n="apply_address">Точна адреса (якщо є)</label>
           <input type="text" id="f-address" />
         </div>
         <div class="form-group">
-          <label for="f-phone">Телефон</label>
+          <label for="f-phone" data-i18n="apply_phone">Телефон</label>
           <input type="tel" id="f-phone" />
         </div>
         <div class="form-group">
-          <label for="f-telegram">Telegram (лінк або нікнейм)</label>
+          <label for="f-telegram" data-i18n="apply_telegram">Telegram (лінк або нікнейм)</label>
           <input type="text" id="f-telegram" />
         </div>
         <div class="form-group">
-          <label for="f-instagram">Instagram (лінк)</label>
+          <label for="f-instagram" data-i18n="apply_instagram">Instagram (лінк)</label>
           <input type="url" id="f-instagram" />
         </div>
         <div class="form-group">
-          <label for="f-facebook">Facebook (лінк)</label>
+          <label for="f-facebook" data-i18n="apply_facebook">Facebook (лінк)</label>
           <input type="url" id="f-facebook" />
         </div>
         <div class="form-group">
-          <label for="f-website">Вебсайт (лінк)</label>
+          <label for="f-website" data-i18n="apply_web">Вебсайт (лінк)</label>
           <input type="url" id="f-website" />
         </div>
         <div class="form-group">
-          <label for="f-price">Орієнтовна ціна</label>
+          <label for="f-price" data-i18n="apply_price">Орієнтовна ціна</label>
           <input type="text" id="f-price" />
         </div>
         <div class="form-group">
-          <label for="f-notes">Додаткові нотатки / Опис</label>
+          <label for="f-notes" data-i18n="apply_notes">Додаткові нотатки / Опис</label>
           <textarea id="f-notes"></textarea>
         </div>
-        <button type="submit" id="submit-btn" class="btn-submit">Відправити заявку</button>
+        <button type="submit" id="submit-btn" class="btn-submit" data-i18n="apply_submit">Відправити заявку</button>
         <div id="form-message" class="form-message"></div>
       </form>
     </div>
