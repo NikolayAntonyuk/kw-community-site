@@ -209,6 +209,7 @@ window.editApp = async (id, isLive = false) => {
 };
 
 window.saveEdit = async () => {
+  if (!confirm("Ви впевнені, що хочете зберегти ці зміни?")) return;
   const id = document.getElementById('edit-id').value;
   const isLive = document.getElementById('edit-islive').value === "true";
   const newName = document.getElementById('edit-name').value;

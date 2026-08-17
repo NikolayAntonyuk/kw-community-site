@@ -290,5 +290,137 @@ test.describe('Admin Panel E2E', () => {
     // Ensure it does not say "Невідомо"
     expect(firstCardText).not.toContain('Створено: Невідомо');
   });
+
+  test('should delete live application when confirmation is accepted', async ({ page }) => {
+    await page.route('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js', async route => {
+      await route.fulfill({
+        contentType: 'application/javascript',
+        body: `
+          export const collection = () => {};
+          export const query = () => {};
+          export const where = () => {};
+          export const getDocs = async () => ({ empty: true });
+          export const updateDoc = async () => {};
+          export const doc = () => {};
+          export const addDoc = async () => {};
+          export const getFirestore = () => ({});
+        `
+      });
+    });
+
+    await page.goto('/admin.html');
+    await page.waitForFunction(() => typeof window.deleteLiveApp === 'function');
+
+    let dialogAppeared = false;
+    page.on('dialog', async dialog => {
+      dialogAppeared = true;
+      await dialog.accept(); // Accept the confirmation
+    });
+
+    await page.evaluate(() => {
+      document.body.innerHTML += '<div id="live-card-del-accept"></div>';
+      return window.deleteLiveApp('del-accept');
+    });
+
+    expect(dialogAppeared).toBeTruthy();
+    
+    // Card should be hidden after successful deletion
+    const cardHidden = await page.evaluate(() => {
+      const el = document.getElementById('live-card-del-accept');
+      return !el || el.style.display === 'none';
+    });
+    expect(cardHidden).toBeTruthy();
+  });
+
+  test('should approve application when confirmation is accepted', async ({ page }) => {
+    await page.route('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js', async route => {
+      await route.fulfill({
+        contentType: 'application/javascript',
+        body: `
+          export const collection = () => {};
+          export const query = () => {};
+          export const where = () => {};
+          export const getDocs = async () => ({ empty: true });
+          export const updateDoc = async () => {};
+          export const doc = () => {};
+          export const addDoc = async () => {};
+          export const getFirestore = () => ({});
+        `
+      });
+    });
+
+    await page.goto('/admin.html');
+    await page.waitForFunction(() => typeof window.approveApp === 'function');
+
+    let dialogAppeared = false;
+    page.on('dialog', async dialog => {
+      dialogAppeared = true;
+      await dialog.accept();
+    });
+
+    await page.evaluate(() => {
+      document.body.innerHTML += '<div id="card-approve-accept"></div>';
+      return window.approveApp('approve-accept');
+    });
+
+    expect(dialogAppeared).toBeTruthy();
+    
+    // Card should be removed after approval
+    const cardExists = await page.evaluate(() => !!document.getElementById('card-approve-accept'));
+    expect(cardExists).toBeFalsy();
+  });
+
+  test('should require confirmation before saving edit and proceed on accept', async ({ page }) => {
+    await page.route('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js', async route => {
+      await route.fulfill({
+        contentType: 'application/javascript',
+        body: `
+          export const collection = () => {};
+          export const query = () => {};
+          export const where = () => {};
+          export const getDocs = async () => ({ empty: true });
+          export const updateDoc = async () => {};
+          export const doc = () => {};
+          export const addDoc = async () => {};
+          export const getFirestore = () => ({});
+          export const serverTimestamp = () => ({});
+        `
+      });
+    });
+
+    await page.goto('/admin.html');
+    await page.waitForFunction(() => typeof window.saveEdit === 'function');
+
+    let dialogAppeared = false;
+    page.on('dialog', async dialog => {
+      dialogAppeared = true;
+      await dialog.accept();
+    });
+
+    await page.evaluate(() => {
+      document.body.innerHTML += `
+        <div id="display-name-edit-accept"></div>
+        <div id="display-desc-edit-accept"></div>
+        <div id="display-phone-edit-accept"></div>
+        <div id="display-web-edit-accept"></div>
+      `;
+      document.getElementById('edit-id').value = 'edit-accept';
+      document.getElementById('edit-islive').value = 'false';
+      document.getElementById('edit-name').value = 'New Name';
+      document.getElementById('edit-desc').value = 'New Desc';
+      document.getElementById('edit-phone').value = 'New Phone';
+      document.getElementById('edit-web').value = 'New Web';
+      document.getElementById('edit-modal').style.display = 'block';
+      return window.saveEdit();
+    });
+
+    expect(dialogAppeared).toBeTruthy();
+    
+    const modalVisible = await page.evaluate(() => document.getElementById('edit-modal')?.style.display !== 'none');
+    expect(modalVisible).toBeFalsy();
+    
+    const updatedName = await page.evaluate(() => document.getElementById('display-name-edit-accept')?.textContent);
+    expect(updatedName).toBe('New Name');
+  });
 });
 
