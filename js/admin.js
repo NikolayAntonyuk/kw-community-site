@@ -119,6 +119,7 @@ async function loadApplications() {
 
 // Global functions for inline handlers
 window.approveApp = async (id) => {
+  if (!confirm("Ви впевнені, що хочете підтвердити цю заявку?")) return;
   try {
     await updateDoc(doc(db, "pending_specialists", id), {
       status: "approved"

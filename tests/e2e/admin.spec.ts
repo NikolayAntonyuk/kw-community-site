@@ -161,4 +161,93 @@ test.describe('Admin Panel E2E', () => {
     const hasEmailWarning = dialogMessages.some(msg => msg.includes('Лист не відправлено, оскільки у спеціаліста немає валідного email'));
     expect(hasEmailWarning).toBeTruthy();
   });
+
+  test('should require confirmation before approving application', async ({ page }) => {
+    // Mock Firestore
+    await page.route('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js', async route => {
+      await route.fulfill({
+        contentType: 'application/javascript',
+        body: `
+          export const collection = () => {};
+          export const query = () => {};
+          export const where = () => {};
+          export const getDocs = async () => ({ empty: true });
+          export const updateDoc = async () => {};
+          export const doc = () => {};
+          export const addDoc = async () => {};
+          export const getFirestore = () => ({});
+        `
+      });
+    });
+
+    await page.goto('/admin.html');
+    await page.waitForFunction(() => typeof window.approveApp === 'function');
+
+    let dialogAppeared = false;
+    let dialogMessage = '';
+    
+    // Test CANCEL
+    page.on('dialog', async dialog => {
+      dialogAppeared = true;
+      dialogMessage = dialog.message();
+      await dialog.dismiss();
+    });
+
+    await page.evaluate(() => {
+      document.body.innerHTML += '<div id="card-approve1"></div>';
+      return window.approveApp('approve1');
+    });
+
+    // Check if card still exists (action was cancelled)
+    expect(dialogAppeared).toBeTruthy();
+    expect(dialogMessage).toContain('хочете підтвердити');
+    
+    const cardExists = await page.evaluate(() => !!document.getElementById('card-approve1'));
+    expect(cardExists).toBeTruthy();
+  });
+
+  test('should require confirmation before deleting live application', async ({ page }) => {
+    // Mock Firestore
+    await page.route('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js', async route => {
+      await route.fulfill({
+        contentType: 'application/javascript',
+        body: `
+          export const collection = () => {};
+          export const query = () => {};
+          export const where = () => {};
+          export const getDocs = async () => ({ empty: true });
+          export const updateDoc = async () => {};
+          export const doc = () => {};
+          export const addDoc = async () => {};
+          export const getFirestore = () => ({});
+        `
+      });
+    });
+
+    await page.goto('/admin.html');
+    await page.waitForFunction(() => typeof window.deleteLiveApp === 'function');
+
+    let dialogAppeared = false;
+    let dialogMessage = '';
+    
+    page.on('dialog', async dialog => {
+      dialogAppeared = true;
+      dialogMessage = dialog.message();
+      await dialog.dismiss();
+    });
+
+    await page.evaluate(() => {
+      document.body.innerHTML += '<div id="live-card-del1"></div>';
+      return window.deleteLiveApp('del1');
+    });
+
+    expect(dialogAppeared).toBeTruthy();
+    expect(dialogMessage).toContain('видалити цього спеціаліста');
+    
+    const cardExists = await page.evaluate(() => {
+      const el = document.getElementById('live-card-del1');
+      return el && el.style.display !== 'none';
+    });
+    expect(cardExists).toBeTruthy();
+  });
 });
