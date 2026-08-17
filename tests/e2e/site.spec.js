@@ -17,7 +17,7 @@ const mockData = [
     "name": "Dr. Olena Ivanenko",
     "description": "Стоматологія",
     "locationType": "Kitchener",
-    "address": "Street, Kitchener",
+    "address": "Random Street",
     "phone": "+15195550101",
     "instagram": "https://instagram.com/dr_ivanenko"
   },
@@ -26,8 +26,8 @@ const mockData = [
     "subcategory": "Репетитори",
     "name": "Марія Коваль",
     "description": "Репетитор англійської мови",
-    "locationType": "Kitchener",
-    "address": "Street, Kitchener",
+    "locationType": "Guelph",
+    "address": "Main St, Guelph",
     "phone": ""
   }
 ];
@@ -113,11 +113,28 @@ test("перемикання категорії оновлює набір під
   await expect(page.locator(".chip")).toHaveCount(0);
 });
 
-test("локація фільтрує за містом з адреси", async ({ page }) => {
+test("локація фільтрує за містом з адреси або типу локації", async ({ page }) => {
+  await page.selectOption("#location-select", "Kitchener");
+  await expect(page.locator(".card")).toHaveCount(1);
+  await expect(page.locator(".card-name")).toHaveText("Dr. Olena Ivanenko");
+
   await page.selectOption("#location-select", "Waterloo");
   await expect(page.locator(".card")).toHaveCount(1);
   await expect(page.locator(".card-name")).toHaveText("Salon Kalyna");
+  
+  await page.selectOption("#location-select", "Guelph");
+  await expect(page.locator(".card")).toHaveCount(1);
+  await expect(page.locator(".card-name")).toHaveText("Марія Коваль");
 
   await page.selectOption("#location-select", "");
   await expect(page.locator(".card")).toHaveCount(3);
+});
+
+test("каталог має загальну шапку з кнопкою 'Додати спеціаліста'", async ({ page }) => {
+  const header = page.locator("nav.top-nav");
+  await expect(header).toBeVisible();
+  
+  const addBtn = header.locator("a", { hasText: "Додати спеціаліста" });
+  await expect(addBtn).toBeVisible();
+  await expect(addBtn).toHaveAttribute("href", "apply.html");
 });

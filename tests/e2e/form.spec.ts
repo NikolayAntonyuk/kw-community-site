@@ -6,6 +6,13 @@ test.describe('Form E2E', () => {
     
     // Check main title
     await expect(page.locator('h1')).toBeVisible();
+
+    // Check header and navigation
+    const header = page.locator('nav.top-nav');
+    await expect(header).toBeVisible();
+    const backBtn = header.locator('a', { hasText: '← Назад до каталогу' });
+    await expect(backBtn).toBeVisible();
+    await expect(backBtn).toHaveAttribute('href', 'catalog.html');
     
     // Check form fields
     await expect(page.locator('#f-name')).toBeVisible();

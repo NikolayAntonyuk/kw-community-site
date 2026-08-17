@@ -60,4 +60,21 @@ test.describe('Language toggle (UA / EN)', () => {
     const loaded = await flag.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0);
     expect(loaded).toBe(true);
   });
+
+  test('каталог динамічно перекладає елементи без перезавантаження', async ({ page }) => {
+    await page.goto('/catalog.html');
+    
+    // Check initial Ukrainian text
+    await expect(page.locator('#search-input')).toHaveAttribute('placeholder', 'Пошук за іменем, описом або підкатегорією…');
+    // Mock the data to avoid pending state if it fetches fast, or just wait for status to show "Знайдено"
+    await expect(page.locator('#status')).toContainText('Знайдено');
+
+    // Switch to English
+    const toggle = page.locator('#lang-toggle');
+    await toggle.click();
+
+    // Check English text
+    await expect(page.locator('#search-input')).toHaveAttribute('placeholder', 'Search by name, description, or subcategory...');
+    await expect(page.locator('#status')).toContainText('Found');
+  });
 });
