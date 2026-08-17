@@ -9,7 +9,7 @@ const dictionary = {
     "hero_btn": "Знайти спеціаліста громади →",
     "about_title": "Про нас",
     "about_text": "Ми — українська громада регіону Ватерлу—Велінтон. Об'єднуємо родини, які переїхали до Кітченера, Ватерлу, Кембриджа та околиць, підтримуємо культурні традиції, проводимо суботню українську школу, організовуємо свята (День Вишиванки, Фестиваль Борщу) та щомісяця збираємо кошти на потреби ЗСУ. Наш каталог спеціалістів — ще один спосіб підтримувати одне одного тут, у Канаді.",
-    "school_title": "🇺🇦 Українська школа вихідного дня",
+    "school_title": "<img class=\"inline-flag\" src=\"assets/flags/ua.svg\" alt=\"\" width=\"24\" height=\"16\"> Українська школа вихідного дня",
     "school_text": "В регіоні Ватерлу діє суботня українська школа для дітей різного віку. Тут діти вивчають українську мову, літературу, історію та традиції в дружньому середовищі.",
     "school_soon": "[Детальна інформація про розклад, адресу та контакти буде додана незабаром]",
     "activity_title": "Що відбувається у громаді",
@@ -29,7 +29,7 @@ const dictionary = {
     "apply_loc": "Локація (Місто)",
     "apply_info": "Опис послуг",
     "apply_submit": "Надіслати заявку",
-    "lang_toggle": "🇺🇸 EN"
+    "lang_toggle": "<img src=\"assets/flags/us.svg\" alt=\"English\" width=\"24\" height=\"16\">"
   },
   en: {
     "nav_brand": "Razom KW",
@@ -41,7 +41,7 @@ const dictionary = {
     "hero_btn": "Find a community specialist →",
     "about_title": "About Us",
     "about_text": "We are the Ukrainian community of Waterloo-Wellington Region. We unite families who moved to Kitchener, Waterloo, Cambridge and surroundings, preserve cultural traditions, run a Saturday Ukrainian school, organize holidays (Vyshyvanka Day, Borscht Festival) and raise funds for the Armed Forces of Ukraine every month. Our specialists directory is another way to support each other here in Canada.",
-    "school_title": "🇺🇦 Saturday Ukrainian School",
+    "school_title": "<img class=\"inline-flag\" src=\"assets/flags/ua.svg\" alt=\"\" width=\"24\" height=\"16\"> Saturday Ukrainian School",
     "school_text": "There is a Saturday Ukrainian school in the Waterloo region for children of all ages. Here children study Ukrainian language, literature, history, and traditions in a friendly environment.",
     "school_soon": "[Detailed information on schedule, address, and contacts will be added soon]",
     "activity_title": "Community Events",
@@ -61,7 +61,7 @@ const dictionary = {
     "apply_loc": "Location (City)",
     "apply_info": "Service Description",
     "apply_submit": "Submit Application",
-    "lang_toggle": "🇺🇦 UA"
+    "lang_toggle": "<img src=\"assets/flags/ua.svg\" alt=\"Українська\" width=\"24\" height=\"16\">"
   }
 };
 
@@ -90,23 +90,25 @@ function applyLanguage(lang) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Inject language toggle button in top-nav if exists
-  const nav = document.querySelector('.top-nav');
-  if (nav && !document.getElementById('lang-toggle')) {
+function initLanguageToggle() {
+  const container = document.querySelector('.top-nav') || document.querySelector('.site-header');
+  if (container && !document.getElementById('lang-toggle')) {
     const btn = document.createElement('button');
     btn.id = 'lang-toggle';
-    btn.className = 'nav-cta';
-    btn.style.marginLeft = '10px';
-    btn.style.background = 'transparent';
-    btn.style.color = 'inherit';
-    btn.style.border = '1px solid currentColor';
-    btn.style.cursor = 'pointer';
+    // Use nav-cta for top-nav, and btn for site-header
+    btn.className = 'lang-toggle';
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Змінити мову / Change language');
     btn.onclick = () => {
       applyLanguage(currentLang === 'ua' ? 'en' : 'ua');
     };
-    nav.appendChild(btn);
+    container.appendChild(btn);
   }
-  
   applyLanguage(currentLang);
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initLanguageToggle);
+} else {
+  initLanguageToggle();
+}

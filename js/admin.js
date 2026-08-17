@@ -21,6 +21,28 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+// Зрозумілі повідомлення замість сирих кодів Firebase
+function describeAuthError(error) {
+  switch (error.code) {
+    case "auth/configuration-not-found":
+      return "Firebase Authentication не увімкнено в проєкті. Відкрий Firebase Console → Authentication → Get started → Sign-in method → Email/Password → Enable.";
+    case "auth/operation-not-allowed":
+      return "Вхід через Email/Password вимкнено. Увімкни його в Firebase Console → Authentication → Sign-in method.";
+    case "auth/invalid-credential":
+    case "auth/wrong-password":
+    case "auth/user-not-found":
+      return "Невірний email або пароль. Переконайся, що цього користувача створено в Firebase Console → Authentication → Users.";
+    case "auth/invalid-email":
+      return "Некоректний формат email.";
+    case "auth/too-many-requests":
+      return "Забагато спроб входу. Спробуй за кілька хвилин.";
+    case "auth/network-request-failed":
+      return "Немає зв'язку з Firebase. Перевір інтернет-з'єднання.";
+    default:
+      return "Помилка входу: " + error.message;
+  }
+}
+
 // Handle Login
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -31,7 +53,7 @@ loginForm.addEventListener("submit", async (e) => {
     await signInWithEmailAndPassword(auth, email, password);
     authError.style.display = "none";
   } catch (error) {
-    authError.textContent = "Невірний email або пароль.";
+    authError.textContent = describeAuthError(error);
     authError.style.display = "block";
   }
 });

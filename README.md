@@ -1,58 +1,98 @@
-# KW Community — Каталог спеціалістів (v2.1)
+# KW Community — каталог спеціалістів
 
-Статичний сайт-каталог спеціалістів та сервісів української громади Kitchener-Waterloo-Cambridge-Guelph.
+Статичний сайт-каталог спеціалістів та сервісів української громади Kitchener–Waterloo–Cambridge–Guelph.
+Хостинг — GitHub Pages, бекенду немає: дані лежать у репозиторії, а нові заявки й модерація йдуть через Firebase.
 
-Сайт працює на статичному хостингу (GitHub Pages) та використовує гібридний підхід до бази даних: статичний JSON для швидкості та Firebase для інтерактивних заявок і модерації.
+🔗 Сайт: https://nikolayantonyuk.github.io/kw-community-site/
 
-## 🏗️ Архітектура (Data Flow)
+## Архітектура
 
-1. **Форма заявки (`apply.html`)**: Користувачі заповнюють форму прямо на сайті. Дані відправляються у базу **Firebase Firestore** (колекція `pending_specialists`).
-2. **Адмін-панель (`admin.html`)**: Захищена авторизацією (Firebase Auth). Адміністратор бачить нові заявки, може редагувати їх і натиснути «Підтвердити» або «Відхилити».
-   - При відхиленні через EmailJS автоматично відправляється лист спеціалісту.
-   - При підтвердженні заявка змінює статус у Firebase.
-3. **Каталог (`catalog.html`)**: Скрипт завантажує основну статичну базу з `data/specialists.json` (надшвидко) та паралельно тягне нові підтверджені заявки з Firebase, миттєво об'єднуючи їх.
-4. **Автоматизація (GitHub Actions)**: Розкладний скрипт регулярно забирає підтверджені заявки з Firebase, додає їх у файл `data/specialists.json` у репозиторії та видаляє з Firebase, щоб сайт залишався статичним і швидким.
+| Шар | Реалізація |
+| --- | --- |
+| Каталог (основна база) | `data/specialists.json` у репозиторії |
+| Нові заявки | Firebase Firestore, колекція `pending_specialists` |
+| Авторизація адмінів | Firebase Authentication (Email/Password) |
+| Листи про відхилення | EmailJS |
+| Перенесення схвалених заявок у JSON | GitHub Actions `.github/workflows/sync.yml` (щодня опівночі + вручну) |
 
-## 💻 Локальна розробка
+Сторінки:
+
+- `index.html` — головна (про громаду, школа, активність)
+- `catalog.html` — каталог з пошуком і фільтрами
+- `apply.html` — форма подачі заявки (пише в Firestore, `status: pending`)
+- `admin.html` — панель модерації (потрібен логін)
+
+## Воркфлоу заявки
+
+1. Спеціаліст заповнює форму на `apply.html` → документ у Firestore зі `status: "pending"`.
+2. Адмін заходить на `admin.html`, бачить чергу, може **Редагувати**, **Підтвердити** (`status: approved`) або **Відхилити** (`status: rejected` + лист через EmailJS).
+3. Схвалені картки одразу видно на сайті — `js/data.js` мерджить статичний JSON із Firestore.
+4. Раз на добу GitHub Action `sync.yml` переносить схвалені записи в `data/specialists.json` і чистить Firestore.
+
+## ⚠️ Що треба увімкнути у Firebase (без цього адмінка й форма не працюють)
+
+У проєкті `kw-community` мають бути активовані два сервіси:
+
+1. **Authentication** — Firebase Console → Build/Authentication → *Get started* → вкладка *Sign-in method* → **Email/Password** → *Enable*.
+   Поки не увімкнено, будь-який вхід повертає `auth/configuration-not-found`, і адмінка каже «невірний пароль» незалежно від пароля.
+2. **Cloud Firestore** — Firebase Console → Firestore Database → *Create database* (режим *Test mode* на старті).
+   Поки не створено, форма заявки не зберігає дані (`PERMISSION_DENIED: Cloud Firestore API has not been used`).
+
+Перевірити стан можна з консолі:
 
 ```bash
-# Встановлення залежностей
+# має повернути помилку про невірні креденшели, а НЕ CONFIGURATION_NOT_FOUND
+curl -s -X POST "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=<API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"probe@example.com","password":"whatever12345","returnSecureToken":true}'
+```
+
+### Як додати адміністратора
+
+Firebase Console → Authentication → вкладка **Users** → *Add user* → email + пароль. Ці ж дані використовуються для входу в `admin.html`.
+
+### Секрет для синхронізації
+
+GitHub → Settings → Secrets and variables → Actions → `FIREBASE_SERVICE_ACCOUNT` (весь JSON сервісного акаунта з Firebase → Project settings → Service accounts → *Generate new private key*).
+
+## Локальна розробка
+
+```bash
 npm install
-
-# Запуск локального сервера (порт 8080)
-npm run serve
+npm run serve   # сайт на http://localhost:8080
 ```
-Сайт буде доступний за адресою `http://localhost:8080`.
 
-## 🧪 Тестування (Playwright + Allure)
-
-Проєкт покритий E2E тестами за допомогою **Playwright**. Усі тести автоматично проганяються при кожному пуші на GitHub.
-
-### Запуск тестів локально:
+## Тести
 
 ```bash
-# Прогон E2E тестів (у консолі)
-npx playwright test
-
-# Згенерувати та відкрити Allure звіт локально
-npx allure generate allure-results --clean
-npx allure open
+npm test          # юніт (vitest) + e2e (Playwright)
+npm run test:unit # vitest, tests/unit
+npm run test:e2e  # playwright, tests/e2e
 ```
 
-### Структура E2E тестів:
-- `tests/e2e/home.spec.ts`: Перевірка головної сторінки та навігації.
-- `tests/e2e/form.spec.ts`: Перевірка роботи форми заявки (`apply.html`). Мережеві запити до Firebase імітуються (Mocking), щоб не створювати тестові дані в реальній базі.
-- `tests/e2e/admin.spec.ts`: Перевірка адмін-панелі та валідації входу. Запити авторизації імітуються.
+Покриття e2e: головна й навігація (`home.spec.ts`), каталог/пошук/фільтри (`site.spec.js`),
+форма заявки (`form.spec.ts`), логін і помилки адмінки (`admin.spec.ts`), перемикач мов UA/EN (`i18n.spec.ts`).
 
-### Allure Reports у GitHub Actions
-При кожному пуші у гілку `master` або `main`, GitHub Actions проганяє тести і автоматично публікує **Allure Report**.
-Звіт можна подивитися на гілці `gh-pages` або за посиланням, згенерованим GitHub Pages (залежить від налаштувань репозиторію, стандартно `https://<user>.github.io/<repo>/`).
+Юніт-тести імпортують `js/data.js`, який тягне Firebase SDK з CDN по `https://`. Node такі імпорти не резолвить,
+тому `vitest.config.js` підміняє їх на заглушку `tests/mocks/firebase-stub.js`.
 
-## 🚀 Деплой на GitHub Pages
+### Звіти
 
-1. **Сайт**: Розгортається з гілки `master` (або `main`), папка `/ (root)`.
-2. **Allure Звіти**: Розгортаються з гілки `gh-pages` (шлях `allure-history`).
+- **GitHub Actions** → останній запуск *Playwright Tests* → секція **Artifacts** → архів `playwright-report` (розпакувати, відкрити `index.html`).
+- Локально: `npx playwright show-report`.
 
-**⚠️ Важливі GitHub Secrets для повноцінної роботи:**
-- `FIREBASE_SERVICE_ACCOUNT`: Сервісний ключ Firebase (JSON) для роботи GitHub Action автоматичної синхронізації (`sync.yml`).
-- `GITHUB_TOKEN`: Потрібен для публікації Allure звітів на гілку `gh-pages` (дозволи на запис мають бути увімкнені у налаштуваннях репозиторію).
+## Багатомовність
+
+`js/i18n.js` тримає словник UA/EN і підміняє вміст елементів з атрибутом `data-i18n`.
+Мова за замовчуванням — українська, вибір зберігається в `localStorage`.
+
+Прапори — **SVG-файли** (`assets/flags/ua.svg`, `assets/flags/us.svg`), а не емоджі:
+емоджі-прапори (🇺🇦/🇺🇸) не рендеряться на Windows і показуються як літери «UA»/«US».
+
+## Деплой на GitHub Pages
+
+1. Settings → Pages → Source → Deploy from a branch.
+2. Гілка `master`, папка `/ (root)`.
+3. Після пуша сайт оновлюється за 1–2 хвилини.
+
+Свій домен — файл `CNAME` у корені репо (або Settings → Pages → Custom domain), код міняти не треба.
