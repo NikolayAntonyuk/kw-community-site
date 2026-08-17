@@ -119,9 +119,7 @@ function renderSubcategoryChips() {
 }
 
 function renderLocationOptions() {
-  const cities = uniqueInOrder(allSpecialists.map((s) => extractCity(s.address))).sort(
-    (a, b) => a.localeCompare(b, "uk")
-  );
+  const allowedCities = ["Kitchener", "Waterloo", "Guelph", "Cambridge", "Elmira", "St. Jacobs"];
 
   els.locationSelect.innerHTML = "";
 
@@ -130,7 +128,7 @@ function renderLocationOptions() {
   allOption.textContent = ALL_LOCATIONS_LABEL;
   els.locationSelect.appendChild(allOption);
 
-  cities.forEach((city) => {
+  allowedCities.forEach((city) => {
     const option = document.createElement("option");
     option.value = city;
     option.textContent = city;

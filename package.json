@@ -31,5 +31,8 @@
   "bugs": {
     "url": "https://github.com/nikolayantonyuk/kw-community-site/issues"
   },
-  "homepage": "https://github.com/nikolayantonyuk/kw-community-site#readme"
+  "homepage": "https://github.com/nikolayantonyuk/kw-community-site#readme",
+  "dependencies": {
+    "firebase-admin": "^14.2.0"
+  }
 }

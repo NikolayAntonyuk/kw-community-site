@@ -1,6 +1,7 @@
 import { db } from "./firebase.js";
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+const ADMIN_EMAILS = "mykola.antoniyk@gmail.com";
 const form = document.getElementById("apply-form");
 const submitBtn = document.getElementById("submit-btn");
 const formMessage = document.getElementById("form-message");
@@ -34,6 +35,27 @@ form.addEventListener("submit", async (e) => {
 
   try {
     await addDoc(collection(db, "pending_specialists"), specialistData);
+    
+    try {
+      const EMAILJS_SERVICE_ID = "service_e521b5c";
+      const EMAILJS_TEMPLATE_ID = "YOUR_NEW_APP_TEMPLATE_ID"; // TODO: Додати Template ID для нової заявки
+      const EMAILJS_PUBLIC_KEY = "064MymkRcVYVYhuJE";
+
+      if (window.emailjs && EMAILJS_TEMPLATE_ID !== "YOUR_NEW_APP_TEMPLATE_ID") {
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          to_email: ADMIN_EMAILS,
+          from_name: specialistData.name,
+          category: specialistData.category,
+          message: "Нова заявка очікує на модерацію."
+        });
+      } else {
+        console.warn("EmailJS Template ID для нових заявок не встановлено. Лист адміну не відправлено.");
+      }
+    } catch (e) {
+      console.error("Помилка відправки email адміну: ", e);
+    }
+
     formMessage.textContent = "Ваша заявка успішно відправлена та очікує на модерацію!";
     formMessage.classList.add("success");
     form.reset();
