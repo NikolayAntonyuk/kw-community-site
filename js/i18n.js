@@ -1,4 +1,4 @@
-const dictionary = {
+window.dictionary = {
   ua: {
     "nav_brand": "Разом KW",
     "nav_catalog": "Каталог спеціалістів",
@@ -16,8 +16,13 @@ const dictionary = {
     "footer_tagline": "Разом сильніші. Разом — громада.",
     "cat_title": "Каталог спеціалістів",
     "cat_add_btn": "+ Додати спеціаліста",
-    "cat_filter_all": "Усі категорії",
-    "cat_search": "Пошук спеціалістів...",
+    "cat_filter_all": "✕ Усі категорії",
+    "cat_search": "Пошук за іменем, описом або підкатегорією…",
+    "cat_footer": "Дані каталогу оновлюються через громадську модерацію. Побачили помилку чи хочете додати спеціаліста? Зверніться до модераторів громади KW.",
+    "cat_all_locations": "По всьому Waterloo регіону",
+    "cat_found": "Знайдено: ",
+    "cat_loading": "Завантаження…",
+    "cat_error": "Помилка завантаження даних: ",
     "apply_title": "Додати спеціаліста",
     "apply_desc": "Заповніть форму нижче, щоб додати свої послуги до каталогу. Після перевірки адміністратором ваша картка з'явиться на сайті.",
     "apply_name": "Ім'я або назва компанії",
@@ -48,8 +53,13 @@ const dictionary = {
     "footer_tagline": "Stronger together. Together — community.",
     "cat_title": "Specialists Directory",
     "cat_add_btn": "+ Add Specialist",
-    "cat_filter_all": "All categories",
-    "cat_search": "Search specialists...",
+    "cat_filter_all": "✕ All categories",
+    "cat_search": "Search by name, description, or subcategory...",
+    "cat_footer": "Directory data is updated via community moderation. Found an error or want to add a specialist? Contact the KW community moderators.",
+    "cat_all_locations": "All across Waterloo Region",
+    "cat_found": "Found: ",
+    "cat_loading": "Loading...",
+    "cat_error": "Error loading data: ",
     "apply_title": "Add Specialist",
     "apply_desc": "Fill out the form below to add your services to the directory. After review by the administrator, your card will appear on the site.",
     "apply_name": "Name or Company Name",
@@ -65,28 +75,34 @@ const dictionary = {
   }
 };
 
-let currentLang = localStorage.getItem('lang') || 'ua';
+window.currentLang = localStorage.getItem('lang') || 'ua';
 
-function applyLanguage(lang) {
-  currentLang = lang;
+window.t = function(key) {
+  return window.dictionary[window.currentLang] && window.dictionary[window.currentLang][key] 
+    ? window.dictionary[window.currentLang][key] 
+    : key;
+};
+
+window.applyLanguage = function(lang) {
+  window.currentLang = lang;
   localStorage.setItem('lang', lang);
   document.documentElement.lang = lang;
   
   const elements = document.querySelectorAll('[data-i18n]');
   elements.forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (dictionary[lang] && dictionary[lang][key]) {
+    if (window.dictionary[lang] && window.dictionary[lang][key]) {
       if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-        el.placeholder = dictionary[lang][key];
+        el.placeholder = window.dictionary[lang][key];
       } else {
-        el.innerHTML = dictionary[lang][key];
+        el.innerHTML = window.dictionary[lang][key];
       }
     }
   });
 
   const toggleBtn = document.getElementById('lang-toggle');
   if (toggleBtn) {
-    toggleBtn.innerHTML = dictionary[lang]['lang_toggle'];
+    toggleBtn.innerHTML = window.dictionary[lang]['lang_toggle'];
   }
 }
 
@@ -100,7 +116,10 @@ function initLanguageToggle() {
     btn.type = 'button';
     btn.setAttribute('aria-label', 'Змінити мову / Change language');
     btn.onclick = () => {
-      applyLanguage(currentLang === 'ua' ? 'en' : 'ua');
+      window.applyLanguage(window.currentLang === 'ua' ? 'en' : 'ua');
+      
+      // Dispatch an event so modules like app.js can re-render if needed
+      window.dispatchEvent(new Event('languageChanged'));
     };
     container.appendChild(btn);
   }

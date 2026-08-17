@@ -6,7 +6,6 @@ import { filterSpecialists } from "./filters.js";
 import { renderSpecialists } from "./render.js";
 
 const ALL_LOCATIONS_VALUE = "";
-const ALL_LOCATIONS_LABEL = "По всьому Waterloo регіону";
 
 const state = {
   category: "",
@@ -39,7 +38,7 @@ function extractCity(address) {
 function applyFilters() {
   const filtered = filterSpecialists(allSpecialists, state);
   renderSpecialists(els.cardsGrid, filtered);
-  els.statusEl.textContent = `Знайдено: ${filtered.length}`;
+  els.statusEl.textContent = `${window.t("cat_found")}${filtered.length}`;
 }
 
 function resetCategory() {
@@ -67,7 +66,7 @@ function renderCategoryPills() {
     const clearPill = document.createElement("button");
     clearPill.type = "button";
     clearPill.className = "pill pill-clear";
-    clearPill.textContent = "✕ Усі категорії";
+    clearPill.textContent = window.t("cat_filter_all");
     clearPill.addEventListener("click", resetCategory);
     els.categoryPills.appendChild(clearPill);
     return;
@@ -125,7 +124,7 @@ function renderLocationOptions() {
 
   const allOption = document.createElement("option");
   allOption.value = ALL_LOCATIONS_VALUE;
-  allOption.textContent = ALL_LOCATIONS_LABEL;
+  allOption.textContent = window.t("cat_all_locations");
   els.locationSelect.appendChild(allOption);
 
   allowedCities.forEach((city) => {
@@ -134,6 +133,9 @@ function renderLocationOptions() {
     option.textContent = city;
     els.locationSelect.appendChild(option);
   });
+  
+  // Set the current selected location if any
+  els.locationSelect.value = state.location;
 }
 
 function bindControls() {
@@ -146,14 +148,22 @@ function bindControls() {
     state.location = event.target.value;
     applyFilters();
   });
+  
+  // Re-render strings when language changes
+  window.addEventListener('languageChanged', () => {
+    renderCategoryPills();
+    renderSubcategoryChips();
+    renderLocationOptions();
+    applyFilters();
+  });
 }
 
 async function init() {
-  els.statusEl.textContent = "Завантаження…";
+  els.statusEl.textContent = window.t("cat_loading");
   try {
     allSpecialists = await fetchSpecialists();
   } catch (err) {
-    els.statusEl.textContent = `Помилка завантаження даних: ${err.message}`;
+    els.statusEl.textContent = `${window.t("cat_error")}${err.message}`;
     return;
   }
 
