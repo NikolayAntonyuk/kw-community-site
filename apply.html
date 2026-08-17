@@ -97,7 +97,7 @@
         </div>
         <div class="form-group">
           <label for="f-name" data-i18n="apply_name">Ім'я спеціаліста або назва компанії *</label>
-          <input type="text" id="f-name" required />
+          <input type="text" id="f-name" required minlength="2" />
         </div>
         <div class="form-group">
           <label for="f-category" data-i18n="apply_cat">Головна категорія *</label>
@@ -115,15 +115,15 @@
         </div>
         <div class="form-group">
           <label for="f-subcategory" data-i18n="apply_subcat">Підкатегорія (наприклад: Перукар, Юрист) *</label>
-          <input type="text" id="f-subcategory" required />
+          <input type="text" id="f-subcategory" required minlength="2" />
         </div>
         <div class="form-group">
           <label for="f-description" data-i18n="apply_desc_short">Короткий опис послуг *</label>
-          <input type="text" id="f-description" required />
+          <input type="text" id="f-description" required minlength="5" />
         </div>
         <div class="form-group">
           <label for="f-locationType" data-i18n="apply_loc">Місто (Kitchener, Waterloo, Cambridge, Guelph тощо) *</label>
-          <input type="text" id="f-locationType" required />
+          <input type="text" id="f-locationType" required minlength="2" />
         </div>
         <div class="form-group">
           <label for="f-address" data-i18n="apply_address">Точна адреса (якщо є)</label>
@@ -131,11 +131,11 @@
         </div>
         <div class="form-group">
           <label for="f-phone" data-i18n="apply_phone">Телефон</label>
-          <input type="tel" id="f-phone" />
+          <input type="tel" id="f-phone" pattern="^[\d\s\+\-\(\)]+$" title="Тільки цифри, пробіли та символи + - ( )" />
         </div>
         <div class="form-group">
           <label for="f-telegram" data-i18n="apply_telegram">Telegram (лінк або нікнейм)</label>
-          <input type="text" id="f-telegram" />
+          <input type="text" id="f-telegram" pattern="^(@|https?:\/\/t\.me\/)?[a-zA-Z0-9_]{5,}$" title="Повинен бути нікнейм (може починатися з @) або посилання t.me" />
         </div>
         <div class="form-group">
           <label for="f-instagram" data-i18n="apply_instagram">Instagram (лінк)</label>
@@ -151,7 +151,7 @@
         </div>
         <div class="form-group">
           <label for="f-price" data-i18n="apply_price">Орієнтовна ціна</label>
-          <input type="text" id="f-price" />
+          <input type="text" id="f-price" pattern="^[^a-zA-Zа-яА-Я]*$" title="Літери не допускаються. Використовуйте цифри, пробіли, або символи валют ($)" />
         </div>
         <div class="form-group">
           <label for="f-notes" data-i18n="apply_notes">Додаткові нотатки / Опис</label>

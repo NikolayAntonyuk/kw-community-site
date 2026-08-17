@@ -78,9 +78,12 @@ async function loadApplications() {
     let html = "";
     querySnapshot.forEach((docSnap) => {
       const data = docSnap.data();
+      const createdStr = data.createdAt && typeof data.createdAt.toDate === 'function' ? data.createdAt.toDate().toLocaleDateString("uk-UA") : (data.createdAt ? new Date(data.createdAt).toLocaleDateString("uk-UA") : 'Невідомо');
+      const updatedStr = data.updatedAt && typeof data.updatedAt.toDate === 'function' ? data.updatedAt.toDate().toLocaleDateString("uk-UA") : (data.updatedAt ? new Date(data.updatedAt).toLocaleDateString("uk-UA") : 'Невідомо');
       html += `
         <div class="application-card" id="card-${docSnap.id}">
           <h3><span id="display-name-${docSnap.id}">${data.name}</span> <small>(<span id="display-cat-${docSnap.id}">${data.category} > ${data.subcategory}</span>)</small></h3>
+          <p><strong>Створено:</strong> ${createdStr} | <strong>Відредаговано:</strong> ${updatedStr}</p>
           <p><strong>Email:</strong> ${data.email}</p>
           <p><strong>Опис:</strong> <span id="display-desc-${docSnap.id}">${data.description}</span></p>
           <p><strong>Локація:</strong> <span id="display-loc-${docSnap.id}">${data.locationType}</span></p>
@@ -222,6 +225,7 @@ window.saveEdit = async () => {
           description: newDesc,
           phone: newPhone,
           website: newWeb,
+          updatedAt: firestore.serverTimestamp(),
           status: "approved"
         });
       });
@@ -229,11 +233,14 @@ window.saveEdit = async () => {
     } else {
       // Update pending doc
       const docRef = doc(db, "pending_specialists", id);
-      await updateDoc(docRef, {
-        name: newName,
-        description: newDesc,
-        phone: newPhone,
-        website: newWeb
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(async (firestore) => {
+        await updateDoc(docRef, {
+          name: newName,
+          description: newDesc,
+          phone: newPhone,
+          website: newWeb,
+          updatedAt: firestore.serverTimestamp()
+        });
       });
       alert("Зміни збережено!");
     }
@@ -248,6 +255,23 @@ window.saveEdit = async () => {
     document.getElementById('edit-modal').style.display = 'none';
   } catch (error) {
     alert("Помилка: " + error.message);
+  }
+};
+
+window.deleteLiveApp = async (id) => {
+  if (!confirm("Ви впевнені, що хочете видалити цього спеціаліста з каталогу?")) return;
+  try {
+    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(async (firestore) => {
+      await firestore.addDoc(firestore.collection(db, "pending_specialists"), {
+        id: id,
+        status: "deleted"
+      });
+    });
+    alert("Запит на видалення надіслано! Спеціаліст зникне з каталогу після наступної синхронізації (за кілька хвилин).");
+    const el = document.getElementById(`live-card-${id}`);
+    if (el) el.style.display = 'none';
+  } catch (error) {
+    alert("Помилка при видаленні: " + error.message);
   }
 };
 
@@ -275,15 +299,20 @@ async function loadLiveCatalog() {
     recent.forEach((item) => {
       // Use crypto UUID if not set, though sync.js should have set it
       const itemId = item.id || Math.random().toString(36).substr(2, 9);
+      const createdStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString("uk-UA") : 'Невідомо';
+      const updatedStr = item.updatedAt ? new Date(item.updatedAt).toLocaleDateString("uk-UA") : 'Невідомо';
+
       html += `
         <div class="application-card" id="live-card-${itemId}">
           <h3><span id="live-display-name-${itemId}">${item.name}</span> <small>(<span id="live-display-cat-${itemId}">${item.category} > ${item.subcategory}</span>)</small></h3>
+          <p><strong>Створено:</strong> ${createdStr} | <strong>Відредаговано:</strong> ${updatedStr}</p>
           <p><strong>Опис:</strong> <span id="live-display-desc-${itemId}">${item.description || ''}</span></p>
           <p><strong>Локація:</strong> <span id="live-display-loc-${itemId}">${item.locationType || ''}</span></p>
           <p><strong>Телефон:</strong> <span id="live-display-phone-${itemId}">${item.phone || '—'}</span></p>
           <p><strong>Вебсайт:</strong> <span id="live-display-web-${itemId}">${item.website || '—'}</span></p>
           <div class="application-actions">
             <button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${itemId}', true)">Редагувати</button>
+            <button class="btn btn-reject" onclick="window.deleteLiveApp('${itemId}')">Видалити</button>
           </div>
         </div>
       `;

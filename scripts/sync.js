@@ -25,10 +25,10 @@ const DATA_FILE = path.join(__dirname, "../data/specialists.json");
 async function sync() {
   console.log("Fetching approved specialists from Firebase...");
   try {
-    const snapshot = await db.collection("pending_specialists").where("status", "==", "approved").get();
+    const snapshot = await db.collection("pending_specialists").where("status", "in", ["approved", "deleted"]).get();
     
     if (snapshot.empty) {
-      console.log("No new approved specialists found.");
+      console.log("No new approved or deleted specialists found.");
       return;
     }
 
@@ -52,12 +52,28 @@ async function sync() {
         data.id = randomUUID();
       }
 
-      // Check if it already exists (edit mode)
+      // Convert Firestore Timestamps to ISO Strings
+      if (data.createdAt && typeof data.createdAt.toDate === 'function') {
+        data.createdAt = data.createdAt.toDate().toISOString();
+      }
+      if (data.updatedAt && typeof data.updatedAt.toDate === 'function') {
+        data.updatedAt = data.updatedAt.toDate().toISOString();
+      }
+
       const existingIndex = currentData.findIndex(s => s.id === data.id);
-      if (existingIndex !== -1) {
-        currentData[existingIndex] = { ...currentData[existingIndex], ...data };
+      
+      const isDeleted = doc.data().status === "deleted";
+
+      if (isDeleted) {
+        if (existingIndex !== -1) {
+          currentData.splice(existingIndex, 1);
+        }
       } else {
-        currentData.push(data);
+        if (existingIndex !== -1) {
+          currentData[existingIndex] = { ...currentData[existingIndex], ...data };
+        } else {
+          currentData.push(data);
+        }
       }
       
       // Delete the document from Firebase
