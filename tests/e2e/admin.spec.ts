@@ -423,7 +423,7 @@ test.describe('Admin Panel E2E', () => {
     expect(updatedName).toBe('New Name');
   });
 
-  test('should load 50 items initially and load more when button is clicked', async ({ page }) => {
+  test('should paginate live catalog 50 per page with working prev/next buttons', async ({ page }) => {
     // Generate 60 mock specialists
     const mockData = Array.from({ length: 60 }, (_, i) => ({
       id: `mock-id-${i}`,
@@ -456,23 +456,69 @@ test.describe('Admin Panel E2E', () => {
     // Wait for the live catalog to load
     await page.waitForSelector('#live-catalog-list .application-card', { state: 'attached', timeout: 5000 });
 
-    // Initially should be 50 cards
-    const initialCardsCount = await page.locator('#live-catalog-list .application-card').count();
-    expect(initialCardsCount).toBe(50);
+    // Page 1: 50 cards out of 60, "Назад" disabled
+    expect(await page.locator('#live-catalog-list .application-card').count()).toBe(50);
+    await expect(page.locator('#live-pagination')).toContainText('Сторінка 1 з 2');
+    await expect(page.locator('#live-pagination')).toContainText('Всього: 60');
+    await expect(page.locator('#live-pagination button:has-text("← Назад")')).toBeDisabled();
 
-    // Button should be visible
-    const loadMoreBtn = page.locator('button:has-text("Показати ще 50")');
-    await expect(loadMoreBtn).toBeVisible();
+    // Page 2: remaining 10 cards, "Далі" disabled
+    await page.locator('#live-pagination button:has-text("Далі →")').click();
+    expect(await page.locator('#live-catalog-list .application-card').count()).toBe(10);
+    await expect(page.locator('#live-pagination')).toContainText('Сторінка 2 з 2');
+    await expect(page.locator('#live-pagination button:has-text("Далі →")')).toBeDisabled();
 
-    // Click it
-    await loadMoreBtn.click();
+    // Back to page 1
+    await page.locator('#live-pagination button:has-text("← Назад")').click();
+    expect(await page.locator('#live-catalog-list .application-card').count()).toBe(50);
+    await expect(page.locator('#live-pagination')).toContainText('Сторінка 1 з 2');
+  });
 
-    // Now should be 60 cards
-    const newCardsCount = await page.locator('#live-catalog-list .application-card').count();
-    expect(newCardsCount).toBe(60);
+  test('should show card IDs and keep search input usable while filtering', async ({ page }) => {
+    const mockData = Array.from({ length: 60 }, (_, i) => ({
+      id: `mock-id-${i}`,
+      name: `Specialist ${i}`,
+      category: 'Test',
+      subcategory: 'Test',
+      description: 'Desc',
+      locationType: 'Waterloo',
+      phone: '123-456',
+      website: 'example.com',
+      createdAt: '2023-01-01T00:00:00Z',
+      updatedAt: '2023-01-01T00:00:00Z'
+    }));
 
-    // Button should not be visible anymore
-    await expect(page.locator('button:has-text("Показати ще 50")')).not.toBeVisible();
+    await page.route('**/data/specialists.json*', async route => {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify(mockData)
+      });
+    });
+
+    await page.goto('/admin.html');
+    await page.waitForFunction(() => typeof window.loadLiveCatalog === 'function');
+
+    await page.evaluate(() => {
+      document.getElementById('dashboard-section')!.style.display = 'block';
+      return window.loadLiveCatalog();
+    });
+
+    await page.waitForSelector('#live-catalog-list .application-card', { state: 'attached', timeout: 5000 });
+
+    // Every card shows its ID (data is reversed, so newest first)
+    await expect(page.locator('#live-card-mock-id-59')).toContainText('#mock-id-59');
+    await expect(page.locator('#live-card-mock-id-59')).toContainText('ID: mock-id-59');
+
+    // Typing several characters must keep focus and the full query in the field
+    const search = page.locator('#live-search');
+    await search.click();
+    await page.keyboard.type('mock-id-42');
+    await expect(search).toHaveValue('mock-id-42');
+    await expect(search).toBeFocused();
+
+    expect(await page.locator('#live-catalog-list .application-card').count()).toBe(1);
+    await expect(page.locator('#live-catalog-list .application-card')).toContainText('Specialist 42');
+    await expect(page.locator('#live-pagination')).toContainText('Всього: 1');
   });
 });
 

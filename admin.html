@@ -96,6 +96,12 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
         <h2>Живий каталог (вже підтверджені)</h2>
       </div>
+      <div style="margin-bottom: 20px;">
+        <input type="text" id="live-search" placeholder="🔍 Пошук по каталогу (ім'я, ID, опис, категорія)..."
+               style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px;"
+               onkeyup="window.filterLiveCatalog(this.value)">
+      </div>
+      <div id="live-pagination"></div>
       <div id="live-catalog-list">
         Завантаження...
       </div>

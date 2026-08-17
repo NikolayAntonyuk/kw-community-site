@@ -296,6 +296,8 @@ async function loadLiveCatalog() {
     
     if (!data || data.length === 0) {
       liveList.innerHTML = "<p>Каталог порожній.</p>";
+      const emptyPagination = document.getElementById("live-pagination");
+      if (emptyPagination) emptyPagination.innerHTML = "";
       return;
     }
     
@@ -356,21 +358,23 @@ function renderLiveCatalog() {
   
   const maxPage = Math.ceil(liveCatalogFiltered.length / liveCatalogPageSize) || 1;
   
-  let html = `
-    <div style="margin-bottom: 20px;">
-      <input type="text" placeholder="🔍 Пошук по каталогу (ім'я, ID, опис, категорія)..." 
-             style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px;"
-             onkeyup="window.filterLiveCatalog(this.value)">
-    </div>
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #f8f9fa; padding: 10px; border-radius: 5px;">
-      <button class="btn" style="flex: 0 0 auto; padding: 8px 20px; background: ${liveCatalogCurrentPage === 1 ? '#ccc' : '#007bff'}" 
-              onclick="window.prevLivePage()" ${liveCatalogCurrentPage === 1 ? 'disabled' : ''}>← Назад</button>
-      <strong>Сторінка ${liveCatalogCurrentPage} з ${maxPage} <span style="font-weight:normal; color:#666;">(Всього: ${liveCatalogFiltered.length})</span></strong>
-      <button class="btn" style="flex: 0 0 auto; padding: 8px 20px; background: ${liveCatalogCurrentPage === maxPage ? '#ccc' : '#007bff'}" 
-              onclick="window.nextLivePage()" ${liveCatalogCurrentPage === maxPage ? 'disabled' : ''}>Далі →</button>
-    </div>
-  `;
-  
+  // Pagination bar lives outside #live-catalog-list so the search field
+  // above it never gets re-created (and never loses focus) while typing.
+  const pagination = document.getElementById("live-pagination");
+  if (pagination) {
+    pagination.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #f8f9fa; padding: 10px; border-radius: 5px;">
+        <button class="btn" style="flex: 0 0 auto; padding: 8px 20px; background: ${liveCatalogCurrentPage === 1 ? '#ccc' : '#007bff'}"
+                onclick="window.prevLivePage()" ${liveCatalogCurrentPage === 1 ? 'disabled' : ''}>← Назад</button>
+        <strong>Сторінка ${liveCatalogCurrentPage} з ${maxPage} <span style="font-weight:normal; color:#666;">(Всього: ${liveCatalogFiltered.length})</span></strong>
+        <button class="btn" style="flex: 0 0 auto; padding: 8px 20px; background: ${liveCatalogCurrentPage === maxPage ? '#ccc' : '#007bff'}"
+                onclick="window.nextLivePage()" ${liveCatalogCurrentPage === maxPage ? 'disabled' : ''}>Далі →</button>
+      </div>
+    `;
+  }
+
+  let html = "";
+
   if (recent.length === 0) {
     html += "<p>Нічого не знайдено за вашим запитом.</p>";
   }
