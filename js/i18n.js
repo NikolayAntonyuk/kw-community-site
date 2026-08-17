@@ -113,7 +113,7 @@ window.dictionary = {
   }
 };
 
-window.currentLang = localStorage.getItem('lang') || 'ua';
+window.currentLang = localStorage.getItem('kw_lang') || 'ua';
 
 window.t = function(key) {
   return window.dictionary[window.currentLang] && window.dictionary[window.currentLang][key] 
@@ -123,7 +123,7 @@ window.t = function(key) {
 
 window.applyLanguage = function(lang) {
   window.currentLang = lang;
-  localStorage.setItem('lang', lang);
+  localStorage.setItem('kw_lang', lang);
   document.documentElement.lang = lang;
   
   const elements = document.querySelectorAll('[data-i18n]');
