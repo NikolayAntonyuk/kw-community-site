@@ -4,6 +4,13 @@
 
 const ACTIVITY_POSTS = [
   {
+    kind: "event",
+    url: "https://facebook.com/events/s/ukrainian-picnic-2026/1528321775242523/",
+    image: "assets/activity/event-ukrainian-picnic.jpg",
+    text: "🌻 Запрошуємо на Ukrainian Picnic 2026! Приєднуйтесь до щорічного українського пікніка.",
+    date: "Подія",
+  },
+  {
     kind: "photo",
     url: "https://www.facebook.com/groups/ukrainian.waterloo.wellington/posts/3573550152799606/",
     image: "assets/activity/post1-katespade.jpg",
@@ -64,7 +71,7 @@ function renderActivity() {
       post.kind === "shot"
         ? `<img src="${post.image}" alt="Скріншот допису у Facebook-групі громади" loading="lazy" />`
         : `
-      <img src="${post.image}" alt="" loading="lazy" />
+      ${post.image ? `<img src="${post.image}" alt="" loading="lazy" />` : ''}
       <p class="activity-card-text">${post.text}</p>
       <p class="activity-card-date">${post.date}</p>
     `;

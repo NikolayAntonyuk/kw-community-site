@@ -4,6 +4,7 @@ const mockData = [
   {
     "category": "Beauty",
     "subcategory": "Перукар",
+    "id": 1,
     "name": "Salon Kalyna",
     "description": "Перукар",
     "locationType": "Waterloo",
@@ -14,6 +15,7 @@ const mockData = [
   {
     "category": "Medical",
     "subcategory": "Дантист",
+    "id": 2,
     "name": "Dr. Olena Ivanenko",
     "description": "Стоматологія",
     "locationType": "Kitchener",
@@ -24,6 +26,7 @@ const mockData = [
   {
     "category": "Освіта",
     "subcategory": "Репетитори",
+    "id": 3,
     "name": "Марія Коваль",
     "description": "Репетитор англійської мови",
     "locationType": "Guelph",
@@ -137,4 +140,20 @@ test("каталог має загальну шапку з кнопкою 'До�
   const addBtn = header.locator("a", { hasText: "Додати спеціаліста" });
   await expect(addBtn).toBeVisible();
   await expect(addBtn).toHaveAttribute("href", "apply.html");
+});
+
+
+test("показує ID, іконку категорії та посилання на форму зворотного зв'язку", async ({ page }) => {
+  const card = page.locator(".card", { hasText: "Salon Kalyna" });
+
+  // ID
+  await expect(card.locator(".card-id")).toHaveText("#1");
+
+  // Icon
+  await expect(card.locator(".category-icon")).toHaveClass(/fa-spa/); // Beauty defaults to fa-spa if not matching exactly
+
+  // Feedback link
+  const feedbackLink = card.locator(".card-feedback-link");
+  await expect(feedbackLink).toBeVisible();
+  await expect(feedbackLink).toHaveAttribute("href", "feedback.html?id=1");
 });

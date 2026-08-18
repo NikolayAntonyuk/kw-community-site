@@ -47,9 +47,13 @@ async function sync() {
       delete data.status;
       delete data.rejectReason;
       
-      // If it doesn't have an ID (shouldn't happen for new, but just in case), add one
+      // If it doesn't have an ID, add one
       if (!data.id) {
-        data.id = randomUUID();
+        const maxId = currentData.reduce((max, s) => {
+          const idNum = parseInt(s.id, 10);
+          return !isNaN(idNum) && idNum > max ? idNum : max;
+        }, 0);
+        data.id = maxId + 1;
       }
 
       // Convert Firestore Timestamps to ISO Strings

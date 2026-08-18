@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Повідомити про неточність</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="module" src="js/feedback.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" class="logo">🏠 Головна</a>
+      <a href="catalog.html" class="logo">🔙 До каталогу</a>
+    </div>
+  </header>
+  <main class="container">
+    <h1>Повідомити про неточність</h1>
+    <p>Знайшли помилку в картці спеціаліста (ID: <span id="specialist-id-display" style="font-weight:bold;"></span>)? Напишіть нам.</p>
+    <form id="feedback-form" class="application-form">
+      <input type="hidden" id="specialist-id" name="specialistId">
+      
+      <div class="form-group">
+        <label for="message">Що не так?</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%;">Надіслати</button>
+    </form>
+    <div id="status-message" style="margin-top: 1rem; font-weight: bold; text-align: center;"></div>
+  </main>
+</body>
+</html>
