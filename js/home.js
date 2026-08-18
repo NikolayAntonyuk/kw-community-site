@@ -6,6 +6,7 @@ const ACTIVITY_POSTS = [
   {
     kind: "event",
     url: "https://facebook.com/events/s/ukrainian-picnic-2026/1528321775242523/",
+    image: "assets/activity/event-ukrainian-picnic.jpg",
     text: "🌻 Запрошуємо на Ukrainian Picnic 2026! Приєднуйтесь до щорічного українського пікніка.",
     date: "Подія",
   },
