@@ -63,28 +63,128 @@ export function getIconClass(subcategory, category) {
   return "fa-star";
 }
 
+
+function openModal(specialist) {
+  const modal = document.getElementById("specialist-modal");
+  if (!modal) return;
+  
+  // Name
+  document.getElementById("modal-name").textContent = specialist.name;
+  
+  // Subcategory + Icon
+  const subcategoryEl = document.getElementById("modal-subcategory");
+  subcategoryEl.innerHTML = "";
+  if (specialist.subcategory) {
+    const icon = document.createElement("i");
+    icon.className = `fas ${getIconClass(specialist.subcategory, specialist.category)} category-icon`;
+    icon.style.marginRight = "8px";
+    subcategoryEl.appendChild(icon);
+    subcategoryEl.appendChild(document.createTextNode(specialist.subcategory));
+  }
+  
+  // Location
+  const locationEl = document.getElementById("modal-location");
+  const location = [specialist.locationType, specialist.address].filter(Boolean).join(" · ");
+  locationEl.textContent = location;
+  
+  // Description
+  const descriptionEl = document.getElementById("modal-description");
+  descriptionEl.textContent = specialist.description || "";
+  
+  // Price
+  const priceEl = document.getElementById("modal-price");
+  priceEl.textContent = specialist.price || "";
+  
+  // Contacts
+  const contactsEl = document.getElementById("modal-contacts");
+  contactsEl.innerHTML = "";
+  const contactsFilled = CONTACTS.filter(({ field }) => specialist[field]);
+  if (contactsFilled.length > 0) {
+    contactsFilled.forEach(({ field, label, href }) => {
+      const link = document.createElement("a");
+      link.className = `card-contact card-contact-${field}`;
+      link.href = href(specialist[field]);
+      link.textContent = label;
+      if (field !== "phone") {
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+      }
+      contactsEl.appendChild(link);
+    });
+  }
+  
+  // Notes
+  const notesEl = document.getElementById("modal-notes");
+  notesEl.textContent = specialist.notes || "";
+  
+  // Dates
+  const datesEl = document.getElementById("modal-dates");
+  const hasDates = specialist.createdAt || specialist.updatedAt;
+  if (hasDates) {
+    let parts = [];
+    if (specialist.createdAt && !isNaN(new Date(specialist.createdAt).getTime())) {
+      const createdStr = new Date(specialist.createdAt).toLocaleDateString("uk-UA");
+      parts.push(`Додано: ${createdStr}`);
+    }
+    if (specialist.updatedAt && !isNaN(new Date(specialist.updatedAt).getTime())) {
+      const updatedStr = new Date(specialist.updatedAt).toLocaleDateString("uk-UA");
+      parts.push(`Оновлено: ${updatedStr}`);
+    }
+    datesEl.textContent = parts.join(" | ");
+  } else {
+    datesEl.textContent = "";
+  }
+  
+  // Feedback Link
+  const feedbackWrap = document.getElementById("modal-feedback-wrap");
+  const feedbackLink = document.getElementById("modal-feedback-link");
+  if (specialist.id) {
+    feedbackWrap.style.display = "block";
+    feedbackLink.href = `feedback.html?id=${specialist.id}`;
+  } else {
+    feedbackWrap.style.display = "none";
+  }
+  
+  // Show modal
+  modal.removeAttribute("hidden");
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function closeModal() {
+  const modal = document.getElementById("specialist-modal");
+  if (modal) {
+    modal.setAttribute("hidden", "");
+    modal.setAttribute("aria-hidden", "true");
+  }
+}
+
+// Attach event listeners for closing modal
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("specialist-modal");
+  const closeBtn = document.getElementById("modal-close");
+  if (modal && closeBtn) {
+    closeBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modal.hasAttribute("hidden")) {
+        closeModal();
+      }
+    });
+  }
+});
+
 function createCard(specialist) {
   const card = document.createElement("article");
   card.className = "card";
-  card.style.position = "relative"; // for absolute id positioning
+  
+  card.addEventListener("click", () => openModal(specialist));
 
   const name = document.createElement("h3");
   name.className = "card-name";
   name.textContent = specialist.name;
   card.appendChild(name);
-
-  if (specialist.id) {
-    const idSpan = document.createElement("span");
-    idSpan.className = "card-id";
-    idSpan.style.position = "absolute";
-    idSpan.style.top = "10px";
-    idSpan.style.right = "10px";
-    idSpan.style.fontSize = "0.75rem";
-    idSpan.style.opacity = "0.5";
-    idSpan.style.fontFamily = "monospace";
-    idSpan.textContent = `#${specialist.id}`;
-    card.appendChild(idSpan);
-  }
 
   if (specialist.subcategory) {
     const subcategory = document.createElement("p");
@@ -99,13 +199,6 @@ function createCard(specialist) {
     card.appendChild(subcategory);
   }
 
-  if (specialist.description) {
-    const description = document.createElement("p");
-    description.className = "card-description";
-    description.textContent = specialist.description;
-    card.appendChild(description);
-  }
-
   const location = [specialist.locationType, specialist.address]
     .filter(Boolean)
     .join(" · ");
@@ -116,79 +209,9 @@ function createCard(specialist) {
     card.appendChild(locationEl);
   }
 
-  if (specialist.price) {
-    const price = document.createElement("p");
-    price.className = "card-price";
-    price.textContent = specialist.price;
-    card.appendChild(price);
-  }
-
-  const contactsFilled = CONTACTS.filter(({ field }) => specialist[field]);
-  if (contactsFilled.length > 0) {
-    const contacts = document.createElement("div");
-    contacts.className = "card-contacts";
-    contactsFilled.forEach(({ field, label, href }) => {
-      const link = document.createElement("a");
-      link.className = `card-contact card-contact-${field}`;
-      link.href = href(specialist[field]);
-      link.textContent = label;
-      if (field !== "phone") {
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-      }
-      contacts.appendChild(link);
-    });
-    card.appendChild(contacts);
-  }
-
-  if (specialist.notes) {
-    const notes = document.createElement("p");
-    notes.className = "card-notes";
-    notes.textContent = specialist.notes;
-    card.appendChild(notes);
-  }
-
-  const hasDates = specialist.createdAt || specialist.updatedAt;
-  if (hasDates) {
-    const datesEl = document.createElement("p");
-    datesEl.className = "card-dates";
-    datesEl.style.fontSize = "0.8rem";
-    datesEl.style.color = "#6c757d";
-    datesEl.style.marginTop = "1rem";
-    
-    let parts = [];
-    if (specialist.createdAt) {
-      const createdStr = new Date(specialist.createdAt).toLocaleDateString("uk-UA");
-      parts.push(`Додано: ${createdStr}`);
-    }
-    if (specialist.updatedAt) {
-      const updatedStr = new Date(specialist.updatedAt).toLocaleDateString("uk-UA");
-      parts.push(`Оновлено: ${updatedStr}`);
-    }
-    
-    datesEl.textContent = parts.join(" | ");
-    card.appendChild(datesEl);
-  }
-
-  if (specialist.id) {
-    const feedbackWrap = document.createElement("div");
-    feedbackWrap.style.marginTop = "1rem";
-    feedbackWrap.style.textAlign = "center";
-    
-    const feedbackLink = document.createElement("a");
-    feedbackLink.className = "card-feedback-link";
-    feedbackLink.href = `feedback.html?id=${specialist.id}`;
-    feedbackLink.textContent = "Повідомити про неточність";
-    feedbackLink.style.fontSize = "0.85rem";
-    feedbackLink.style.color = "#dc3545";
-    feedbackLink.style.textDecoration = "underline";
-    
-    feedbackWrap.appendChild(feedbackLink);
-    card.appendChild(feedbackWrap);
-  }
-
   return card;
 }
+
 export function renderSpecialists(container, specialists) {
   container.innerHTML = "";
   if (!specialists || specialists.length === 0) {

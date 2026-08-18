@@ -65,17 +65,18 @@ test("завантажує дані та показує картки спеці�
   );
 
   const first = page.locator(".card", { hasText: "Dr. Olena Ivanenko" });
-  await expect(first.locator(".card-contact-phone")).toHaveAttribute(
+  await first.click();
+  await expect(page.locator("#modal-contacts .card-contact-phone")).toHaveAttribute(
     "href",
     "tel:+15195550101"
   );
-  await expect(first.locator(".card-contact-instagram")).toHaveAttribute(
+  await expect(page.locator("#modal-contacts .card-contact-instagram")).toHaveAttribute(
     "href",
     "https://instagram.com/dr_ivanenko"
   );
   // Telegram і Facebook порожні для цього спеціаліста — не мають рендеритись.
-  await expect(first.locator(".card-contact-telegram")).toHaveCount(0);
-  await expect(first.locator(".card-contact-facebook")).toHaveCount(0);
+  await expect(page.locator("#modal-contacts .card-contact-telegram")).toHaveCount(0);
+  await expect(page.locator("#modal-contacts .card-contact-facebook")).toHaveCount(0);
 });
 
 test("пошук фільтрує картки за іменем/описом/підкатегорією", async ({ page }) => {
@@ -143,17 +144,17 @@ test("каталог має загальну шапку з кнопкою 'До�
 });
 
 
-test("показує ID, іконку категорії та посилання на форму зворотного зв'язку", async ({ page }) => {
+test("показує іконку категорії та посилання на форму зворотного зв'язку в модалці", async ({ page }) => {
   const card = page.locator(".card", { hasText: "Salon Kalyna" });
 
-  // ID
-  await expect(card.locator(".card-id")).toHaveText("#1");
-
   // Icon
-  await expect(card.locator(".category-icon")).toHaveClass(/fa-spa/); // Beauty defaults to fa-spa if not matching exactly
+  await expect(card.locator(".category-icon")).toHaveClass(/fa-spa/);
 
-  // Feedback link
-  const feedbackLink = card.locator(".card-feedback-link");
+  // Click to open modal
+  await card.click();
+
+  // Feedback link in modal
+  const feedbackLink = page.locator("#modal-feedback-link");
   await expect(feedbackLink).toBeVisible();
   await expect(feedbackLink).toHaveAttribute("href", "feedback.html?id=1");
 });

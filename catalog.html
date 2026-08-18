@@ -25,6 +25,28 @@
   
 
 
+  <!-- Modal -->
+  <div id="specialist-modal" class="modal" aria-hidden="true" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-name">
+      <div class="modal-header">
+        <h2 id="modal-name" class="modal-name">Name</h2>
+        <button id="modal-close" class="modal-close" aria-label="Закрити">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="modal-subcategory" class="card-subcategory"></p>
+        <p id="modal-location" class="card-location"></p>
+        <div id="modal-description" class="card-description" style="margin-top: 1rem;"></div>
+        <p id="modal-price" class="card-price" style="margin-top: 0.5rem;"></p>
+        <div id="modal-contacts" class="card-contacts" style="margin-top: 1rem;"></div>
+        <p id="modal-notes" class="card-notes" style="margin-top: 1rem;"></p>
+        <p id="modal-dates" class="card-dates" style="margin-top: 1rem; font-size: 0.8rem; color: #6c757d;"></p>
+        <div id="modal-feedback-wrap" style="margin-top: 1.5rem; text-align: center;">
+          <a id="modal-feedback-link" class="card-feedback-link" style="font-size: 0.85rem; color: #dc3545; text-decoration: underline;">Повідомити про неточність</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <main>
     <section class="controls" aria-label="Фільтри каталогу">
       <div class="search-row">
