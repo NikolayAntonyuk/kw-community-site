@@ -20,7 +20,17 @@ export async function fetchSpecialists({ force = false } = {}) {
     const q = query(collection(db, "pending_specialists"), where("status", "==", "approved"));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      firebaseSpecialists.push(doc.data());
+      const data = doc.data();
+      if (data.createdAt && typeof data.createdAt.toDate === 'function') {
+        data.createdAt = data.createdAt.toDate().toISOString();
+      }
+      if (data.updatedAt && typeof data.updatedAt.toDate === 'function') {
+        data.updatedAt = data.updatedAt.toDate().toISOString();
+      }
+      if (!data.id) {
+        data.id = "New";
+      }
+      firebaseSpecialists.push(data);
     });
   } catch (error) {
     console.error("Не вдалося завантажити з Firebase:", error);

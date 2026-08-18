@@ -46,7 +46,7 @@ describe("fetchSpecialists", () => {
 
     const result = await fetchSpecialists();
 
-    expect(result).toEqual([{ name: "Only Firebase" }]);
+    expect(result).toEqual([{ name: "Only Firebase", id: "New" }]);
   });
 
   it("не падає, якщо fetch кидає помилку мережі", async () => {
