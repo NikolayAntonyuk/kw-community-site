@@ -1,38 +1,9 @@
-// Рендер карток спеціалістів у DOM (CSS Grid). Використовує DOM API
-// (не innerHTML) для тексту з таблиці, щоб уникнути XSS.
+import re
 
-function normalizeUrl(value) {
-  if (/^https?:\/\//i.test(value)) return value;
-  return `https://${value}`;
-}
+with open('js/render.js', 'r', encoding='utf-8') as f:
+    content = f.read()
 
-function telegramUrl(value) {
-  const handle = value.replace(/^@/, "").trim();
-  if (/^https?:\/\//i.test(value)) return value;
-  return `https://t.me/${handle}`;
-}
-
-function instagramUrl(value) {
-  const handle = value.replace(/^@/, "").trim();
-  if (/^https?:\/\//i.test(value)) return value;
-  return `https://instagram.com/${handle}`;
-}
-
-function facebookUrl(value) {
-  if (/^https?:\/\//i.test(value)) return value;
-  return `https://facebook.com/${value}`;
-}
-
-const CONTACTS = [
-  { field: "phone", label: "Телефон", href: (v) => `tel:${v.replace(/[^+\d]/g, "")}` },
-  { field: "telegram", label: "Telegram", href: telegramUrl },
-  { field: "instagram", label: "Instagram", href: instagramUrl },
-  { field: "facebook", label: "Facebook", href: facebookUrl },
-  { field: "website", label: "Вебсайт", href: normalizeUrl },
-];
-
-
-
+new_functions = """
 const ICON_MAP = {
   "Перукар/Барбер": "fa-scissors",
   "Манікюр/Педикюр": "fa-hand-sparkles",
@@ -62,7 +33,9 @@ function getIconClass(subcategory, category) {
   if (category === "Послуги") return "fa-briefcase";
   return "fa-star";
 }
+"""
 
+card_creation = """
 function createCard(specialist) {
   const card = document.createElement("article");
   card.className = "card";
@@ -189,16 +162,12 @@ function createCard(specialist) {
 
   return card;
 }
-export function renderSpecialists(container, specialists) {
-  container.innerHTML = "";
-  if (!specialists || specialists.length === 0) {
-    const empty = document.createElement("p");
-    empty.className = "empty-state";
-    empty.textContent = "Нічого не знайдено. Спробуйте змінити фільтри.";
-    container.appendChild(empty);
-    return;
-  }
-  const fragment = document.createDocumentFragment();
-  specialists.forEach((specialist) => fragment.appendChild(createCard(specialist)));
-  container.appendChild(fragment);
-}
+"""
+
+# Replace createCard
+content = re.sub(r'function createCard\(specialist\) \{.*?(?=export function renderSpecialists)', card_creation, content, flags=re.DOTALL)
+# Insert ICON_MAP and getIconClass before createCard
+content = content.replace("function createCard", new_functions + "\nfunction createCard")
+
+with open('js/render.js', 'w', encoding='utf-8') as f:
+    f.write(content)
