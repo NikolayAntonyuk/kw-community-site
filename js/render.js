@@ -37,17 +37,7 @@ function createCard(specialist) {
 
   const name = document.createElement("h3");
   name.className = "card-name";
-  if (specialist.id) {
-    const idSpan = document.createElement("span");
-    idSpan.style.color = "#007bff";
-    idSpan.style.fontFamily = "monospace";
-    idSpan.style.marginRight = "8px";
-    idSpan.textContent = `#${specialist.id}`;
-    name.appendChild(idSpan);
-    name.appendChild(document.createTextNode(specialist.name));
-  } else {
-    name.textContent = specialist.name;
-  }
+  name.textContent = specialist.name;
   card.appendChild(name);
 
   if (specialist.subcategory) {
