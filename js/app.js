@@ -3,7 +3,7 @@
 
 import { fetchSpecialists } from "./data.js";
 import { filterSpecialists } from "./filters.js";
-import { renderSpecialists } from "./render.js";
+import { renderSpecialists, getIconClass } from "./render.js";
 
 const ALL_LOCATIONS_VALUE = "";
 
@@ -58,7 +58,7 @@ function renderCategoryPills() {
     activePill.type = "button";
     activePill.className = "pill active";
     activePill.dataset.category = state.category;
-    activePill.textContent = state.category;
+    activePill.innerHTML = `<i class="fas ${getIconClass(null, state.category)}"></i> ${state.category}`;
     activePill.setAttribute("aria-pressed", "true");
     activePill.addEventListener("click", resetCategory);
     els.categoryPills.appendChild(activePill);
@@ -77,7 +77,7 @@ function renderCategoryPills() {
     pill.type = "button";
     pill.className = "pill";
     pill.dataset.category = category;
-    pill.textContent = category;
+    pill.innerHTML = `<i class="fas ${getIconClass(null, category)}"></i> ${category}`;
     pill.setAttribute("aria-pressed", "false");
     pill.addEventListener("click", () => {
       state.category = category;
@@ -105,7 +105,7 @@ function renderSubcategoryChips() {
     chip.type = "button";
     chip.className = "chip";
     chip.dataset.subcategory = subcategory;
-    chip.textContent = subcategory;
+    chip.innerHTML = `<i class="fas ${getIconClass(subcategory, state.category)}"></i> ${subcategory}`;
     chip.setAttribute("aria-pressed", String(state.subcategory === subcategory));
     if (state.subcategory === subcategory) chip.classList.add("active");
     chip.addEventListener("click", () => {

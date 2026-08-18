@@ -54,7 +54,7 @@ const ICON_MAP = {
   "Кондитери": "fa-cake-candles"
 };
 
-function getIconClass(subcategory, category) {
+export function getIconClass(subcategory, category) {
   if (ICON_MAP[subcategory]) return ICON_MAP[subcategory];
   if (category === "Beauty") return "fa-spa";
   if (category === "Medical") return "fa-user-nurse";
