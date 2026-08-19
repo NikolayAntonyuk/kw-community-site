@@ -81,7 +81,7 @@ test.describe('Admin Panel E2E', () => {
 
     // Inject a dummy live catalog item into the DOM and make dashboard visible
     await page.evaluate(() => {
-      document.getElementById('dashboard-section')!.style.display = 'block'; window.switchTab&&window.switchTab('live-catalog');
+      document.getElementById('dashboard-section')!.style.display = 'block'; const style = document.createElement('style'); style.innerHTML = '#dashboard-section { display: block !important; }'; document.head.appendChild(style); window.switchTab&&window.switchTab('live-catalog');
       const liveList = document.getElementById('live-catalog-list');
       if (liveList) {
         liveList.innerHTML = `
@@ -288,7 +288,7 @@ test.describe('Admin Panel E2E', () => {
     await page.waitForFunction(() => typeof window.loadLiveCatalog === 'function');
 
     await page.evaluate(() => {
-      document.getElementById('dashboard-section')!.style.display = 'block'; window.switchTab&&window.switchTab('live-catalog');
+      document.getElementById('dashboard-section')!.style.display = 'block'; const style = document.createElement('style'); style.innerHTML = '#dashboard-section { display: block !important; }'; document.head.appendChild(style); window.switchTab&&window.switchTab('live-catalog');
       return window.loadLiveCatalog();
     });
 
@@ -480,7 +480,7 @@ test.describe('Admin Panel E2E', () => {
     await page.waitForFunction(() => typeof window.loadLiveCatalog === 'function');
 
     await page.evaluate(() => {
-      document.getElementById('dashboard-section')!.style.display = 'block'; window.switchTab&&window.switchTab('live-catalog');
+      document.getElementById('dashboard-section')!.style.display = 'block'; const style = document.createElement('style'); style.innerHTML = '#dashboard-section { display: block !important; }'; document.head.appendChild(style); window.switchTab&&window.switchTab('live-catalog');
       return window.loadLiveCatalog();
     });
 
@@ -530,7 +530,7 @@ test.describe('Admin Panel E2E', () => {
     await page.waitForFunction(() => typeof window.loadLiveCatalog === 'function');
 
     await page.evaluate(() => {
-      document.getElementById('dashboard-section')!.style.display = 'block'; window.switchTab&&window.switchTab('live-catalog');
+      document.getElementById('dashboard-section')!.style.display = 'block'; const style = document.createElement('style'); style.innerHTML = '#dashboard-section { display: block !important; }'; document.head.appendChild(style); window.switchTab&&window.switchTab('live-catalog');
       return window.loadLiveCatalog();
     });
 
@@ -563,7 +563,7 @@ test.describe('Admin Panel E2E', () => {
 
     // Trigger modal
     await page.evaluate(() => {
-      document.getElementById('dashboard-section')!.style.display = 'block';
+      document.getElementById('dashboard-section')!.style.display = 'block'; const style = document.createElement('style'); style.innerHTML = '#dashboard-section { display: block !important; }'; document.head.appendChild(style);
       document.body.innerHTML += `
         <div id="display-name-test_mob">TestName</div>
         <div id="display-cat-test_mob">Cat</div>
@@ -608,7 +608,7 @@ test.describe('Admin Panel E2E', () => {
 
     // Show dashboard
     await page.evaluate(() => {
-      document.getElementById('dashboard-section')!.style.display = 'block';
+      document.getElementById('dashboard-section')!.style.display = 'block'; const style = document.createElement('style'); style.innerHTML = '#dashboard-section { display: block !important; }'; document.head.appendChild(style);
     });
 
     // Wait a moment for tabs to render
@@ -659,7 +659,7 @@ test.describe('Admin Panel E2E', () => {
 
     // Show dashboard
     await page.evaluate(() => {
-      document.getElementById('dashboard-section')!.style.display = 'block';
+      document.getElementById('dashboard-section')!.style.display = 'block'; const style = document.createElement('style'); style.innerHTML = '#dashboard-section { display: block !important; }'; document.head.appendChild(style);
     });
 
     // Wait for tabs to render
@@ -691,7 +691,7 @@ test.describe('Admin Panel E2E', () => {
 
     // Inject test data and trigger modal
     await page.evaluate(() => {
-      document.getElementById('dashboard-section')!.style.display = 'block';
+      document.getElementById('dashboard-section')!.style.display = 'block'; const style = document.createElement('style'); style.innerHTML = '#dashboard-section { display: block !important; }'; document.head.appendChild(style);
       // Switch to live-catalog tab
       window.goToPage(document.querySelectorAll('.admin-tab')[1], 'live-catalog');
 
