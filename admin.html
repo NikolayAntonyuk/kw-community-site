@@ -63,14 +63,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
-  <nav class="top-nav" style="background: var(--surface-color); padding: 1rem 2rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+  <nav class="top-nav" style="background: var(--surface-color); padding: 1rem 2rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
     <a href="index.html" class="brand" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; color: var(--text-color); font-weight: 600;">
       <span class="brand-mark" aria-hidden="true" style="width: 24px; height: 24px; background: var(--primary-color); border-radius: 4px;"></span>
       <h1 style="font-size: 1.25rem; margin: 0; font-weight: 600;">Адмін-панель</h1>
     </a>
-    <div style="display: flex; gap: 1rem;">
+    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
       <a href="index.html" style="text-decoration: none; color: #0056b3;">Головна</a>
-      <a href="catalog.html" style="text-decoration: none; color: #0056b3; font-weight: bold;">Перейти до каталогу →</a>
+      <a href="catalog.html" style="text-decoration: none; color: #0056b3; font-weight: bold;">Каталог →</a>
+      <button id="logout-btn" class="btn" style="flex: 0 0 auto; padding: 0.4rem 0.8rem; font-size: 0.85rem; background: #dc3545; display: none;">Вийти</button>
     </div>
   </nav>
 
@@ -92,9 +93,17 @@
     <div id="dashboard-section" class="dashboard-section">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
         <h2>Нові заявки</h2>
-        <button id="logout-btn" class="btn">Вийти</button>
       </div>
       <div id="applications-list">
+        Завантаження...
+      </div>
+
+      <hr style="margin: 3rem 0; border: none; border-top: 1px solid #ccc;" />
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Архів відхилених заявок</h2>
+      </div>
+      <div id="rejected-applications-list">
         Завантаження...
       </div>
 

@@ -14,10 +14,12 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     authSection.style.display = "none";
     dashboardSection.style.display = "block";
+    logoutBtn.style.display = "inline-block";
     loadApplications();
   } else {
     authSection.style.display = "block";
     dashboardSection.style.display = "none";
+    logoutBtn.style.display = "none";
   }
 });
 
@@ -479,11 +481,66 @@ function renderLiveCatalog() {
 
 window.loadLiveCatalog = loadLiveCatalog;
 
+// --- Rejected Applications Fetcher ---
+async function loadRejectedApplications() {
+  const rejectedList = document.getElementById("rejected-applications-list");
+  if (!rejectedList) return;
+  rejectedList.innerHTML = "Завантаження...";
+  
+  const q = query(collection(db, "pending_specialists"), where("status", "==", "rejected"));
+  try {
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+      rejectedList.innerHTML = "<p>Немає відхилених заявок.</p>";
+      return;
+    }
+    
+    let html = "";
+    querySnapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const createdStr = data.createdAt && typeof data.createdAt.toDate === 'function' ? data.createdAt.toDate().toLocaleDateString("uk-UA") : (data.createdAt ? new Date(data.createdAt).toLocaleDateString("uk-UA") : 'Невідомо');
+      const updatedStr = data.updatedAt && typeof data.updatedAt.toDate === 'function' ? data.updatedAt.toDate().toLocaleDateString("uk-UA") : (data.updatedAt ? new Date(data.updatedAt).toLocaleDateString("uk-UA") : 'Невідомо');
+      html += `
+        <div class="application-card" id="rejected-card-${docSnap.id}" style="background: #fff5f5; border-color: #ffcccc;">
+          <h3 style="margin-bottom: 0.5rem;"><span style="color:#dc3545; font-family:monospace;">#${docSnap.id}</span> ${data.name} <small>(${data.category} > ${data.subcategory})</small></h3>
+          <p style="margin-bottom: 0.5rem;"><strong>Причина відхилення:</strong> <span style="color: #dc3545; font-weight: bold;">${data.rejectReason || 'Не вказано'}</span></p>
+          <p style="margin-bottom: 0.5rem;"><strong>Email:</strong> ${data.email || '—'}</p>
+          <p style="margin-bottom: 0.5rem;"><strong>Опис:</strong> ${data.description || '—'}</p>
+          <div class="application-actions" style="margin-top: 1rem;">
+            <button class="btn btn-approve" style="background: #17a2b8;" onclick="window.restoreApp('${docSnap.id}')">Відновити на розгляд</button>
+          </div>
+          <p class="card-admin-dates" style="margin-top: 0.5rem;">ID: ${docSnap.id} | Створено: ${createdStr} | Відхилено: ${updatedStr}</p>
+        </div>
+      `;
+    });
+    rejectedList.innerHTML = html;
+  } catch (error) {
+    console.error("Помилка завантаження відхилених заявок: ", error);
+    rejectedList.innerHTML = "<p style='color:red;'>Помилка завантаження. Перевірте консоль.</p>";
+  }
+}
+
+window.restoreApp = async (id) => {
+  if (!confirm("Ви впевнені, що хочете повернути цю заявку на повторний розгляд? Вона знову з'явиться в списку нових.")) return;
+  try {
+    await updateDoc(doc(db, "pending_specialists", id), {
+      status: "pending",
+      updatedAt: serverTimestamp()
+    });
+    alert("Заявку відновлено!");
+    // Reload both lists to move it from rejected to pending visually
+    await loadApplications();
+  } catch (error) {
+    alert("Помилка при відновленні: " + error.message);
+  }
+};
+
 // Hook into loadApplications so it loads both
 const originalLoad = loadApplications;
 loadApplications = async () => {
   await originalLoad();
   await loadLiveCatalog();
+  await loadRejectedApplications();
 };
 
 
