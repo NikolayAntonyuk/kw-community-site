@@ -101,7 +101,7 @@ export function getIconClass(subcategory, category) {
   
   // fallback based on category
   if (category === "Beauty") return "fa-spa";
-  if (category === "Auto, insurance") return "fa-car";
+  if (category === "Auto" || category === "Auto, insurance") return "fa-car";
   if (category === "Food") return "fa-utensils";
   if (category === "IT") return "fa-laptop-code";
   if (category === "Legal and bookkeeping") return "fa-file-signature";
