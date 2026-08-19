@@ -94,11 +94,11 @@
       <form id="apply-form">
         <div class="form-group">
           <label for="f-email" data-i18n="apply_email">Ваш Email (не публікується, потрібен для зв'язку) *</label>
-          <input type="email" id="f-email" required />
+          <input type="email" id="f-email" required maxlength="100" />
         </div>
         <div class="form-group">
           <label for="f-name" data-i18n="apply_name">Ім'я спеціаліста або назва компанії *</label>
-          <input type="text" id="f-name" required minlength="2" />
+          <input type="text" id="f-name" required minlength="2" maxlength="100" />
         </div>
         <div class="form-group">
           <label for="f-category" data-i18n="apply_cat">Головна категорія *</label>
@@ -116,47 +116,58 @@
         </div>
         <div class="form-group">
           <label for="f-subcategory" data-i18n="apply_subcat">Підкатегорія (наприклад: Перукар, Юрист) *</label>
-          <input type="text" id="f-subcategory" required minlength="2" />
+          <input type="text" id="f-subcategory" required minlength="2" maxlength="50" />
         </div>
         <div class="form-group">
           <label for="f-description" data-i18n="apply_desc_short">Короткий опис послуг *</label>
-          <input type="text" id="f-description" required minlength="5" />
+          <input type="text" id="f-description" required minlength="5" maxlength="200" />
         </div>
         <div class="form-group">
           <label for="f-locationType" data-i18n="apply_loc">Місто (Kitchener, Waterloo, Cambridge, Guelph тощо) *</label>
-          <input type="text" id="f-locationType" required minlength="2" />
+          <select id="f-locationType" required>
+            <option value="">Оберіть місто...</option>
+            <option value="Kitchener">Kitchener</option>
+            <option value="Waterloo">Waterloo</option>
+            <option value="Cambridge">Cambridge</option>
+            <option value="Guelph">Guelph</option>
+            <option value="Breslau">Breslau</option>
+            <option value="Elmira">Elmira</option>
+            <option value="Ayr">Ayr</option>
+            <option value="Online">Online / Віддалено</option>
+            <option value="Інше">Інше (вкажіть в адресі)</option>
+          </select>
         </div>
         <div class="form-group">
           <label for="f-address" data-i18n="apply_address">Точна адреса (якщо є)</label>
-          <input type="text" id="f-address" />
+          <input type="text" id="f-address" maxlength="150" />
         </div>
         <div class="form-group">
           <label for="f-phone" data-i18n="apply_phone">Телефон</label>
-          <input type="tel" id="f-phone" pattern="^[\d\s\+\-\(\)]+$" title="Тільки цифри, пробіли та символи + - ( )" />
+          <input type="tel" id="f-phone" maxlength="20" pattern="^[\d\s\+\-\(\)]+$" title="Тільки цифри, пробіли та символи + - ( )" />
         </div>
         <div class="form-group">
           <label for="f-telegram" data-i18n="apply_telegram">Telegram (лінк або нікнейм)</label>
-          <input type="text" id="f-telegram" pattern="^(@|https?:\/\/t\.me\/)?[a-zA-Z0-9_]{5,}$" title="Повинен бути нікнейм (може починатися з @) або посилання t.me" />
+          <input type="text" id="f-telegram" maxlength="100" pattern="^(@|https?:\/\/t\.me\/)?[a-zA-Z0-9_]{5,}$" title="Повинен бути нікнейм (може починатися з @) або посилання t.me" />
         </div>
         <div class="form-group">
           <label for="f-instagram" data-i18n="apply_instagram">Instagram (лінк)</label>
-          <input type="url" id="f-instagram" />
+          <input type="url" id="f-instagram" maxlength="200" />
         </div>
         <div class="form-group">
           <label for="f-facebook" data-i18n="apply_facebook">Facebook (лінк)</label>
-          <input type="url" id="f-facebook" />
+          <input type="url" id="f-facebook" maxlength="200" />
         </div>
         <div class="form-group">
           <label for="f-website" data-i18n="apply_web">Вебсайт (лінк)</label>
-          <input type="url" id="f-website" />
+          <input type="url" id="f-website" maxlength="200" />
         </div>
         <div class="form-group">
           <label for="f-price" data-i18n="apply_price">Орієнтовна ціна</label>
-          <input type="text" id="f-price" pattern="^[^a-zA-Zа-яА-Я]*$" title="Літери не допускаються. Використовуйте цифри, пробіли, або символи валют ($)" />
+          <input type="text" id="f-price" maxlength="50" pattern="^[^a-zA-Zа-яА-Я]*$" title="Літери не допускаються. Використовуйте цифри, пробіли, або символи валют ($)" />
         </div>
         <div class="form-group">
           <label for="f-notes" data-i18n="apply_notes">Додаткові нотатки / Опис</label>
-          <textarea id="f-notes"></textarea>
+          <textarea id="f-notes" maxlength="1000"></textarea>
         </div>
         <button type="submit" id="submit-btn" class="btn-submit" data-i18n="apply_submit">Відправити заявку</button>
         <div id="form-message" class="form-message"></div>
