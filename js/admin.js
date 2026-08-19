@@ -179,8 +179,8 @@ window.rejectApp = async (id, userEmail, userName) => {
 
 // Edit Application Modal logic
 const editModalHTML = `
-  <div id="edit-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
-    <div style="background:#fff; max-width:500px; margin:50px auto; padding:2rem; border-radius:8px;">
+  <div id="edit-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; overflow-y: auto;">
+    <div style="background:#fff; max-width:500px; margin:50px auto; padding:2rem; border-radius:8px; max-height: 80vh; overflow-y: auto;">
       <h2>Редагувати заявку</h2>
       <input type="hidden" id="edit-id">
       <input type="hidden" id="edit-islive">
