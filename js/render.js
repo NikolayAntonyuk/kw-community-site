@@ -117,7 +117,7 @@ export function getIconClass(subcategory, category) {
 }
 
 
-function openModal(specialist) {
+export function openModal(specialist) {
   const modal = document.getElementById("specialist-modal");
   if (!modal) return;
   

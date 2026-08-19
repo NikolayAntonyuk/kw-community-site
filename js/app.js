@@ -3,7 +3,7 @@
 
 import { fetchSpecialists } from "./data.js";
 import { filterSpecialists } from "./filters.js";
-import { renderSpecialists, getIconClass } from "./render.js";
+import { renderSpecialists, getIconClass, openModal } from "./render.js";
 
 const ALL_LOCATIONS_VALUE = "";
 
@@ -172,6 +172,15 @@ async function init() {
   renderLocationOptions();
   bindControls();
   applyFilters();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const deepLinkId = urlParams.get('id');
+  if (deepLinkId) {
+    const spec = allSpecialists.find(s => s.id === deepLinkId);
+    if (spec) {
+      openModal(spec);
+    }
+  }
 }
 
 init();

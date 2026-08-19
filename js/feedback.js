@@ -39,12 +39,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (window.emailjs) {
           emailjs.init(EMAILJS_PUBLIC_KEY);
+          
+          const baseURL = window.location.origin + window.location.pathname.replace(/\/feedback\.html$/, '');
+          const catalogLink = form.specialistId.value ? `${baseURL}/catalog.html?id=${form.specialistId.value}` : 'Не вказано (загальне)';
+          const adminLink = `${baseURL}/admin.html`;
+          
+          const fullMessage = `Контакт: ${form.contactInfo.value}
+
+Повідомлення:
+${form.message.value}
+
+🔗 Картка в каталозі: ${catalogLink}
+⚙️ Адмінка: ${adminLink}`;
+
           await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
             to_email: ADMIN_EMAILS,
             from_name: form.senderName.value,
             category: "Звіт про неточність" + (form.specialistId.value ? " (ID: " + form.specialistId.value + ")" : ""),
-            message: "Контакт: " + form.contactInfo.value + "\n\nПовідомлення:\n" + form.message.value,
-            admin_link: "https://nikolayantonyuk.github.io/kw-community-site/admin.html"
+            message: fullMessage,
+            admin_link: adminLink
           });
         }
       } catch (e) {
