@@ -113,3 +113,48 @@ function initScrollAnimations() {
 }
 
 initScrollAnimations();
+
+
+
+async function fetchFbEvents() {
+  try {
+    // Add cache busting to avoid GitHub Pages aggressive caching
+    const res = await fetch('data/events.json?t=' + new Date().getTime());
+    if (!res.ok) return;
+    const events = await res.json();
+    
+    // Map them to match the carousel format
+    const parsedEvents = events.filter(e => e.title).map(e => ({
+      kind: 'event',
+      url: e.url,
+      image: e.image,
+      text: '🌻 ' + e.title,
+      date: e.date || 'Подія'
+    }));
+
+    function getEventId(url) {
+      const match = url.match(/\/events\/(?:s\/[^\/]+\/)?(\d+)/);
+      return match ? match[1] : null;
+    }
+
+    for (const pe of parsedEvents) {
+      const peId = getEventId(pe.url);
+      if (peId) {
+        const existingIdx = ACTIVITY_POSTS.findIndex(p => {
+          const pId = getEventId(p.url);
+          return pId === peId;
+        });
+        if (existingIdx !== -1) {
+          ACTIVITY_POSTS.splice(existingIdx, 1);
+        }
+      }
+    }
+
+    ACTIVITY_POSTS.unshift(...parsedEvents);
+    renderActivity();
+  } catch (err) {
+    console.error('Failed to fetch events.json', err);
+  }
+}
+
+fetchFbEvents();
