@@ -181,9 +181,9 @@ window.rejectApp = async (id, userEmail, userName) => {
 
 // Edit Application Modal logic
 const editModalHTML = `
-  <div id="edit-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; padding:1rem; margin:0; box-sizing:border-box; justify-content:center; align-items:center; flex-direction:column;">
-    <div style="background:#fff; width:100%; max-width:500px; padding:1.5rem; border-radius:8px; max-height:90vh; overflow-y:auto; box-sizing:border-box; position:relative;">
-      <h2>Редагувати заявку</h2>
+  <div id="edit-modal" class="modal" aria-hidden="true" hidden>
+    <div class="modal-dialog" style="padding: 1.5rem; overflow-y: auto;">
+      <h2 style="margin-top: 0; margin-bottom: 1.5rem;">Редагувати заявку</h2>
       <input type="hidden" id="edit-id">
       <input type="hidden" id="edit-islive">
       <div class="form-group"><label>Ім'я/Назва:</label><input type="text" id="edit-name"></div>
@@ -198,10 +198,10 @@ const editModalHTML = `
       <div class="form-group"><label>Facebook:</label><input type="text" id="edit-fb"></div>
       <div class="form-group"><label>Вебсайт:</label><input type="text" id="edit-web"></div>
       <div class="form-group"><label>Ціна:</label><input type="text" id="edit-price"></div>
-      <div class="form-group"><label>Нотатки:</label><textarea id="edit-notes" style="width:100%; height:80px;"></textarea></div>
-      <div class="application-actions">
+      <div class="form-group"><label>Нотатки:</label><textarea id="edit-notes" style="width:100%; height:80px; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"></textarea></div>
+      <div class="application-actions" style="margin-top: 1.5rem;">
         <button class="btn btn-approve" onclick="window.saveEdit()">Зберегти</button>
-        <button class="btn" onclick="document.getElementById('edit-modal').style.display='none'">Скасувати</button>
+        <button class="btn" onclick="document.getElementById('edit-modal').setAttribute('hidden', ''); document.getElementById('edit-modal').setAttribute('aria-hidden', 'true');">Скасувати</button>
       </div>
     </div>
   </div>
@@ -247,9 +247,9 @@ window.editApp = async (id, isLive = false) => {
   const notes = document.getElementById(`${prefix}display-notes-${id}`).innerText;
   document.getElementById('edit-notes').value = notes === '—' ? '' : notes;
   
-  document.getElementById('edit-modal').style.display = 'flex';
-  document.getElementById('edit-modal').style.flexDirection = 'column';
-  document.getElementById('edit-modal').style.justifyContent = 'center';
+  const modal = document.getElementById('edit-modal');
+  modal.removeAttribute('hidden');
+  modal.setAttribute('aria-hidden', 'false');
 };
 
 window.saveEdit = async () => {
@@ -325,7 +325,10 @@ window.saveEdit = async () => {
     document.getElementById(`${prefix}display-price-${id}`).innerText = newPrice || '—';
     document.getElementById(`${prefix}display-notes-${id}`).innerText = newNotes || '—';
 
-    document.getElementById('edit-modal').style.display = 'none';
+    alert("Зміни успішно збережено!");
+    document.getElementById('edit-modal').setAttribute('hidden', '');
+    document.getElementById('edit-modal').setAttribute('aria-hidden', 'true');
+    loadLiveCatalog();
   } catch (error) {
     alert("Помилка при збереженні: " + error.message);
     console.error("Save error:", error);

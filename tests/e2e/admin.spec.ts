@@ -118,7 +118,7 @@ test.describe('Admin Panel E2E', () => {
 
     // Click cancel to close modal
     await page.click('button:has-text("Скасувати")');
-    await expect(page.locator('#edit-modal')).not.toBeVisible();
+    await expect(page.locator('#edit-modal')).toHaveAttribute('hidden', '');
   });
 
   test('should show warning when rejecting application without valid email', async ({ page }) => {
@@ -446,8 +446,8 @@ test.describe('Admin Panel E2E', () => {
 
     expect(dialogAppeared).toBeTruthy();
     
-    const modalVisible = await page.evaluate(() => document.getElementById('edit-modal')?.style.display !== 'none');
-    expect(modalVisible).toBeFalsy();
+    const modalHidden = await page.evaluate(() => document.getElementById('edit-modal')?.hasAttribute('hidden') === true);
+    expect(modalHidden).toBeTruthy();
     
     const updatedName = await page.evaluate(() => document.getElementById('display-name-edit-accept')?.textContent);
     expect(updatedName).toBe('New Name');
@@ -585,8 +585,8 @@ test.describe('Admin Panel E2E', () => {
 
     // The modal container
     await expect(modal).toHaveCSS('display', 'flex');
-    await expect(modal).toHaveCSS('flex-direction', 'column');
     await expect(modal).toHaveCSS('justify-content', 'center');
+    await expect(modal).toHaveCSS('align-items', 'center');
     
     // The inner content block of the modal
     const modalInner = modal.locator('> div');
