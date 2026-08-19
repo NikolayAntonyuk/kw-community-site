@@ -4,28 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Повідомити про неточність</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/home.css" />
   <script type="module" src="js/feedback.js" defer></script>
 </head>
-<body>
-  <header class="site-header">
-    <div class="header-container">
-      <a href="index.html" class="logo">🏠 Головна</a>
-      <a href="catalog.html" class="logo">🔙 До каталогу</a>
-    </div>
-  </header>
-  <main class="container">
+<body style="background-color: var(--background-color, #f4f4f4); font-family: var(--font-family, sans-serif); margin: 0; padding: 0;">
+  <nav class="top-nav">
+    <a href="index.html" class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Разом KW</span>
+    </a>
+    <a href="catalog.html" class="nav-cta">До каталогу</a>
+  </nav>
+  <main class="container" style="max-width: 600px; margin: 0 auto;">
     <h1>Повідомити про неточність</h1>
-    <p>Знайшли помилку в картці спеціаліста (ID: <span id="specialist-id-display" style="font-weight:bold;"></span>)? Напишіть нам.</p>
+    <p>Знайшли помилку в картці спеціаліста (ID: <span id="specialist-id-display" style="font-weight:bold;"></span>)? Будь ласка, напишіть нам. Ваше повідомлення буде відправлено безпосередньо адміністраторам каталогу, і ми виправимо інформацію найближчим часом.</p>
     <form id="feedback-form" class="application-form">
       <input type="hidden" id="specialist-id" name="specialistId">
       
-      <div class="form-group">
-        <label for="message">Що не так?</label>
-        <textarea id="message" name="message" rows="5" required></textarea>
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="senderName" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Ваше ім'я <span style="color:red">*</span></label>
+        <input type="text" id="senderName" name="senderName" required style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px;" placeholder="Як до вас звертатися?">
       </div>
 
-      <button type="submit" class="btn btn-primary" style="width: 100%;">Надіслати</button>
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="contactInfo" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Ваш контакт (Telegram, Email або телефон) <span style="color:red">*</span></label>
+        <input type="text" id="contactInfo" name="contactInfo" required style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px;" placeholder="Для зворотного зв'язку">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="message" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Що не так? Що варто змінити чи додати? <span style="color:red">*</span></label>
+        <textarea id="message" name="message" rows="5" required style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px;" placeholder="Опишіть, що саме потрібно виправити..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; background: #0056b3; color: white; padding: 0.75rem; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem;">Надіслати адміністраторам</button>
     </form>
     <div id="status-message" style="margin-top: 1rem; font-weight: bold; text-align: center;"></div>
   </main>

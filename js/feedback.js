@@ -28,11 +28,14 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       await addDoc(collection(db, "feedback"), {
         specialistId: form.specialistId.value,
+        senderName: form.senderName.value,
+        contactInfo: form.contactInfo.value,
         message: form.message.value,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        status: "new" // status for admin panel tracking
       });
       statusMsg.style.color = "green";
-      statusMsg.textContent = "Дякуємо! Ваше повідомлення надіслано.";
+      statusMsg.textContent = "Дякуємо! Ваше повідомлення успішно надіслано адміністраторам.";
       form.reset();
     } catch (err) {
       console.error(err);
