@@ -2,6 +2,17 @@ import { auth, db } from "./firebase.js";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { collection, query, where, getDocs, updateDoc, doc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+window.showAdminAlert = function(htmlMsg) {
+  let m = document.getElementById("custom-alert-modal");
+  if (!m) {
+    const html = `<div id="custom-alert-modal" class="modal" aria-hidden="true" hidden style="z-index: 1000;"><div class="modal-dialog" style="max-width: 400px; padding: 1.5rem; text-align: center;"><div id="custom-alert-message" style="margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.4;"></div><button class="btn btn-approve" onclick="document.getElementById('custom-alert-modal').setAttribute('hidden', '');" style="width: 100%;">Зрозуміло</button></div></div>`;
+    document.body.insertAdjacentHTML("beforeend", html);
+    m = document.getElementById("custom-alert-modal");
+  }
+  document.getElementById("custom-alert-message").innerHTML = htmlMsg;
+  m.removeAttribute("hidden");
+};
+
 const authSection = document.getElementById("auth-section");
 const dashboardSection = document.getElementById("dashboard-section");
 const loginForm = document.getElementById("login-form");
@@ -133,9 +144,9 @@ window.approveApp = async (id) => {
       status: "approved"
     });
     document.getElementById(`card-${id}`).remove();
-    alert("Заявка підтверджена! Вона з'явиться в каталозі.");
+    showAdminAlert("Заявка підтверджена! Вона з'явиться в каталозі.");
   } catch (error) {
-    alert("Помилка: " + error.message);
+    showAdminAlert("Помилка: " + error.message);
   }
 };
 
@@ -156,7 +167,7 @@ window.rejectApp = async (id, userEmail, userName) => {
     let trimmedEmail = userEmail ? userEmail.trim() : "";
 
     if (!trimmedEmail || !trimmedEmail.includes("@")) {
-      alert("Заявку відхилено. Лист не відправлено, оскільки у спеціаліста немає валідного email.");
+      showAdminAlert("Заявку відхилено. Лист не відправлено, оскільки у спеціаліста немає валідного email.");
     } else {
       if (EMAILJS_TEMPLATE_ID !== "YOUR_TEMPLATE_ID" && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
         emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
@@ -166,16 +177,16 @@ window.rejectApp = async (id, userEmail, userName) => {
           reject_reason: reason || "Не відповідає правилам спільноти."
         });
         console.log("Email sent successfully to: " + trimmedEmail);
-        alert("Заявка відхилена. Лист успішно відправлено!");
+        showAdminAlert("Заявка відхилена. Лист успішно відправлено!");
       } else {
         console.warn("EmailJS не налаштовано повністю. Лист не відправлено.");
-        alert("Заявка відхилена.");
+        showAdminAlert("Заявка відхилена.");
       }
     }
     
     document.getElementById(`card-${id}`).remove();
   } catch (error) {
-    alert("Помилка при відхиленні: " + error.message);
+    showAdminAlert("Помилка при відхиленні: " + error.message);
   }
 };
 
@@ -183,7 +194,7 @@ window.rejectApp = async (id, userEmail, userName) => {
 const editModalHTML = `
   <div id="edit-modal" class="modal" aria-hidden="true" hidden>
     <div class="modal-dialog" style="padding: 0; display: flex; flex-direction: column;">
-      <div style="padding: 1.5rem; overflow-y: auto;">
+      <div style="padding: 1.5rem; overflow-y: auto; flex: 1;">
         <h2 style="margin-top: 0; margin-bottom: 1.5rem;">Редагувати заявку</h2>
         <input type="hidden" id="edit-id">
         <input type="hidden" id="edit-islive">
@@ -275,6 +286,7 @@ window.saveEdit = async () => {
   const newNotes = document.getElementById('edit-notes').value;
 
   try {
+    let msg = "";
     if (isLive) {
       await addDoc(collection(db, "pending_specialists"), {
         id: id,
@@ -294,7 +306,7 @@ window.saveEdit = async () => {
         updatedAt: serverTimestamp(),
         status: "approved"
       });
-      alert("Зміни збережено в базу! Вони з'являться в каталозі після наступної синхронізації GitHub (за кілька хвилин).");
+      msg = "Зміни збережено в базу! Щоб вони з'явилися в каталозі зараз, <br><a href='https://github.com/nikolayantonyuk/kw-community-site/actions/workflows/sync.yml' target='_blank' style='color:#1f6feb; text-decoration:underline;'>пропуште синхронізацію вручну тут</a> (кнопка 'Run workflow').";
     } else {
       await updateDoc(doc(db, "pending_specialists", id), {
         name: newName,
@@ -312,7 +324,7 @@ window.saveEdit = async () => {
         notes: newNotes,
         updatedAt: serverTimestamp()
       });
-      alert("Зміни збережено!");
+      msg = "Зміни успішно збережено!";
     }
 
     let prefix = isLive ? 'live-' : '';
@@ -329,12 +341,12 @@ window.saveEdit = async () => {
     document.getElementById(`${prefix}display-price-${id}`).innerText = newPrice || '—';
     document.getElementById(`${prefix}display-notes-${id}`).innerText = newNotes || '—';
 
-    alert("Зміни успішно збережено!");
+    showAdminAlert(msg);
     document.getElementById('edit-modal').setAttribute('hidden', '');
     document.getElementById('edit-modal').setAttribute('aria-hidden', 'true');
     loadLiveCatalog();
   } catch (error) {
-    alert("Помилка при збереженні: " + error.message);
+    showAdminAlert("Помилка при збереженні: " + error.message);
     console.error("Save error:", error);
   }
 };
@@ -348,11 +360,11 @@ window.deleteLiveApp = async (id) => {
         status: "deleted"
       });
     });
-    alert("Запит на видалення надіслано! Спеціаліст зникне з каталогу після наступної синхронізації (за кілька хвилин).");
+    showAdminAlert("Запит на видалення надіслано! Спеціаліст зникне з каталогу після наступної синхронізації (за кілька хвилин).");
     const el = document.getElementById(`live-card-${id}`);
     if (el) el.style.display = 'none';
   } catch (error) {
-    alert("Помилка при видаленні: " + error.message);
+    showAdminAlert("Помилка при видаленні: " + error.message);
   }
 };
 
@@ -536,11 +548,11 @@ window.restoreApp = async (id) => {
       status: "pending",
       updatedAt: serverTimestamp()
     });
-    alert("Заявку відновлено!");
+    showAdminAlert("Заявку відновлено!");
     // Reload both lists to move it from rejected to pending visually
     await loadApplications();
   } catch (error) {
-    alert("Помилка при відновленні: " + error.message);
+    showAdminAlert("Помилка при відновленні: " + error.message);
   }
 };
 
