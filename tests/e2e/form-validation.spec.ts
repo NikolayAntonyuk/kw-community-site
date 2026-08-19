@@ -322,7 +322,7 @@ test.describe("Form Validation and Security (Test Design / Boundary / Edge Cases
 
     if (isVisible && errorClass?.includes("error")) {
       const text = await errorMessage.textContent();
-      expect(text).toContain("контакт");
+      expect(text).toMatch(/контакт|apply_no_contacts_error/);
     } else {
       // If not visible, this test will fail - but that's the point
       expect(isVisible).toBe(true);

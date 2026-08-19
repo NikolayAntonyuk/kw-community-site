@@ -89,6 +89,9 @@ test.describe('Admin Panel E2E', () => {
             <h3><span id="live-display-name-test123">Тестовий Спец</span></h3>
             <p><span id="live-display-desc-test123">Опис тест</span></p>
             <p><span id="live-display-phone-test123">123-456</span></p>
+            <p><span id="live-display-tg-test123">@test</span></p>
+            <p><span id="live-display-inst-test123">@test_inst</span></p>
+            <p><span id="live-display-fb-test123">fb</span></p>
             <p><span id="live-display-web-test123">example.com</span></p>
             <button id="trigger-edit" onclick="window.editApp('test123', true)">Редагувати</button>
           </div>
@@ -402,6 +405,9 @@ test.describe('Admin Panel E2E', () => {
         <div id="display-name-edit-accept"></div>
         <div id="display-desc-edit-accept"></div>
         <div id="display-phone-edit-accept"></div>
+        <div id="display-tg-edit-accept"></div>
+        <div id="display-inst-edit-accept"></div>
+        <div id="display-fb-edit-accept"></div>
         <div id="display-web-edit-accept"></div>
       `;
       document.getElementById('edit-id').value = 'edit-accept';
@@ -409,6 +415,9 @@ test.describe('Admin Panel E2E', () => {
       document.getElementById('edit-name').value = 'New Name';
       document.getElementById('edit-desc').value = 'New Desc';
       document.getElementById('edit-phone').value = 'New Phone';
+      document.getElementById('edit-tg').value = 'New Tg';
+      document.getElementById('edit-inst').value = 'New Inst';
+      document.getElementById('edit-fb').value = 'New Fb';
       document.getElementById('edit-web').value = 'New Web';
       document.getElementById('edit-modal').style.display = 'block';
       return window.saveEdit();
