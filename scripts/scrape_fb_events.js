@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
       .map(a => a.href)
       .filter(href => /\/events\/\d+/.test(href))
       .filter((v, i, a) => a.indexOf(v) === i)
-      .slice(0, 6); // Grab top 6 events to not take too long
+      .slice(0, 5); // Grab top 5 events to not take too long
   });
   
   console.log(`Found ${eventLinks.length} event links.`);
