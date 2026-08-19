@@ -550,5 +550,75 @@ test.describe('Admin Panel E2E', () => {
     await expect(page.locator('#live-catalog-list .application-card')).toContainText('Specialist 42');
     await expect(page.locator('#live-pagination')).toContainText('Всього: 1');
   });
-});
 
+  test('should switch tabs between new applications, live catalog, and archive', async ({ page }) => {
+    await page.goto('/admin.html');
+    
+    // Check initial state
+    await expect(page.locator('#new-apps')).toHaveClass(/active/);
+    await expect(page.locator('#live-catalog')).not.toHaveClass(/active/);
+    await expect(page.locator('#rejected-apps')).not.toHaveClass(/active/);
+
+    // Click on "Живий каталог" tab
+    await page.locator('.admin-tab', { hasText: 'Живий каталог' }).click();
+    await expect(page.locator('#live-catalog')).toHaveClass(/active/);
+    await expect(page.locator('#new-apps')).not.toHaveClass(/active/);
+
+    // Click on "Архів" tab
+    await page.locator('.admin-tab', { hasText: 'Архів' }).click();
+    await expect(page.locator('#rejected-apps')).toHaveClass(/active/);
+    await expect(page.locator('#live-catalog')).not.toHaveClass(/active/);
+    
+    // Click on "Нові заявки" tab
+    await page.locator('.admin-tab', { hasText: 'Нові заявки' }).click();
+    await expect(page.locator('#new-apps')).toHaveClass(/active/);
+    await expect(page.locator('#rejected-apps')).not.toHaveClass(/active/);
+  });
+
+  test('should center edit modal and apply correct width on mobile screens', async ({ page }) => {
+    // Set viewport to mobile size
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/admin.html');
+    
+    // Wait for the admin.js module to finish loading
+    await page.waitForFunction(() => typeof window.editApp === 'function');
+
+    // Trigger modal
+    await page.evaluate(() => {
+      document.getElementById('dashboard-section')!.style.display = 'block';
+      document.body.innerHTML += `
+        <div id="display-name-test_mob">TestName</div>
+        <div id="display-cat-test_mob">Cat</div>
+        <div id="display-desc-test_mob">Desc</div>
+        <div id="display-loc-test_mob">Loc</div>
+        <div id="display-address-test_mob">Addr</div>
+        <div id="display-phone-test_mob">Phone</div>
+        <div id="display-tg-test_mob">Tg</div>
+        <div id="display-inst-test_mob">Inst</div>
+        <div id="display-fb-test_mob">Fb</div>
+        <div id="display-web-test_mob">Web</div>
+        <div id="display-price-test_mob">Price</div>
+        <div id="display-notes-test_mob">Notes</div>
+      `;
+      window.editApp('test_mob', false);
+    });
+
+    const modal = page.locator('#edit-modal');
+    await expect(modal).toBeVisible();
+
+    // The modal container
+    await expect(modal).toHaveCSS('display', 'flex');
+    await expect(modal).toHaveCSS('flex-direction', 'column');
+    await expect(modal).toHaveCSS('justify-content', 'center');
+    
+    // The inner content block of the modal
+    const modalInner = modal.locator('> div');
+    await expect(modalInner).toHaveCSS('box-sizing', 'border-box');
+    
+    // Playwright converts styles to computed values (px)
+    const box = await modalInner.boundingBox();
+    // In a 375px viewport with padding, it should be well within bounds
+    expect(box?.width).toBeLessThanOrEqual(375);
+    expect(box?.x).toBeGreaterThanOrEqual(0);
+  });
+});
