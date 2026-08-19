@@ -551,29 +551,6 @@ test.describe('Admin Panel E2E', () => {
     await expect(page.locator('#live-pagination')).toContainText('Всього: 1');
   });
 
-  test('should switch tabs between new applications, live catalog, and archive', async ({ page }) => {
-    await page.goto('/admin.html');
-    
-    // Check initial state
-    await expect(page.locator('#new-apps')).toHaveClass(/active/);
-    await expect(page.locator('#live-catalog')).not.toHaveClass(/active/);
-    await expect(page.locator('#rejected-apps')).not.toHaveClass(/active/);
-
-    // Click on "Живий каталог" tab
-    await page.locator('.admin-tab', { hasText: 'Живий каталог' }).click();
-    await expect(page.locator('#live-catalog')).toHaveClass(/active/);
-    await expect(page.locator('#new-apps')).not.toHaveClass(/active/);
-
-    // Click on "Архів" tab
-    await page.locator('.admin-tab', { hasText: 'Архів' }).click();
-    await expect(page.locator('#rejected-apps')).toHaveClass(/active/);
-    await expect(page.locator('#live-catalog')).not.toHaveClass(/active/);
-    
-    // Click on "Нові заявки" tab
-    await page.locator('.admin-tab', { hasText: 'Нові заявки' }).click();
-    await expect(page.locator('#new-apps')).toHaveClass(/active/);
-    await expect(page.locator('#rejected-apps')).not.toHaveClass(/active/);
-  });
 
   test('should center edit modal and apply correct width on mobile screens', async ({ page }) => {
     // Set viewport to mobile size
@@ -620,5 +597,148 @@ test.describe('Admin Panel E2E', () => {
     // In a 375px viewport with padding, it should be well within bounds
     expect(box?.width).toBeLessThanOrEqual(375);
     expect(box?.x).toBeGreaterThanOrEqual(0);
+  });
+
+  test('should switch between tabs (new apps, live catalog, rejected apps)', async ({ page }) => {
+    await page.goto('/admin.html');
+
+    // Wait for admin.js to load and initialize goToPage
+    await page.waitForFunction(() => typeof window.goToPage === 'function');
+
+    // Show dashboard
+    await page.evaluate(() => {
+      document.getElementById('dashboard-section')!.style.display = 'block';
+    });
+
+    // Wait a moment for tabs to render
+    await page.waitForSelector('.admin-tab');
+
+    // Tab 1: Нові заявки should be active by default
+    const newAppsTab = page.locator('.admin-tab').nth(0);
+    const newAppsContent = page.locator('#new-apps');
+
+    await expect(newAppsTab).toHaveClass(/active/);
+    await expect(newAppsContent).toHaveClass(/active/);
+
+    // Click "Живий каталог" tab (second tab, index 1)
+    const liveTab = page.locator('.admin-tab').nth(1);
+    await liveTab.click();
+
+    // Live catalog should become active
+    await expect(liveTab).toHaveClass(/active/);
+    await expect(page.locator('#live-catalog')).toHaveClass(/active/);
+
+    // New apps should not be active anymore
+    await expect(newAppsTab).not.toHaveClass(/active/);
+    await expect(newAppsContent).not.toHaveClass(/active/);
+
+    // Click "Архів" tab (third tab, index 2)
+    const archiveTab = page.locator('.admin-tab').nth(2);
+    await archiveTab.click();
+
+    // Archive should become active
+    await expect(archiveTab).toHaveClass(/active/);
+    await expect(page.locator('#rejected-apps')).toHaveClass(/active/);
+
+    // Live catalog should not be active anymore
+    await expect(liveTab).not.toHaveClass(/active/);
+    await expect(page.locator('#live-catalog')).not.toHaveClass(/active/);
+
+    // Switch back to new apps (first tab)
+    await newAppsTab.click();
+    await expect(newAppsTab).toHaveClass(/active/);
+    await expect(newAppsContent).toHaveClass(/active/);
+  });
+
+  test('should display separate content areas for new applications, archive, and live catalog', async ({ page }) => {
+    await page.goto('/admin.html');
+
+    // Wait for admin.js to load and inject modal
+    await page.waitForFunction(() => typeof window.editApp === 'function');
+
+    // Show dashboard
+    await page.evaluate(() => {
+      document.getElementById('dashboard-section')!.style.display = 'block';
+    });
+
+    // Wait for tabs to render
+    await page.waitForSelector('.admin-tab');
+
+    // Verify all three tab sections exist and have correct IDs
+    expect(await page.locator('#new-apps').count()).toBeGreaterThan(0);
+    expect(await page.locator('#live-catalog').count()).toBeGreaterThan(0);
+    expect(await page.locator('#rejected-apps').count()).toBeGreaterThan(0);
+
+    // Verify all three tabs are clickable
+    const tabs = page.locator('.admin-tab');
+    const tabCount = await tabs.count();
+    expect(tabCount).toBe(3);
+
+    // Verify tab labels
+    await expect(tabs.nth(0)).toContainText('Нові заявки');
+    await expect(tabs.nth(1)).toContainText('Живий каталог');
+    await expect(tabs.nth(2)).toContainText('Архів');
+  });
+
+  test('should keep modal responsive on mobile viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 }); // iPhone SE
+
+    await page.goto('/admin.html');
+
+    // Wait for admin.js to load
+    await page.waitForFunction(() => typeof window.editApp === 'function' && typeof window.goToPage === 'function');
+
+    // Inject test data and trigger modal
+    await page.evaluate(() => {
+      document.getElementById('dashboard-section')!.style.display = 'block';
+      // Switch to live-catalog tab
+      window.goToPage(document.querySelectorAll('.admin-tab')[1], 'live-catalog');
+
+      const liveList = document.getElementById('live-catalog-list');
+      if (liveList) {
+        liveList.innerHTML = `
+          <div class="application-card" id="live-card-mobile-test">
+            <h3><span id="live-display-name-mobile-test">Mobile Test Specialist</span></h3>
+            <p><span id="live-display-cat-mobile-test">Test > Mobile</span></p>
+            <p><span id="live-display-desc-mobile-test">Test description</span></p>
+            <p><span id="live-display-loc-mobile-test">City</span></p>
+            <p><span id="live-display-address-mobile-test">123 Main St</span></p>
+            <p><span id="live-display-phone-mobile-test">555-1234</span></p>
+            <p><span id="live-display-tg-mobile-test">@test</span></p>
+            <p><span id="live-display-inst-mobile-test">@inst</span></p>
+            <p><span id="live-display-fb-mobile-test">fb</span></p>
+            <p><span id="live-display-web-mobile-test">example.com</span></p>
+            <p><span id="live-display-price-mobile-test">100</span></p>
+            <p><span id="live-display-notes-mobile-test">Notes</span></p>
+            <button id="trigger-mobile-edit" onclick="window.editApp('mobile-test', true)">Редагувати</button>
+          </div>
+        `;
+      }
+    });
+
+    // Wait for button to be ready
+    await page.waitForSelector('#trigger-mobile-edit');
+
+    // Trigger modal
+    await page.click('#trigger-mobile-edit');
+
+    // Check modal is visible
+    const modal = page.locator('#edit-modal');
+    await expect(modal).toBeVisible();
+
+    // Check modal doesn't overflow viewport
+    const box = await modal.boundingBox();
+    expect(box?.width).toBeLessThanOrEqual(375);
+    expect(box?.x).toBeGreaterThanOrEqual(0);
+
+    // Check inner content is also properly sized
+    const innerBox = await modal.locator('> div').boundingBox();
+    expect(innerBox?.width).toBeLessThanOrEqual(375);
+    expect(innerBox?.x).toBeGreaterThanOrEqual(0);
+
+    // Verify all form fields are accessible
+    await expect(page.locator('#edit-name')).toBeVisible();
+    await expect(page.locator('#edit-category')).toBeVisible();
+    await expect(page.locator('#edit-phone')).toBeVisible();
   });
 });
