@@ -433,3 +433,31 @@ main {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+@media (max-width: 600px) {
+  .top-nav {
+    padding: 1rem !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .top-nav .brand {
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .top-nav div {
+    justify-content: center;
+  }
+  .admin-tabs {
+    flex-direction: column;
+  }
+  .admin-tab {
+    text-align: center;
+  }
+  .application-actions {
+    flex-direction: column;
+  }
+  #live-pagination > div {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+.application-card { word-break: break-word; overflow-wrap: break-word; }

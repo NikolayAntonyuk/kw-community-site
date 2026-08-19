@@ -457,11 +457,11 @@ function renderLiveCatalog() {
   const pagination = document.getElementById("live-pagination");
   if (pagination) {
     pagination.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #f8f9fa; padding: 10px; border-radius: 5px;">
-        <button class="btn" style="flex: 0 0 auto; padding: 8px 20px; background: ${liveCatalogCurrentPage === 1 ? '#ccc' : '#007bff'}"
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; background: #f8f9fa; padding: 10px; border-radius: 5px;">
+        <button class="btn" style="flex: 0 0 auto; padding: 8px 15px; background: ${liveCatalogCurrentPage === 1 ? '#ccc' : '#007bff'}"
                 onclick="window.prevLivePage()" ${liveCatalogCurrentPage === 1 ? 'disabled' : ''}>← Назад</button>
-        <strong>Сторінка ${liveCatalogCurrentPage} з ${maxPage} <span style="font-weight:normal; color:#666;">(Всього: ${liveCatalogFiltered.length})</span></strong>
-        <button class="btn" style="flex: 0 0 auto; padding: 8px 20px; background: ${liveCatalogCurrentPage === maxPage ? '#ccc' : '#007bff'}"
+        <strong style="flex: 1; text-align: center; min-width: 150px;">Сторінка ${liveCatalogCurrentPage} з ${maxPage} <br><span style="font-weight:normal; color:#666; font-size: 0.85em;">(Всього: ${liveCatalogFiltered.length})</span></strong>
+        <button class="btn" style="flex: 0 0 auto; padding: 8px 15px; background: ${liveCatalogCurrentPage === maxPage ? '#ccc' : '#007bff'}"
                 onclick="window.nextLivePage()" ${liveCatalogCurrentPage === maxPage ? 'disabled' : ''}>Далі →</button>
       </div>
     `;
