@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase.js";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { collection, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, query, where, getDocs, updateDoc, doc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const authSection = document.getElementById("auth-section");
 const dashboardSection = document.getElementById("dashboard-section");
@@ -265,56 +265,48 @@ window.saveEdit = async () => {
   const newWeb = document.getElementById('edit-web').value;
   const newPrice = document.getElementById('edit-price').value;
   const newNotes = document.getElementById('edit-notes').value;
-  
+
   try {
     if (isLive) {
-      // Create an edit request in Firebase that sync.js will merge
-      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(async (firestore) => {
-        await firestore.addDoc(firestore.collection(db, "pending_specialists"), {
-          id: id,
-          name: newName,
-          description: newDesc,
-          category: newCategory,
-          subcategory: newSubcategory,
-          locationType: newLoc,
-          address: newAddress,
-          phone: newPhone,
-          telegram: newTg,
-          instagram: newInst,
-          facebook: newFb,
-          website: newWeb,
-          price: newPrice,
-          notes: newNotes,
-          updatedAt: firestore.serverTimestamp(),
-          status: "approved"
-        });
+      await addDoc(collection(db, "pending_specialists"), {
+        id: id,
+        name: newName,
+        description: newDesc,
+        category: newCategory,
+        subcategory: newSubcategory,
+        locationType: newLoc,
+        address: newAddress,
+        phone: newPhone,
+        telegram: newTg,
+        instagram: newInst,
+        facebook: newFb,
+        website: newWeb,
+        price: newPrice,
+        notes: newNotes,
+        updatedAt: serverTimestamp(),
+        status: "approved"
       });
       alert("Зміни збережено в базу! Вони з'являться в каталозі після наступної синхронізації GitHub (за кілька хвилин).");
     } else {
-      // Update pending doc
-      const docRef = doc(db, "pending_specialists", id);
-      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(async (firestore) => {
-        await updateDoc(docRef, {
-          name: newName,
-          description: newDesc,
-          category: newCategory,
-          subcategory: newSubcategory,
-          locationType: newLoc,
-          address: newAddress,
-          phone: newPhone,
-          telegram: newTg,
-          instagram: newInst,
-          facebook: newFb,
-          website: newWeb,
-          price: newPrice,
-          notes: newNotes,
-          updatedAt: firestore.serverTimestamp()
-        });
+      await updateDoc(doc(db, "pending_specialists", id), {
+        name: newName,
+        description: newDesc,
+        category: newCategory,
+        subcategory: newSubcategory,
+        locationType: newLoc,
+        address: newAddress,
+        phone: newPhone,
+        telegram: newTg,
+        instagram: newInst,
+        facebook: newFb,
+        website: newWeb,
+        price: newPrice,
+        notes: newNotes,
+        updatedAt: serverTimestamp()
       });
       alert("Зміни збережено!");
     }
-    
-    // Update UI
+
     let prefix = isLive ? 'live-' : '';
     document.getElementById(`${prefix}display-name-${id}`).innerText = newName;
     document.getElementById(`${prefix}display-cat-${id}`).innerText = `${newCategory} > ${newSubcategory}`;
@@ -328,10 +320,11 @@ window.saveEdit = async () => {
     document.getElementById(`${prefix}display-web-${id}`).innerText = newWeb || '—';
     document.getElementById(`${prefix}display-price-${id}`).innerText = newPrice || '—';
     document.getElementById(`${prefix}display-notes-${id}`).innerText = newNotes || '—';
-    
+
     document.getElementById('edit-modal').style.display = 'none';
   } catch (error) {
-    alert("Помилка: " + error.message);
+    alert("Помилка при збереженні: " + error.message);
+    console.error("Save error:", error);
   }
 };
 
