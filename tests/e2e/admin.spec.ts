@@ -397,7 +397,6 @@ test.describe('Admin Panel E2E', () => {
           export const addDoc = async () => {};
           export const getFirestore = () => ({});
           export const serverTimestamp = () => ({});
-          export const serverTimestamp = () => ({});
         `
       });
     });
