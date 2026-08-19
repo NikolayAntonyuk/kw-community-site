@@ -167,7 +167,8 @@ test.describe('Admin Panel E2E', () => {
     expect(dialogMessages).toContain('Вкажіть причину відхилення (або залиште порожнім):');
     
     // Check if the specific email warning was shown
-    const hasEmailWarning = dialogMessages.some(msg => msg.includes('Лист не відправлено, оскільки у спеціаліста немає валідного email'));
+    const modalText = await page.textContent('#custom-alert-message');
+    const hasEmailWarning = modalText.includes('Лист не відправлено, оскільки у спеціаліста немає валідного email');
     expect(hasEmailWarning).toBeTruthy();
   });
 

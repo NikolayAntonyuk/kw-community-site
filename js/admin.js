@@ -19,6 +19,7 @@ const loginForm = document.getElementById("login-form");
 const authError = document.getElementById("auth-error");
 const applicationsList = document.getElementById("applications-list");
 const logoutBtn = document.getElementById("logout-btn");
+const refreshBtn = document.getElementById("refresh-btn");
 
 // Handle Authentication State
 onAuthStateChanged(auth, (user) => {
@@ -26,11 +27,13 @@ onAuthStateChanged(auth, (user) => {
     authSection.style.display = "none";
     dashboardSection.style.display = "block";
     logoutBtn.style.display = "inline-block";
+    if (refreshBtn) refreshBtn.style.display = "inline-block";
     loadApplications();
   } else {
     authSection.style.display = "block";
     dashboardSection.style.display = "none";
     logoutBtn.style.display = "none";
+    if (refreshBtn) refreshBtn.style.display = "none";
   }
 });
 
