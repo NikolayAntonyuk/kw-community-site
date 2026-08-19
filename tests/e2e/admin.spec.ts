@@ -135,6 +135,7 @@ test.describe('Admin Panel E2E', () => {
           export const doc = () => {};
           export const addDoc = async () => {};
           export const getFirestore = () => ({});
+          export const serverTimestamp = () => ({});
         `
       });
     });
@@ -184,6 +185,7 @@ test.describe('Admin Panel E2E', () => {
           export const doc = () => {};
           export const addDoc = async () => {};
           export const getFirestore = () => ({});
+          export const serverTimestamp = () => ({});
         `
       });
     });
@@ -228,6 +230,7 @@ test.describe('Admin Panel E2E', () => {
           export const doc = () => {};
           export const addDoc = async () => {};
           export const getFirestore = () => ({});
+          export const serverTimestamp = () => ({});
         `
       });
     });
@@ -312,6 +315,7 @@ test.describe('Admin Panel E2E', () => {
           export const doc = () => {};
           export const addDoc = async () => {};
           export const getFirestore = () => ({});
+          export const serverTimestamp = () => ({});
         `
       });
     });
@@ -353,6 +357,7 @@ test.describe('Admin Panel E2E', () => {
           export const doc = () => {};
           export const addDoc = async () => {};
           export const getFirestore = () => ({});
+          export const serverTimestamp = () => ({});
         `
       });
     });
@@ -391,6 +396,7 @@ test.describe('Admin Panel E2E', () => {
           export const doc = () => {};
           export const addDoc = async () => {};
           export const getFirestore = () => ({});
+          export const serverTimestamp = () => ({});
           export const serverTimestamp = () => ({});
         `
       });

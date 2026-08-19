@@ -63,10 +63,16 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
-  <header class="site-header">
-    <a href="index.html" style="color:white;text-decoration:none;display:inline-block;margin-left:1rem;margin-top:1rem;">← Головна</a>
-    <h1>Адмін-панель</h1>
-  </header>
+  <nav class="top-nav" style="background: var(--surface-color); padding: 1rem 2rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <a href="index.html" class="brand" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; color: var(--text-color); font-weight: 600;">
+      <span class="brand-mark" aria-hidden="true" style="width: 24px; height: 24px; background: var(--primary-color); border-radius: 4px;"></span>
+      <h1 style="font-size: 1.25rem; margin: 0; font-weight: 600;">Адмін-панель</h1>
+    </a>
+    <div style="display: flex; gap: 1rem;">
+      <a href="index.html" style="text-decoration: none; color: #0056b3;">Головна</a>
+      <a href="catalog.html" style="text-decoration: none; color: #0056b3; font-weight: bold;">Перейти до каталогу →</a>
+    </div>
+  </nav>
 
   <main class="admin-container">
     <div id="auth-section" class="auth-section">
