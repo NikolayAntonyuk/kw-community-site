@@ -87,6 +87,9 @@ async function loadApplications() {
           <p><strong>Опис:</strong> <span id="display-desc-${docSnap.id}">${data.description}</span></p>
           <p><strong>Локація:</strong> <span id="display-loc-${docSnap.id}">${data.locationType}</span></p>
           <p><strong>Телефон:</strong> <span id="display-phone-${docSnap.id}">${data.phone || '—'}</span></p>
+          <p><strong>Telegram:</strong> <span id="display-tg-${docSnap.id}">${data.telegram || '—'}</span></p>
+          <p><strong>Instagram:</strong> <span id="display-inst-${docSnap.id}">${data.instagram || '—'}</span></p>
+          <p><strong>Facebook:</strong> <span id="display-fb-${docSnap.id}">${data.facebook || '—'}</span></p>
           <p><strong>Вебсайт:</strong> <span id="display-web-${docSnap.id}">${data.website || '—'}</span></p>
           <div class="application-actions">
             <button class="btn btn-approve" onclick="window.approveApp('${docSnap.id}')">Підтвердити</button>
@@ -181,6 +184,9 @@ const editModalHTML = `
       <div class="form-group"><label>Ім'я/Назва:</label><input type="text" id="edit-name"></div>
       <div class="form-group"><label>Опис:</label><input type="text" id="edit-desc"></div>
       <div class="form-group"><label>Телефон:</label><input type="text" id="edit-phone"></div>
+      <div class="form-group"><label>Telegram:</label><input type="text" id="edit-tg"></div>
+      <div class="form-group"><label>Instagram:</label><input type="text" id="edit-inst"></div>
+      <div class="form-group"><label>Facebook:</label><input type="text" id="edit-fb"></div>
       <div class="form-group"><label>Вебсайт:</label><input type="text" id="edit-web"></div>
       <div class="application-actions">
         <button class="btn btn-approve" onclick="window.saveEdit()">Зберегти</button>
@@ -201,6 +207,15 @@ window.editApp = async (id, isLive = false) => {
   
   const phone = document.getElementById(`${prefix}display-phone-${id}`).innerText;
   document.getElementById('edit-phone').value = phone === '—' ? '' : phone;
+
+  const tg = document.getElementById(`${prefix}display-tg-${id}`).innerText;
+  document.getElementById('edit-tg').value = tg === '—' ? '' : tg;
+  
+  const inst = document.getElementById(`${prefix}display-inst-${id}`).innerText;
+  document.getElementById('edit-inst').value = inst === '—' ? '' : inst;
+  
+  const fb = document.getElementById(`${prefix}display-fb-${id}`).innerText;
+  document.getElementById('edit-fb').value = fb === '—' ? '' : fb;
   
   const web = document.getElementById(`${prefix}display-web-${id}`).innerText;
   document.getElementById('edit-web').value = web === '—' ? '' : web;
@@ -226,6 +241,9 @@ window.saveEdit = async () => {
           name: newName,
           description: newDesc,
           phone: newPhone,
+          telegram: newTg,
+          instagram: newInst,
+          facebook: newFb,
           website: newWeb,
           updatedAt: firestore.serverTimestamp(),
           status: "approved"
@@ -240,6 +258,9 @@ window.saveEdit = async () => {
           name: newName,
           description: newDesc,
           phone: newPhone,
+          telegram: newTg,
+          instagram: newInst,
+          facebook: newFb,
           website: newWeb,
           updatedAt: firestore.serverTimestamp()
         });
@@ -252,6 +273,9 @@ window.saveEdit = async () => {
     document.getElementById(`${prefix}display-name-${id}`).innerText = newName;
     document.getElementById(`${prefix}display-desc-${id}`).innerText = newDesc;
     document.getElementById(`${prefix}display-phone-${id}`).innerText = newPhone || '—';
+    document.getElementById(`${prefix}display-tg-${id}`).innerText = newTg || '—';
+    document.getElementById(`${prefix}display-inst-${id}`).innerText = newInst || '—';
+    document.getElementById(`${prefix}display-fb-${id}`).innerText = newFb || '—';
     document.getElementById(`${prefix}display-web-${id}`).innerText = newWeb || '—';
     
     document.getElementById('edit-modal').style.display = 'none';
@@ -390,6 +414,9 @@ function renderLiveCatalog() {
         <p><strong>Опис:</strong> <span id="live-display-desc-${itemId}">${item.description || ''}</span></p>
         <p><strong>Локація:</strong> <span id="live-display-loc-${itemId}">${item.locationType || ''}</span></p>
         <p><strong>Телефон:</strong> <span id="live-display-phone-${itemId}">${item.phone || '—'}</span></p>
+        <p><strong>Telegram:</strong> <span id="live-display-tg-${itemId}">${item.telegram || '—'}</span></p>
+        <p><strong>Instagram:</strong> <span id="live-display-inst-${itemId}">${item.instagram || '—'}</span></p>
+        <p><strong>Facebook:</strong> <span id="live-display-fb-${itemId}">${item.facebook || '—'}</span></p>
         <p><strong>Вебсайт:</strong> <span id="live-display-web-${itemId}">${item.website || '—'}</span></p>
         <div class="application-actions">
           <button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${itemId}', true)">Редагувати</button>

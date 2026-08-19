@@ -1582,23 +1582,5 @@
     "id": 96,
     "createdAt": "2026-08-13T12:00:00.000Z",
     "updatedAt": "2026-08-13T12:00:00.000Z"
-  },
-  {
-    "category": "Місця",
-    "subcategory": "Ферма/Збір ягід",
-    "name": "Ферма",
-    "description": "Ягідна ферма",
-    "locationType": "Puslinch",
-    "address": "1747 Valens Road, Puslinch",
-    "phone": "",
-    "telegram": "",
-    "instagram": "",
-    "facebook": "https://m.facebook.com/MarcysBerries",
-    "website": "",
-    "price": "5-15$",
-    "notes": "На цій фермі можна купити/зібрати самому такі ягоди: жимолість, полуниця, малина, лохина (blueberry), чорна та червона смородина, аґрус. Ціни на різний вид ягід різні",
-    "id": 97,
-    "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-08-13T12:00:00.000Z"
   }
 ]
