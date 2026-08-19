@@ -182,26 +182,30 @@ window.rejectApp = async (id, userEmail, userName) => {
 // Edit Application Modal logic
 const editModalHTML = `
   <div id="edit-modal" class="modal" aria-hidden="true" hidden>
-    <div class="modal-dialog" style="padding: 1.5rem; overflow-y: auto;">
-      <h2 style="margin-top: 0; margin-bottom: 1.5rem;">Редагувати заявку</h2>
-      <input type="hidden" id="edit-id">
-      <input type="hidden" id="edit-islive">
-      <div class="form-group"><label>Ім'я/Назва:</label><input type="text" id="edit-name"></div>
-      <div class="form-group"><label>Категорія:</label><input type="text" id="edit-category"></div>
-      <div class="form-group"><label>Підкатегорія:</label><input type="text" id="edit-subcategory"></div>
-      <div class="form-group"><label>Опис (короткий):</label><input type="text" id="edit-desc"></div>
-      <div class="form-group"><label>Локація (Місто):</label><input type="text" id="edit-loc"></div>
-      <div class="form-group"><label>Адреса:</label><input type="text" id="edit-address"></div>
-      <div class="form-group"><label>Телефон:</label><input type="text" id="edit-phone"></div>
-      <div class="form-group"><label>Telegram:</label><input type="text" id="edit-tg"></div>
-      <div class="form-group"><label>Instagram:</label><input type="text" id="edit-inst"></div>
-      <div class="form-group"><label>Facebook:</label><input type="text" id="edit-fb"></div>
-      <div class="form-group"><label>Вебсайт:</label><input type="text" id="edit-web"></div>
-      <div class="form-group"><label>Ціна:</label><input type="text" id="edit-price"></div>
-      <div class="form-group"><label>Нотатки:</label><textarea id="edit-notes" style="width:100%; height:80px; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"></textarea></div>
-      <div class="application-actions" style="margin-top: 1.5rem;">
-        <button class="btn btn-approve" onclick="window.saveEdit()">Зберегти</button>
-        <button class="btn" onclick="document.getElementById('edit-modal').setAttribute('hidden', ''); document.getElementById('edit-modal').setAttribute('aria-hidden', 'true');">Скасувати</button>
+    <div class="modal-dialog" style="padding: 0; display: flex; flex-direction: column;">
+      <div style="padding: 1.5rem; overflow-y: auto;">
+        <h2 style="margin-top: 0; margin-bottom: 1.5rem;">Редагувати заявку</h2>
+        <input type="hidden" id="edit-id">
+        <input type="hidden" id="edit-islive">
+        <div class="form-group"><label>Ім'я/Назва:</label><input type="text" id="edit-name"></div>
+        <div class="form-group"><label>Категорія:</label><input type="text" id="edit-category"></div>
+        <div class="form-group"><label>Підкатегорія:</label><input type="text" id="edit-subcategory"></div>
+        <div class="form-group"><label>Опис (короткий):</label><input type="text" id="edit-desc"></div>
+        <div class="form-group"><label>Локація (Місто):</label><input type="text" id="edit-loc"></div>
+        <div class="form-group"><label>Адреса:</label><input type="text" id="edit-address"></div>
+        <div class="form-group"><label>Телефон:</label><input type="text" id="edit-phone"></div>
+        <div class="form-group"><label>Telegram:</label><input type="text" id="edit-tg"></div>
+        <div class="form-group"><label>Instagram:</label><input type="text" id="edit-inst"></div>
+        <div class="form-group"><label>Facebook:</label><input type="text" id="edit-fb"></div>
+        <div class="form-group"><label>Вебсайт:</label><input type="text" id="edit-web"></div>
+        <div class="form-group"><label>Ціна:</label><input type="text" id="edit-price"></div>
+        <div class="form-group"><label>Нотатки:</label><textarea id="edit-notes" style="width:100%; height:80px; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"></textarea></div>
+      </div>
+      <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e5e9;">
+        <div class="application-actions" style="margin: 0;">
+          <button class="btn btn-approve" onclick="window.saveEdit()">Зберегти</button>
+          <button class="btn" onclick="document.getElementById('edit-modal').setAttribute('hidden', ''); document.getElementById('edit-modal').setAttribute('aria-hidden', 'true');">Скасувати</button>
+        </div>
       </div>
     </div>
   </div>
