@@ -309,7 +309,7 @@ window.saveEdit = async () => {
         updatedAt: serverTimestamp(),
         status: "approved"
       });
-      msg = "Зміни збережено в базу! Щоб вони з'явилися в каталозі зараз, <br><a href='https://github.com/nikolayantonyuk/kw-community-site/actions/workflows/sync.yml' target='_blank' style='color:#1f6feb; text-decoration:underline;'>пропуште синхронізацію вручну тут</a> (кнопка 'Run workflow').";
+      msg = "Зміни збережено в базу! Щоб вони з'явилися в каталозі зараз, <br><a href='#' onclick='window.triggerSync(); return false;' style='color:#1f6feb; text-decoration:underline;'>запустіть синхронізацію вручну тут</a>.";
     } else {
       await updateDoc(doc(db, "pending_specialists", id), {
         name: newName,
@@ -568,3 +568,39 @@ loadApplications = async () => {
 };
 
 
+
+window.triggerSync = async () => {
+  let token = localStorage.getItem("gh_pat_token");
+  if (!token) {
+    token = prompt("Для автоматичного запуску через API потрібен GitHub Personal Access Token (classic: 'repo' scope, або fine-grained: 'Actions: read&write'). Введіть його тут (збережеться в браузері):");
+    if (!token) return;
+    localStorage.setItem("gh_pat_token", token.trim());
+    token = token.trim();
+  }
+
+  showAdminAlert("Запускаємо синхронізацію... ⏳");
+  
+  try {
+    const response = await fetch("https://api.github.com/repos/nikolayantonyuk/kw-community-site/actions/workflows/sync.yml/dispatches", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ ref: "master" })
+    });
+
+    if (response.ok) {
+      showAdminAlert("✅ Синхронізація успішно запущена! Сайт оновиться через 2-5 хвилин.");
+    } else if (response.status === 401 || response.status === 403 || response.status === 404) {
+      localStorage.removeItem("gh_pat_token");
+      showAdminAlert("❌ Помилка доступу. Можливо, токен недійсний або не має прав. Токен видалено, оновіть сторінку і спробуйте ще раз.<br><br>Переконайтеся, що ви створили токен з правами 'repo' (для classic token).");
+    } else {
+      const errText = await response.text();
+      showAdminAlert("⚠️ Помилка запуску: " + response.status + " " + errText);
+    }
+  } catch (error) {
+    showAdminAlert("Помилка мережі: " + error.message);
+  }
+};

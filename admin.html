@@ -93,7 +93,7 @@
       <h1 style="font-size: 1.25rem; margin: 0; font-weight: 600;">Адмін-панель</h1>
     </a>
     <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-      <a href="https://github.com/nikolayantonyuk/kw-community-site/actions/workflows/sync.yml" target="_blank" id="refresh-btn" class="btn" style="flex: 0 0 auto; padding: 0.4rem 0.8rem; font-size: 0.85rem; background: #28a745; text-decoration: none; display: none;" title="Запустити деплой на GitHub">🔄 Оновити сайт</a>
+      <button id="refresh-btn" class="btn" style="flex: 0 0 auto; padding: 0.4rem 0.8rem; font-size: 0.85rem; background: #28a745; text-decoration: none; display: none; color: white; border: none; cursor: pointer;" title="Запустити деплой на GitHub" onclick="window.triggerSync()">🔄 Оновити сайт</button>
       <a href="index.html" style="text-decoration: none; color: #0056b3;">Головна</a>
       <a href="catalog.html" style="text-decoration: none; color: #0056b3; font-weight: bold;">Каталог →</a>
       <button id="logout-btn" class="btn" style="flex: 0 0 auto; padding: 0.4rem 0.8rem; font-size: 0.85rem; background: #dc3545; display: none;">Вийти</button>
