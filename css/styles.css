@@ -143,9 +143,19 @@ main {
   overflow-x: auto;
   gap: 0.5rem;
   margin-top: 1rem;
-  padding-bottom: 0.4rem;
+  padding-bottom: 0.8rem;
   scrollbar-width: thin;
   -webkit-overflow-scrolling: touch;
+}
+
+.pills::-webkit-scrollbar {
+  height: 6px;
+  background-color: transparent;
+}
+
+.pills::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 4px;
 }
 
 .chips {

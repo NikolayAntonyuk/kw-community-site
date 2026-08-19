@@ -34,32 +34,85 @@ const CONTACTS = [
 
 
 const ICON_MAP = {
+  // Beauty
   "Перукар/Барбер": "fa-scissors",
   "Манікюр/Педикюр": "fa-hand-sparkles",
-  "Вії/Брови/Макіяж": "fa-eye",
-  "Косметологія": "fa-spa",
-  "Масаж": "fa-hands",
-  "Епіляція": "fa-leaf",
-  "Тату": "fa-pen-nib",
-  "Дантист": "fa-tooth",
-  "Психолог": "fa-brain",
-  "Сімейний лікар": "fa-stethoscope",
-  "Ремонт": "fa-hammer",
-  "Авто/Інструктори": "fa-car",
-  "Нерухомість": "fa-house",
-  "Клінінг": "fa-broom",
-  "Фото/Відео": "fa-camera",
-  "Спорт/Йога": "fa-dumbbell",
-  "Освіта/Репетитори": "fa-book",
-  "Кондитери": "fa-cake-candles"
+  "Брови та вії": "fa-eye",
+  "Косички/Зачіски": "fa-pump-soap",
+  "Косметологія/Епіляція": "fa-spa",
+  "Масаж": "fa-hands-bubbles",
+  "Остеопатія/Реабілітація": "fa-bone",
+  "Тату/Перманентний макіяж": "fa-pen-nib",
+  "Флорист": "fa-seedling",
+
+  // Auto
+  "Інструктор з водіння": "fa-car-side",
+  "Автодилер/Купівля авто": "fa-car",
+  "СТО/Механік": "fa-wrench",
+  "Шини": "fa-compact-disc",
+
+  // Food
+  "Кондитер/Випічка": "fa-cake-candles",
+  "Солодощі/Шоколад": "fa-cookie-bite",
+
+  // IT
+  "Веброзробка": "fa-code",
+  "Інше": "fa-laptop",
+
+  // Legal
+  "Бухгалтер/Податки": "fa-calculator",
+  "Юрист": "fa-scale-balanced",
+
+  // Photo
+  "Відеограф": "fa-video",
+  "Фотограф": "fa-camera",
+
+  // Житло
+  "Прибирання": "fa-broom",
+  "Ремонт/Будівництво": "fa-hammer",
+  "Ріелтор": "fa-house",
+
+  // Лікарі
+  "Doula/Пологи": "fa-baby",
+  "Ветеринар/Догляд за тваринами": "fa-paw",
+  "Оптометрист/Окуліст": "fa-glasses",
+  "Психотерапевт": "fa-brain",
+
+  // Місця
+  "Ферма/Збір ягід": "fa-tractor",
+
+  // Освіта
+  "Гуртки (мистецтво/спорт/танці)": "fa-palette",
+  "Дитячий садочок/Няня": "fa-child-reaching",
+  "Психолог/Логопед": "fa-brain",
+  "Репетитор мов": "fa-language",
+  
+  // Перекладач
+  "Викладання мов": "fa-chalkboard-user",
+  "Усний переклад": "fa-ear-listen",
+
+  // Швеї
+  "Пошив одягу": "fa-shirt",
+  "Ремонт/Підгонка одягу": "fa-scissors"
 };
 
 export function getIconClass(subcategory, category) {
-  if (ICON_MAP[subcategory]) return ICON_MAP[subcategory];
+  if (subcategory && ICON_MAP[subcategory]) return ICON_MAP[subcategory];
+  
+  // fallback based on category
   if (category === "Beauty") return "fa-spa";
-  if (category === "Medical") return "fa-user-nurse";
-  if (category === "Освіта") return "fa-graduation-cap";
-  if (category === "Послуги") return "fa-briefcase";
+  if (category === "Auto, insurance") return "fa-car";
+  if (category === "Food") return "fa-utensils";
+  if (category === "IT") return "fa-laptop-code";
+  if (category === "Legal and bookkeeping") return "fa-file-signature";
+  if (category === "Photo/Video") return "fa-camera-retro";
+  if (category === "Житло (рієлтор, прибирання, ремонт)") return "fa-house-chimney-window";
+  if (category === "Лікарі/ветеринари") return "fa-user-doctor";
+  if (category === "Місця") return "fa-map-location-dot";
+  if (category === "Освіта/Дитсадки/Гуртки") return "fa-graduation-cap";
+  if (category === "Перекладач") return "fa-language";
+  if (category === "Швеї") return "fa-scissors";
+  
   return "fa-star";
 }
 
