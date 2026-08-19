@@ -87,12 +87,17 @@ test.describe('Admin Panel E2E', () => {
         liveList.innerHTML = `
           <div class="application-card" id="live-card-test123">
             <h3><span id="live-display-name-test123">Тестовий Спец</span></h3>
+            <p><span id="live-display-cat-test123">Cat > Subcat</span></p>
             <p><span id="live-display-desc-test123">Опис тест</span></p>
+            <p><span id="live-display-loc-test123">Місто</span></p>
+            <p><span id="live-display-address-test123">Адреса</span></p>
             <p><span id="live-display-phone-test123">123-456</span></p>
             <p><span id="live-display-tg-test123">@test</span></p>
             <p><span id="live-display-inst-test123">@test_inst</span></p>
             <p><span id="live-display-fb-test123">fb</span></p>
             <p><span id="live-display-web-test123">example.com</span></p>
+            <p><span id="live-display-price-test123">100</span></p>
+            <p><span id="live-display-notes-test123">Notes</span></p>
             <button id="trigger-edit" onclick="window.editApp('test123', true)">Редагувати</button>
           </div>
         `;
@@ -403,12 +408,17 @@ test.describe('Admin Panel E2E', () => {
     await page.evaluate(() => {
       document.body.innerHTML += `
         <div id="display-name-edit-accept"></div>
+        <div id="display-cat-edit-accept"></div>
         <div id="display-desc-edit-accept"></div>
+        <div id="display-loc-edit-accept"></div>
+        <div id="display-address-edit-accept"></div>
         <div id="display-phone-edit-accept"></div>
         <div id="display-tg-edit-accept"></div>
         <div id="display-inst-edit-accept"></div>
         <div id="display-fb-edit-accept"></div>
         <div id="display-web-edit-accept"></div>
+        <div id="display-price-edit-accept"></div>
+        <div id="display-notes-edit-accept"></div>
       `;
       document.getElementById('edit-id').value = 'edit-accept';
       document.getElementById('edit-islive').value = 'false';
@@ -419,6 +429,12 @@ test.describe('Admin Panel E2E', () => {
       document.getElementById('edit-inst').value = 'New Inst';
       document.getElementById('edit-fb').value = 'New Fb';
       document.getElementById('edit-web').value = 'New Web';
+      document.getElementById('edit-category').value = 'New Cat';
+      document.getElementById('edit-subcategory').value = 'New Subcat';
+      document.getElementById('edit-loc').value = 'New Loc';
+      document.getElementById('edit-address').value = 'New Addr';
+      document.getElementById('edit-price').value = 'New Price';
+      document.getElementById('edit-notes').value = 'New Notes';
       document.getElementById('edit-modal').style.display = 'block';
       return window.saveEdit();
     });

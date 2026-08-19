@@ -85,7 +85,10 @@ async function loadApplications() {
           <h3><span style="color:#007bff; font-family:monospace;">#${docSnap.id}</span> <span id="display-name-${docSnap.id}">${data.name}</span> <small>(<span id="display-cat-${docSnap.id}">${data.category} > ${data.subcategory}</span>)</small></h3>
           <p><strong>Email:</strong> ${data.email}</p>
           <p><strong>Опис:</strong> <span id="display-desc-${docSnap.id}">${data.description}</span></p>
-          <p><strong>Локація:</strong> <span id="display-loc-${docSnap.id}">${data.locationType}</span></p>
+          <p><strong>Локація:</strong> <span id="display-loc-${docSnap.id}">${data.locationType || '—'}</span></p>
+          <p><strong>Адреса:</strong> <span id="display-address-${docSnap.id}">${data.address || '—'}</span></p>
+          <p><strong>Ціна:</strong> <span id="display-price-${docSnap.id}">${data.price || '—'}</span></p>
+          <p><strong>Нотатки:</strong> <span id="display-notes-${docSnap.id}">${data.notes || '—'}</span></p>
           <p><strong>Телефон:</strong> <span id="display-phone-${docSnap.id}">${data.phone || '—'}</span></p>
           <p><strong>Telegram:</strong> <span id="display-tg-${docSnap.id}">${data.telegram || '—'}</span></p>
           <p><strong>Instagram:</strong> <span id="display-inst-${docSnap.id}">${data.instagram || '—'}</span></p>
@@ -182,12 +185,18 @@ const editModalHTML = `
       <input type="hidden" id="edit-id">
       <input type="hidden" id="edit-islive">
       <div class="form-group"><label>Ім'я/Назва:</label><input type="text" id="edit-name"></div>
-      <div class="form-group"><label>Опис:</label><input type="text" id="edit-desc"></div>
+      <div class="form-group"><label>Категорія:</label><input type="text" id="edit-category"></div>
+      <div class="form-group"><label>Підкатегорія:</label><input type="text" id="edit-subcategory"></div>
+      <div class="form-group"><label>Опис (короткий):</label><input type="text" id="edit-desc"></div>
+      <div class="form-group"><label>Локація (Місто):</label><input type="text" id="edit-loc"></div>
+      <div class="form-group"><label>Адреса:</label><input type="text" id="edit-address"></div>
       <div class="form-group"><label>Телефон:</label><input type="text" id="edit-phone"></div>
       <div class="form-group"><label>Telegram:</label><input type="text" id="edit-tg"></div>
       <div class="form-group"><label>Instagram:</label><input type="text" id="edit-inst"></div>
       <div class="form-group"><label>Facebook:</label><input type="text" id="edit-fb"></div>
       <div class="form-group"><label>Вебсайт:</label><input type="text" id="edit-web"></div>
+      <div class="form-group"><label>Ціна:</label><input type="text" id="edit-price"></div>
+      <div class="form-group"><label>Нотатки:</label><textarea id="edit-notes" style="width:100%; height:80px;"></textarea></div>
       <div class="application-actions">
         <button class="btn btn-approve" onclick="window.saveEdit()">Зберегти</button>
         <button class="btn" onclick="document.getElementById('edit-modal').style.display='none'">Скасувати</button>
@@ -204,7 +213,17 @@ window.editApp = async (id, isLive = false) => {
   let prefix = isLive ? 'live-' : '';
   document.getElementById('edit-name').value = document.getElementById(`${prefix}display-name-${id}`).innerText;
   document.getElementById('edit-desc').value = document.getElementById(`${prefix}display-desc-${id}`).innerText;
+
+  const catText = document.getElementById(`${prefix}display-cat-${id}`).innerText.split(" > ");
+  document.getElementById('edit-category').value = (catText[0] || '').trim();
+  document.getElementById('edit-subcategory').value = (catText[1] || '').trim();
   
+  const loc = document.getElementById(`${prefix}display-loc-${id}`).innerText;
+  document.getElementById('edit-loc').value = loc === '—' ? '' : loc;
+
+  const address = document.getElementById(`${prefix}display-address-${id}`).innerText;
+  document.getElementById('edit-address').value = address === '—' ? '' : address;
+
   const phone = document.getElementById(`${prefix}display-phone-${id}`).innerText;
   document.getElementById('edit-phone').value = phone === '—' ? '' : phone;
 
@@ -219,6 +238,12 @@ window.editApp = async (id, isLive = false) => {
   
   const web = document.getElementById(`${prefix}display-web-${id}`).innerText;
   document.getElementById('edit-web').value = web === '—' ? '' : web;
+
+  const price = document.getElementById(`${prefix}display-price-${id}`).innerText;
+  document.getElementById('edit-price').value = price === '—' ? '' : price;
+
+  const notes = document.getElementById(`${prefix}display-notes-${id}`).innerText;
+  document.getElementById('edit-notes').value = notes === '—' ? '' : notes;
   
   document.getElementById('edit-modal').style.display = 'block';
 };
@@ -229,8 +254,17 @@ window.saveEdit = async () => {
   const isLive = document.getElementById('edit-islive').value === "true";
   const newName = document.getElementById('edit-name').value;
   const newDesc = document.getElementById('edit-desc').value;
+  const newCategory = document.getElementById('edit-category').value;
+  const newSubcategory = document.getElementById('edit-subcategory').value;
+  const newLoc = document.getElementById('edit-loc').value;
+  const newAddress = document.getElementById('edit-address').value;
   const newPhone = document.getElementById('edit-phone').value;
+  const newTg = document.getElementById('edit-tg').value;
+  const newInst = document.getElementById('edit-inst').value;
+  const newFb = document.getElementById('edit-fb').value;
   const newWeb = document.getElementById('edit-web').value;
+  const newPrice = document.getElementById('edit-price').value;
+  const newNotes = document.getElementById('edit-notes').value;
   
   try {
     if (isLive) {
@@ -240,11 +274,17 @@ window.saveEdit = async () => {
           id: id,
           name: newName,
           description: newDesc,
+          category: newCategory,
+          subcategory: newSubcategory,
+          locationType: newLoc,
+          address: newAddress,
           phone: newPhone,
           telegram: newTg,
           instagram: newInst,
           facebook: newFb,
           website: newWeb,
+          price: newPrice,
+          notes: newNotes,
           updatedAt: firestore.serverTimestamp(),
           status: "approved"
         });
@@ -257,11 +297,17 @@ window.saveEdit = async () => {
         await updateDoc(docRef, {
           name: newName,
           description: newDesc,
+          category: newCategory,
+          subcategory: newSubcategory,
+          locationType: newLoc,
+          address: newAddress,
           phone: newPhone,
           telegram: newTg,
           instagram: newInst,
           facebook: newFb,
           website: newWeb,
+          price: newPrice,
+          notes: newNotes,
           updatedAt: firestore.serverTimestamp()
         });
       });
@@ -271,12 +317,17 @@ window.saveEdit = async () => {
     // Update UI
     let prefix = isLive ? 'live-' : '';
     document.getElementById(`${prefix}display-name-${id}`).innerText = newName;
+    document.getElementById(`${prefix}display-cat-${id}`).innerText = `${newCategory} > ${newSubcategory}`;
     document.getElementById(`${prefix}display-desc-${id}`).innerText = newDesc;
+    document.getElementById(`${prefix}display-loc-${id}`).innerText = newLoc || '—';
+    document.getElementById(`${prefix}display-address-${id}`).innerText = newAddress || '—';
     document.getElementById(`${prefix}display-phone-${id}`).innerText = newPhone || '—';
     document.getElementById(`${prefix}display-tg-${id}`).innerText = newTg || '—';
     document.getElementById(`${prefix}display-inst-${id}`).innerText = newInst || '—';
     document.getElementById(`${prefix}display-fb-${id}`).innerText = newFb || '—';
     document.getElementById(`${prefix}display-web-${id}`).innerText = newWeb || '—';
+    document.getElementById(`${prefix}display-price-${id}`).innerText = newPrice || '—';
+    document.getElementById(`${prefix}display-notes-${id}`).innerText = newNotes || '—';
     
     document.getElementById('edit-modal').style.display = 'none';
   } catch (error) {
@@ -412,7 +463,10 @@ function renderLiveCatalog() {
       <div class="application-card" id="live-card-${itemId}">
         <h3><span style="color:#007bff; font-family:monospace;">#${itemId}</span> <span id="live-display-name-${itemId}">${item.name}</span> <small>(<span id="live-display-cat-${itemId}">${item.category} > ${item.subcategory}</span>)</small></h3>
         <p><strong>Опис:</strong> <span id="live-display-desc-${itemId}">${item.description || ''}</span></p>
-        <p><strong>Локація:</strong> <span id="live-display-loc-${itemId}">${item.locationType || ''}</span></p>
+        <p><strong>Локація:</strong> <span id="live-display-loc-${itemId}">${item.locationType || '—'}</span></p>
+        <p><strong>Адреса:</strong> <span id="live-display-address-${itemId}">${item.address || '—'}</span></p>
+        <p><strong>Ціна:</strong> <span id="live-display-price-${itemId}">${item.price || '—'}</span></p>
+        <p><strong>Нотатки:</strong> <span id="live-display-notes-${itemId}">${item.notes || '—'}</span></p>
         <p><strong>Телефон:</strong> <span id="live-display-phone-${itemId}">${item.phone || '—'}</span></p>
         <p><strong>Telegram:</strong> <span id="live-display-tg-${itemId}">${item.telegram || '—'}</span></p>
         <p><strong>Instagram:</strong> <span id="live-display-inst-${itemId}">${item.instagram || '—'}</span></p>
