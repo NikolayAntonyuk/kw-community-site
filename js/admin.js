@@ -181,8 +181,8 @@ window.rejectApp = async (id, userEmail, userName) => {
 
 // Edit Application Modal logic
 const editModalHTML = `
-  <div id="edit-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; overflow-y: auto; padding: 1rem; box-sizing: border-box;">
-    <div style="background:#fff; width: 100%; max-width:500px; margin: 2rem auto; padding:1.5rem; border-radius:8px; max-height: 85vh; overflow-y: auto; box-sizing: border-box;">
+  <div id="edit-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; padding:1rem; margin:0; box-sizing:border-box; justify-content:center; align-items:center; flex-direction:column;">
+    <div style="background:#fff; width:100%; max-width:500px; padding:1.5rem; border-radius:8px; max-height:90vh; overflow-y:auto; box-sizing:border-box; position:relative;">
       <h2>Редагувати заявку</h2>
       <input type="hidden" id="edit-id">
       <input type="hidden" id="edit-islive">
@@ -247,7 +247,9 @@ window.editApp = async (id, isLive = false) => {
   const notes = document.getElementById(`${prefix}display-notes-${id}`).innerText;
   document.getElementById('edit-notes').value = notes === '—' ? '' : notes;
   
-  document.getElementById('edit-modal').style.display = 'block';
+  document.getElementById('edit-modal').style.display = 'flex';
+  document.getElementById('edit-modal').style.flexDirection = 'column';
+  document.getElementById('edit-modal').style.justifyContent = 'center';
 };
 
 window.saveEdit = async () => {

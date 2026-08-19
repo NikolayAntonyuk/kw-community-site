@@ -81,7 +81,7 @@ test.describe('Admin Panel E2E', () => {
 
     // Inject a dummy live catalog item into the DOM and make dashboard visible
     await page.evaluate(() => {
-      document.getElementById('dashboard-section')!.style.display = 'block';
+      document.getElementById('dashboard-section')!.style.display = 'block'; window.switchTab&&window.switchTab('live-catalog');
       const liveList = document.getElementById('live-catalog-list');
       if (liveList) {
         liveList.innerHTML = `
@@ -287,7 +287,7 @@ test.describe('Admin Panel E2E', () => {
     await page.waitForFunction(() => typeof window.loadLiveCatalog === 'function');
 
     await page.evaluate(() => {
-      document.getElementById('dashboard-section')!.style.display = 'block';
+      document.getElementById('dashboard-section')!.style.display = 'block'; window.switchTab&&window.switchTab('live-catalog');
       return window.loadLiveCatalog();
     });
 
@@ -479,7 +479,7 @@ test.describe('Admin Panel E2E', () => {
     await page.waitForFunction(() => typeof window.loadLiveCatalog === 'function');
 
     await page.evaluate(() => {
-      document.getElementById('dashboard-section')!.style.display = 'block';
+      document.getElementById('dashboard-section')!.style.display = 'block'; window.switchTab&&window.switchTab('live-catalog');
       return window.loadLiveCatalog();
     });
 
@@ -529,7 +529,7 @@ test.describe('Admin Panel E2E', () => {
     await page.waitForFunction(() => typeof window.loadLiveCatalog === 'function');
 
     await page.evaluate(() => {
-      document.getElementById('dashboard-section')!.style.display = 'block';
+      document.getElementById('dashboard-section')!.style.display = 'block'; window.switchTab&&window.switchTab('live-catalog');
       return window.loadLiveCatalog();
     });
 

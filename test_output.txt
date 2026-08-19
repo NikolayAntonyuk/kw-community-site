@@ -1,0 +1,249 @@
+npm notice run kw-community-site@1.0.0 npx
+npm notice run 'playwright' test tests/e2e/admin.spec.ts --reporter=list
+[WebServer] npm notice run kw-community-site@1.0.0 serve
+[WebServer] npm notice run http-server . -p 8080 -s
+
+Running 14 tests using 1 worker
+
+  ✓   1 [chromium] › tests/e2e/admin.spec.ts:4:3 › Admin Panel E2E › should load the admin login page (522ms)
+  ✓   2 [chromium] › tests/e2e/admin.spec.ts:17:3 › Admin Panel E2E › should show error on wrong password (454ms)
+  ✓   3 [chromium] › tests/e2e/admin.spec.ts:48:3 › Admin Panel E2E › should explain when Firebase Authentication is not enabled (456ms)
+  ✘   4 [chromium] › tests/e2e/admin.spec.ts:76:3 › Admin Panel E2E › should display live catalog edit modal and populate fields (402ms)
+  ✘   5 [chromium] › tests/e2e/admin.spec.ts:76:3 › Admin Panel E2E › should display live catalog edit modal and populate fields (retry #1) (516ms)
+  ✘   6 [chromium] › tests/e2e/admin.spec.ts:76:3 › Admin Panel E2E › should display live catalog edit modal and populate fields (retry #2) (484ms)
+  ✓   7 [chromium] › tests/e2e/admin.spec.ts:124:3 › Admin Panel E2E › should show warning when rejecting application without valid email (879ms)
+  ✓   8 [chromium] › tests/e2e/admin.spec.ts:174:3 › Admin Panel E2E › should require confirmation before approving application (321ms)
+  ✓   9 [chromium] › tests/e2e/admin.spec.ts:219:3 › Admin Panel E2E › should require confirmation before deleting live application (359ms)
+  ✓  10 [chromium] › tests/e2e/admin.spec.ts:265:3 › Admin Panel E2E › should cancel rejection when dismiss is clicked on prompt (398ms)
+  ✘  11 [chromium] › tests/e2e/admin.spec.ts:285:3 › Admin Panel E2E › should display formatted dates on live catalog cards (398ms)
+  ✘  12 [chromium] › tests/e2e/admin.spec.ts:285:3 › Admin Panel E2E › should display formatted dates on live catalog cards (retry #1) (526ms)
+  ✘  13 [chromium] › tests/e2e/admin.spec.ts:285:3 › Admin Panel E2E › should display formatted dates on live catalog cards (retry #2) (431ms)
+  ✓  14 [chromium] › tests/e2e/admin.spec.ts:305:3 › Admin Panel E2E › should delete live application when confirmation is accepted (410ms)
+  ✓  15 [chromium] › tests/e2e/admin.spec.ts:347:3 › Admin Panel E2E › should approve application when confirmation is accepted (385ms)
+  ✓  16 [chromium] › tests/e2e/admin.spec.ts:386:3 › Admin Panel E2E › should require confirmation before saving edit and proceed on accept (361ms)
+  ✘  17 [chromium] › tests/e2e/admin.spec.ts:456:3 › Admin Panel E2E › should paginate live catalog 50 per page with working prev/next buttons (412ms)
+  ✘  18 [chromium] › tests/e2e/admin.spec.ts:456:3 › Admin Panel E2E › should paginate live catalog 50 per page with working prev/next buttons (retry #1) (518ms)
+  ✘  19 [chromium] › tests/e2e/admin.spec.ts:456:3 › Admin Panel E2E › should paginate live catalog 50 per page with working prev/next buttons (retry #2) (489ms)
+  ✘  20 [chromium] › tests/e2e/admin.spec.ts:507:3 › Admin Panel E2E › should show card IDs and keep search input usable while filtering (452ms)
+  ✘  21 [chromium] › tests/e2e/admin.spec.ts:507:3 › Admin Panel E2E › should show card IDs and keep search input usable while filtering (retry #1) (525ms)
+  ✘  22 [chromium] › tests/e2e/admin.spec.ts:507:3 › Admin Panel E2E › should show card IDs and keep search input usable while filtering (retry #2) (402ms)
+
+
+  1) [chromium] › tests/e2e/admin.spec.ts:76:3 › Admin Panel E2E › should display live catalog edit modal and populate fields 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'currentTarget')
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:83:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-897d9-t-modal-and-populate-fields-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'currentTarget')
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:83:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-897d9-t-modal-and-populate-fields-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/admin-Admin-Panel-E2E-shou-897d9-t-modal-and-populate-fields-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/admin-Admin-Panel-E2E-shou-897d9-t-modal-and-populate-fields-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'currentTarget')
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:83:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-897d9-t-modal-and-populate-fields-chromium-retry2/error-context.md
+
+  2) [chromium] › tests/e2e/admin.spec.ts:285:3 › Admin Panel E2E › should display formatted dates on live catalog cards 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'currentTarget')
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:289:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-674e0-dates-on-live-catalog-cards-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'currentTarget')
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:289:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-674e0-dates-on-live-catalog-cards-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/admin-Admin-Panel-E2E-shou-674e0-dates-on-live-catalog-cards-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/admin-Admin-Panel-E2E-shou-674e0-dates-on-live-catalog-cards-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'currentTarget')
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:289:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-674e0-dates-on-live-catalog-cards-chromium-retry2/error-context.md
+
+  3) [chromium] › tests/e2e/admin.spec.ts:456:3 › Admin Panel E2E › should paginate live catalog 50 per page with working prev/next buttons 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'currentTarget')
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:481:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-e80b9-h-working-prev-next-buttons-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'currentTarget')
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:481:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-e80b9-h-working-prev-next-buttons-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/admin-Admin-Panel-E2E-shou-e80b9-h-working-prev-next-buttons-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/admin-Admin-Panel-E2E-shou-e80b9-h-working-prev-next-buttons-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'currentTarget')
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:481:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-e80b9-h-working-prev-next-buttons-chromium-retry2/error-context.md
+
+  4) [chromium] › tests/e2e/admin.spec.ts:507:3 › Admin Panel E2E › should show card IDs and keep search input usable while filtering 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'currentTarget')
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:531:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-f10ab-nput-usable-while-filtering-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'currentTarget')
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:531:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-f10ab-nput-usable-while-filtering-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/admin-Admin-Panel-E2E-shou-f10ab-nput-usable-while-filtering-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/admin-Admin-Panel-E2E-shou-f10ab-nput-usable-while-filtering-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'currentTarget')
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at switchTab (http://127.0.0.1:8080/admin.html:164:13)
+        at eval (eval at evaluate (:311:30), <anonymous>:3:34)
+        at UtilityScript.evaluate (<anonymous>:313:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:531:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-f10ab-nput-usable-while-filtering-chromium-retry2/error-context.md
+
+  4 failed
+    [chromium] › tests/e2e/admin.spec.ts:76:3 › Admin Panel E2E › should display live catalog edit modal and populate fields 
+    [chromium] › tests/e2e/admin.spec.ts:285:3 › Admin Panel E2E › should display formatted dates on live catalog cards 
+    [chromium] › tests/e2e/admin.spec.ts:456:3 › Admin Panel E2E › should paginate live catalog 50 per page with working prev/next buttons 
+    [chromium] › tests/e2e/admin.spec.ts:507:3 › Admin Panel E2E › should show card IDs and keep search input usable while filtering 
+  10 passed (23.1s)
