@@ -194,39 +194,10 @@ window.rejectApp = async (id, userEmail, userName) => {
 };
 
 // Edit Application Modal logic
-const editModalHTML = `
-  <div id="edit-modal" class="modal" aria-hidden="true" hidden>
-    <div class="modal-dialog" style="padding: 0; display: flex; flex-direction: column;">
-      <div style="padding: 1.5rem; overflow-y: auto; flex: 1;">
-        <h2 style="margin-top: 0; margin-bottom: 1.5rem;">Редагувати заявку</h2>
-        <input type="hidden" id="edit-id">
-        <input type="hidden" id="edit-islive">
-        <div class="form-group"><label>Ім'я/Назва:</label><input type="text" id="edit-name"></div>
-        <div class="form-group"><label>Категорія:</label><input type="text" id="edit-category"></div>
-        <div class="form-group"><label>Підкатегорія:</label><input type="text" id="edit-subcategory"></div>
-        <div class="form-group"><label>Опис (короткий):</label><input type="text" id="edit-desc"></div>
-        <div class="form-group"><label>Локація (Місто):</label><input type="text" id="edit-loc"></div>
-        <div class="form-group"><label>Адреса:</label><input type="text" id="edit-address"></div>
-        <div class="form-group"><label>Телефон:</label><input type="text" id="edit-phone"></div>
-        <div class="form-group"><label>Telegram:</label><input type="text" id="edit-tg"></div>
-        <div class="form-group"><label>Instagram:</label><input type="text" id="edit-inst"></div>
-        <div class="form-group"><label>Facebook:</label><input type="text" id="edit-fb"></div>
-        <div class="form-group"><label>Вебсайт:</label><input type="text" id="edit-web"></div>
-        <div class="form-group"><label>Ціна:</label><input type="text" id="edit-price"></div>
-        <div class="form-group"><label>Нотатки:</label><textarea id="edit-notes" style="width:100%; height:80px; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"></textarea></div>
-      </div>
-      <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e5e9;">
-        <div class="application-actions" style="margin: 0;">
-          <button class="btn btn-approve" onclick="window.saveEdit()">Зберегти</button>
-          <button class="btn" onclick="document.getElementById('edit-modal').setAttribute('hidden', ''); document.getElementById('edit-modal').setAttribute('aria-hidden', 'true');">Скасувати</button>
-        </div>
-      </div>
-    </div>
-  </div>
-`;
-document.body.insertAdjacentHTML('beforeend', editModalHTML);
+
 
 window.editApp = async (id, isLive = false) => {
+  document.getElementById('form-title').innerText = "Редагувати заявку";
   document.getElementById('edit-id').value = id;
   document.getElementById('edit-islive').value = isLive ? "true" : "false";
   
@@ -265,14 +236,58 @@ window.editApp = async (id, isLive = false) => {
   const notes = document.getElementById(`${prefix}display-notes-${id}`).innerText;
   document.getElementById('edit-notes').value = notes === '—' ? '' : notes;
   
-  const modal = document.getElementById('edit-modal');
-  modal.removeAttribute('hidden');
-  modal.setAttribute('aria-hidden', 'false');
+  // Navigate to form section, hide tabs
+  document.querySelector('.admin-tabs').style.display = 'none';
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('form-section').classList.add('active');
 };
+
+window.showAddForm = () => {
+  document.getElementById('form-title').innerText = "Додати спеціаліста";
+  document.getElementById('edit-id').value = "";
+  document.getElementById('edit-islive').value = "true"; // Added directly to live
+  
+  document.getElementById('edit-name').value = "";
+  document.getElementById('edit-desc').value = "";
+  document.getElementById('edit-category').value = "";
+  document.getElementById('edit-subcategory').value = "";
+  document.getElementById('edit-loc').value = "";
+  document.getElementById('edit-address').value = "";
+  document.getElementById('edit-phone').value = "";
+  document.getElementById('edit-tg').value = "";
+  document.getElementById('edit-inst').value = "";
+  document.getElementById('edit-fb').value = "";
+  document.getElementById('edit-web').value = "";
+  document.getElementById('edit-price').value = "";
+  document.getElementById('edit-notes').value = "";
+  
+  // Navigate to form section
+  document.querySelector('.admin-tabs').style.display = 'none';
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('form-section').classList.add('active');
+};
+
+window.cancelForm = () => {
+  document.querySelector('.admin-tabs').style.display = 'flex';
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  // Determine which tab to go back to. Let's default to live catalog for Add, or previous one for edit.
+  // We can just rely on the active tab from before, but we removed .active from .admin-tab ? 
+  // No, we didn't remove .active from .admin-tab when hiding .admin-tabs. 
+  // So we just re-activate the content that matches the active tab.
+  const activeTab = document.querySelector('.admin-tab.active');
+  if (activeTab) {
+    if (activeTab.id === 'tab-new-apps') document.getElementById('new-apps').classList.add('active');
+    else if (activeTab.id === 'tab-live-catalog') document.getElementById('live-catalog').classList.add('active');
+    else if (activeTab.id === 'tab-rejected-apps') document.getElementById('rejected-apps').classList.add('active');
+  } else {
+    document.getElementById('live-catalog').classList.add('active');
+  }
+};
+
 
 window.saveEdit = async () => {
   if (!confirm("Ви впевнені, що хочете зберегти ці зміни?")) return;
-  const id = document.getElementById('edit-id').value;
+  let id = document.getElementById('edit-id').value;
   const isLive = document.getElementById('edit-islive').value === "true";
   const newName = document.getElementById('edit-name').value;
   const newDesc = document.getElementById('edit-desc').value;
@@ -290,7 +305,30 @@ window.saveEdit = async () => {
 
   try {
     let msg = "";
-    if (isLive) {
+    if (!id) {
+      // Create new
+      id = "ext-" + Math.random().toString(36).substr(2, 9);
+      await addDoc(collection(db, "pending_specialists"), {
+        id: id,
+        name: newName,
+        description: newDesc,
+        category: newCategory,
+        subcategory: newSubcategory,
+        locationType: newLoc,
+        address: newAddress,
+        phone: newPhone,
+        telegram: newTg,
+        instagram: newInst,
+        facebook: newFb,
+        website: newWeb,
+        price: newPrice,
+        notes: newNotes,
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        status: "approved"
+      });
+      msg = "Спеціаліста додано в базу! Щоб він з'явився в каталозі зараз, <br><a href='#' onclick='window.triggerSync(); return false;' style='color:#1f6feb; text-decoration:underline;'>запустіть синхронізацію вручну тут</a>.";
+    } else if (isLive) {
       await addDoc(collection(db, "pending_specialists"), {
         id: id,
         name: newName,
@@ -330,24 +368,39 @@ window.saveEdit = async () => {
       msg = "Зміни успішно збережено!";
     }
 
-    let prefix = isLive ? 'live-' : '';
-    document.getElementById(`${prefix}display-name-${id}`).innerText = newName;
-    document.getElementById(`${prefix}display-cat-${id}`).innerText = `${newCategory} > ${newSubcategory}`;
-    document.getElementById(`${prefix}display-desc-${id}`).innerText = newDesc;
-    document.getElementById(`${prefix}display-loc-${id}`).innerText = newLoc || '—';
-    document.getElementById(`${prefix}display-address-${id}`).innerText = newAddress || '—';
-    document.getElementById(`${prefix}display-phone-${id}`).innerText = newPhone || '—';
-    document.getElementById(`${prefix}display-tg-${id}`).innerText = newTg || '—';
-    document.getElementById(`${prefix}display-inst-${id}`).innerText = newInst || '—';
-    document.getElementById(`${prefix}display-fb-${id}`).innerText = newFb || '—';
-    document.getElementById(`${prefix}display-web-${id}`).innerText = newWeb || '—';
-    document.getElementById(`${prefix}display-price-${id}`).innerText = newPrice || '—';
-    document.getElementById(`${prefix}display-notes-${id}`).innerText = newNotes || '—';
+    if (id && document.getElementById('live-display-name-' + id) && isLive) {
+      document.getElementById('live-display-name-' + id).innerText = newName;
+      document.getElementById('live-display-cat-' + id).innerText = `${newCategory} > ${newSubcategory}`;
+      document.getElementById('live-display-desc-' + id).innerText = newDesc;
+      document.getElementById('live-display-loc-' + id).innerText = newLoc || '—';
+      document.getElementById('live-display-address-' + id).innerText = newAddress || '—';
+      document.getElementById('live-display-phone-' + id).innerText = newPhone || '—';
+      document.getElementById('live-display-tg-' + id).innerText = newTg || '—';
+      document.getElementById('live-display-inst-' + id).innerText = newInst || '—';
+      document.getElementById('live-display-fb-' + id).innerText = newFb || '—';
+      document.getElementById('live-display-web-' + id).innerText = newWeb || '—';
+      document.getElementById('live-display-price-' + id).innerText = newPrice || '—';
+      document.getElementById('live-display-notes-' + id).innerText = newNotes || '—';
+    } else if (id && document.getElementById('display-name-' + id) && !isLive) {
+      document.getElementById('display-name-' + id).innerText = newName;
+      document.getElementById('display-cat-' + id).innerText = `${newCategory} > ${newSubcategory}`;
+      document.getElementById('display-desc-' + id).innerText = newDesc;
+      document.getElementById('display-loc-' + id).innerText = newLoc || '—';
+      document.getElementById('display-address-' + id).innerText = newAddress || '—';
+      document.getElementById('display-phone-' + id).innerText = newPhone || '—';
+      document.getElementById('display-tg-' + id).innerText = newTg || '—';
+      document.getElementById('display-inst-' + id).innerText = newInst || '—';
+      document.getElementById('display-fb-' + id).innerText = newFb || '—';
+      document.getElementById('display-web-' + id).innerText = newWeb || '—';
+      document.getElementById('display-price-' + id).innerText = newPrice || '—';
+      document.getElementById('display-notes-' + id).innerText = newNotes || '—';
+    }
 
     showAdminAlert(msg);
-    document.getElementById('edit-modal').setAttribute('hidden', '');
-    document.getElementById('edit-modal').setAttribute('aria-hidden', 'true');
-    loadLiveCatalog();
+    window.cancelForm();
+    if (!id || isLive) {
+      loadLiveCatalog();
+    }
   } catch (error) {
     showAdminAlert("Помилка при збереженні: " + error.message);
     console.error("Save error:", error);

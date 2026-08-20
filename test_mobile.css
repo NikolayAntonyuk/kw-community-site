@@ -1,0 +1,27 @@
+@media (max-width: 600px) {
+  .top-nav {
+    padding: 1rem !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .top-nav .brand {
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .top-nav div {
+    justify-content: center;
+  }
+  .admin-tabs {
+    flex-direction: column;
+  }
+  .admin-tab {
+    text-align: center;
+  }
+  .application-actions {
+    flex-direction: column;
+  }
+  #live-pagination > div {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
