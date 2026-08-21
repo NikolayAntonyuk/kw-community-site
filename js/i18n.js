@@ -145,7 +145,7 @@ window.applyLanguage = function(lang) {
 }
 
 function initLanguageToggle() {
-  const container = document.querySelector('.top-nav') || document.querySelector('.site-header');
+  const container = document.querySelector('.nav-actions') || document.querySelector('.top-nav') || document.querySelector('.site-header');
   if (container && !document.getElementById('lang-toggle')) {
     const btn = document.createElement('button');
     btn.id = 'lang-toggle';

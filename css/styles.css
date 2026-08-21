@@ -433,18 +433,21 @@ main {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 @media (max-width: 600px) {
   .top-nav {
     padding: 1rem !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
+    flex-wrap: wrap !important;
+    gap: 1rem;
+    justify-content: center !important;
   }
-  .top-nav .brand {
+  .nav-actions {
     justify-content: center;
-    margin-bottom: 1rem;
-  }
-  .top-nav div {
-    justify-content: center;
+    width: 100%;
   }
   .admin-tabs {
     flex-direction: column;

@@ -8,12 +8,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Initialize Firebase Admin
-if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
-  console.error("Missing FIREBASE_SERVICE_ACCOUNT environment variable.");
+let serviceAccount;
+const localKeyPath = path.join(__dirname, "../firebase-key.json");
+
+if (fs.existsSync(localKeyPath)) {
+  serviceAccount = JSON.parse(fs.readFileSync(localKeyPath, 'utf8'));
+} else if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+} else {
+  console.error("Missing FIREBASE_SERVICE_ACCOUNT environment variable or firebase-key.json file.");
   process.exit(1);
 }
-
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
 initializeApp({
   credential: cert(serviceAccount)

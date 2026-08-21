@@ -36,6 +36,19 @@ export async function fetchSpecialists({ force = false } = {}) {
     console.error("Не вдалося завантажити з Firebase:", error);
   }
 
-  // Combine both
-  return [...firebaseSpecialists, ...staticSpecialists];
+  // Combine both and deduplicate by ID
+  const uniqueMap = new Map();
+
+  // Add static items first
+  staticSpecialists.forEach(item => {
+    if (item.id) uniqueMap.set(item.id, item);
+  });
+
+  // Firebase items override static (they're more up-to-date)
+  firebaseSpecialists.forEach(item => {
+    if (item.id) uniqueMap.set(item.id, item);
+  });
+
+  // Return only deduplicated items with valid IDs
+  return Array.from(uniqueMap.values());
 }

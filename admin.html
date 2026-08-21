@@ -94,7 +94,7 @@
       <h1 style="font-size: 1.25rem; margin: 0; font-weight: 600;">Адмін-панель</h1>
     </a>
     <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; flex: 1; justify-content: flex-end;">
-      <button id="refresh-btn" class="btn" style="flex: 0 0 auto; padding: 0.4rem 0.8rem; font-size: 0.85rem; background: #28a745; text-decoration: none; display: none; color: white; border: none; cursor: pointer;" title="Запустити деплой на GitHub" onclick="window.triggerSync()">🔄 Оновити</button>
+
       <a href="index.html" style="text-decoration: none; color: #0056b3; margin-left: 0.5rem;">Головна</a>
       <a href="catalog.html" style="text-decoration: none; color: #0056b3; font-weight: bold; margin-left: 0.5rem;">Каталог →</a>
       <button id="logout-btn" class="btn" style="flex: 0 0 auto; padding: 0.4rem 0.8rem; font-size: 0.85rem; background: #dc3545; display: none; margin-left: 0.5rem;">Вийти</button>
@@ -118,7 +118,7 @@
 
     <div id="dashboard-section" class="dashboard-section">
       <div class="admin-tabs">
-        <div class="admin-tab active" onclick="window.goToPage(this, 'new-apps')">Нові заявки</div>
+        <div class="admin-tab active" id="tab-new-apps" onclick="window.goToPage(this, 'new-apps')">Нові заявки</div>
         <div class="admin-tab" id="tab-live-catalog" onclick="window.goToPage(this, 'live-catalog')">Живий каталог</div>
         <div class="admin-tab" id="tab-rejected-apps" onclick="window.goToPage(this, 'rejected-apps')">Архів</div>
       </div>

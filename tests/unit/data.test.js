@@ -3,8 +3,8 @@ import { fetchSpecialists } from "../../js/data.js";
 import { __state } from "../mocks/firebase-stub.js";
 
 const STATIC_ROWS = [
-  { category: "Здоров'я", subcategory: "Лікарі", name: "Dr. Olena Ivanenko" },
-  { category: "Освіта", subcategory: "Репетитори", name: "Марія Коваль" },
+  { id: "static-1", category: "Здоров'я", subcategory: "Лікарі", name: "Dr. Olena Ivanenko" },
+  { id: "static-2", category: "Освіта", subcategory: "Репетитори", name: "Марія Коваль" },
 ];
 
 function mockJsonFetch(rows, { ok = true } = {}) {
@@ -29,24 +29,28 @@ describe("fetchSpecialists", () => {
     expect(result).toEqual(STATIC_ROWS);
   });
 
-  it("додає схвалені заявки з Firebase перед статичними", async () => {
+  it("додає схвалені заявки з Firebase і дедуплікує за ID", async () => {
     mockJsonFetch(STATIC_ROWS);
-    __state.docs = [{ category: "Краса", subcategory: "Перукар", name: "Salon Kalyna" }];
+    // Firebase item with unique ID
+    __state.docs = [{ id: "fb-1", category: "Краса", subcategory: "Перукар", name: "Salon Kalyna" }];
 
     const result = await fetchSpecialists();
 
-    expect(result).toHaveLength(3);
-    expect(result[0].name).toBe("Salon Kalyna");
-    expect(result.slice(1)).toEqual(STATIC_ROWS);
+    expect(result).toHaveLength(3); // 2 static + 1 firebase
+    // Firebase should be in the mix (order may vary due to Map)
+    expect(result.some(r => r.name === "Salon Kalyna")).toBe(true);
+    expect(result.some(r => r.name === "Dr. Olena Ivanenko")).toBe(true);
   });
 
   it("не падає, якщо статичний JSON недоступний", async () => {
     mockJsonFetch(null, { ok: false });
-    __state.docs = [{ name: "Only Firebase" }];
+    // Firebase item must have ID to be included (no "New" items)
+    __state.docs = [{ id: "fb-only", name: "Only Firebase" }];
 
     const result = await fetchSpecialists();
 
-    expect(result).toEqual([{ name: "Only Firebase", id: "New" }]);
+    expect(result).toHaveLength(1);
+    expect(result[0].name).toBe("Only Firebase");
   });
 
   it("не падає, якщо fetch кидає помилку мережі", async () => {

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "Статичний сайт-каталог спеціалістів громади Kitchener-Waterloo",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "vitest run tests/unit",
@@ -33,6 +33,10 @@
   },
   "homepage": "https://github.com/nikolayantonyuk/kw-community-site#readme",
   "dependencies": {
-    "firebase-admin": "^14.2.0"
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "firebase-admin": "^14.3.0",
+    "node-cron": "^4.6.0"
   }
 }

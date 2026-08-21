@@ -141,13 +141,13 @@ async function loadApplications() {
 
 // Global functions for inline handlers
 window.approveApp = async (id) => {
-  if (!confirm("Ви впевнені, що хочете підтвердити цю заявку?")) return;
   try {
     await updateDoc(doc(db, "pending_specialists", id), {
       status: "approved"
     });
     document.getElementById(`card-${id}`).remove();
-    showAdminAlert("Заявка підтверджена! Вона з'явиться в каталозі.");
+    showAdminAlert("Заявку підтверджено!");
+    fetch("/api/sync", {method: "POST"}).catch(console.error);
   } catch (error) {
     showAdminAlert("Помилка: " + error.message);
   }
@@ -286,7 +286,6 @@ window.cancelForm = () => {
 
 
 window.saveEdit = async () => {
-  if (!confirm("Ви впевнені, що хочете зберегти ці зміни?")) return;
   let id = document.getElementById('edit-id').value;
   const isLive = document.getElementById('edit-islive').value === "true";
   const newName = document.getElementById('edit-name').value;
@@ -305,66 +304,60 @@ window.saveEdit = async () => {
 
   try {
     let msg = "";
+    const payload = {
+      name: newName,
+      description: newDesc,
+      category: newCategory,
+      subcategory: newSubcategory,
+      locationType: newLoc,
+      address: newAddress,
+      phone: newPhone,
+      telegram: newTg,
+      instagram: newInst,
+      facebook: newFb,
+      website: newWeb,
+      price: newPrice,
+      notes: newNotes,
+      status: "approved"
+    };
+
     if (!id) {
       // Create new
       id = "ext-" + Math.random().toString(36).substr(2, 9);
-      await addDoc(collection(db, "pending_specialists"), {
-        id: id,
-        name: newName,
-        description: newDesc,
-        category: newCategory,
-        subcategory: newSubcategory,
-        locationType: newLoc,
-        address: newAddress,
-        phone: newPhone,
-        telegram: newTg,
-        instagram: newInst,
-        facebook: newFb,
-        website: newWeb,
-        price: newPrice,
-        notes: newNotes,
-        updatedAt: serverTimestamp(),
-        createdAt: serverTimestamp(),
-        status: "approved"
+      console.log(`[CRUD] Creating new specialist with ID: ${id}`, payload);
+      const response = await fetch('/api/specialists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...payload, id })
       });
-      msg = "Спеціаліста додано в базу! Щоб він з'явився в каталозі зараз, <br><a href='#' onclick='window.triggerSync(); return false;' style='color:#1f6feb; text-decoration:underline;'>запустіть синхронізацію вручну тут</a>.";
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
+      const result = await response.json();
+      console.log(`[CRUD] Created successfully:`, result);
+      msg = "Спеціаліста успішно додано!";
     } else if (isLive) {
-      await addDoc(collection(db, "pending_specialists"), {
-        id: id,
-        name: newName,
-        description: newDesc,
-        category: newCategory,
-        subcategory: newSubcategory,
-        locationType: newLoc,
-        address: newAddress,
-        phone: newPhone,
-        telegram: newTg,
-        instagram: newInst,
-        facebook: newFb,
-        website: newWeb,
-        price: newPrice,
-        notes: newNotes,
-        updatedAt: serverTimestamp(),
-        status: "approved"
+      // Update existing (FIX: was using addDoc before, now using API update)
+      console.log(`[CRUD] Updating specialist ID: ${id}`, payload);
+      const response = await fetch('/api/specialists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, ...payload })
       });
-      msg = "Зміни збережено в базу! Щоб вони з'явилися в каталозі зараз, <br><a href='#' onclick='window.triggerSync(); return false;' style='color:#1f6feb; text-decoration:underline;'>запустіть синхронізацію вручну тут</a>.";
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
+      const result = await response.json();
+      console.log(`[CRUD] Updated successfully:`, result);
+      msg = "Спеціаліста успішно оновлено!";
+      fetch("/api/sync", {method: "POST"}).catch(console.error);
     } else {
-      await updateDoc(doc(db, "pending_specialists", id), {
-        name: newName,
-        description: newDesc,
-        category: newCategory,
-        subcategory: newSubcategory,
-        locationType: newLoc,
-        address: newAddress,
-        phone: newPhone,
-        telegram: newTg,
-        instagram: newInst,
-        facebook: newFb,
-        website: newWeb,
-        price: newPrice,
-        notes: newNotes,
-        updatedAt: serverTimestamp()
+      // Update pending application
+      console.log(`[CRUD] Updating pending application ID: ${id}`, payload);
+      const response = await fetch('/api/specialists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, ...payload, status: 'pending' })
       });
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
+      const result = await response.json();
+      console.log(`[CRUD] Pending updated successfully:`, result);
       msg = "Зміни успішно збережено!";
     }
 
@@ -399,7 +392,46 @@ window.saveEdit = async () => {
     showAdminAlert(msg);
     window.cancelForm();
     if (!id || isLive) {
-      loadLiveCatalog();
+      if (id && isLive) {
+        const item = liveCatalogData.find(i => i.id === id);
+        if (item) {
+          item.name = newName;
+          item.description = newDesc;
+          item.category = newCategory;
+          item.subcategory = newSubcategory;
+          item.locationType = newLoc;
+          item.address = newAddress;
+          item.phone = newPhone;
+          item.telegram = newTg;
+          item.instagram = newInst;
+          item.facebook = newFb;
+          item.website = newWeb;
+          item.price = newPrice;
+          item.notes = newNotes;
+        }
+      } else if (!id) {
+        const newItem = {
+          id: id,
+          name: newName,
+          description: newDesc,
+          category: newCategory,
+          subcategory: newSubcategory,
+          locationType: newLoc,
+          address: newAddress,
+          phone: newPhone,
+          telegram: newTg,
+          instagram: newInst,
+          facebook: newFb,
+          website: newWeb,
+          price: newPrice,
+          notes: newNotes,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        liveCatalogData.unshift(newItem);
+      }
+      const searchVal = document.getElementById('live-search') ? document.getElementById('live-search').value : '';
+      window.filterLiveCatalog(searchVal);
     }
   } catch (error) {
     showAdminAlert("Помилка при збереженні: " + error.message);
@@ -408,15 +440,13 @@ window.saveEdit = async () => {
 };
 
 window.deleteLiveApp = async (id) => {
-  if (!confirm("Ви впевнені, що хочете видалити цього спеціаліста з каталогу?")) return;
   try {
-    import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(async (firestore) => {
-      await firestore.addDoc(firestore.collection(db, "pending_specialists"), {
-        id: id,
-        status: "deleted"
-      });
+    await addDoc(collection(db, "pending_specialists"), {
+      id: id,
+      status: "deleted"
     });
-    showAdminAlert("Запит на видалення надіслано! Спеціаліст зникне з каталогу після наступної синхронізації (за кілька хвилин).");
+    showAdminAlert("Спеціаліста успішно видалено!");
+    fetch("/api/sync", {method: "POST"}).catch(console.error);
     const el = document.getElementById(`live-card-${id}`);
     if (el) el.style.display = 'none';
   } catch (error) {
@@ -623,35 +653,25 @@ loadApplications = async () => {
 
 
 window.triggerSync = async () => {
-  let token = localStorage.getItem("gh_pat_token");
-  if (!token) {
-    token = prompt("Для автоматичного запуску через API потрібен GitHub Personal Access Token (classic: 'repo' scope, або fine-grained: 'Actions: read&write'). Введіть його тут (збережеться в браузері):");
-    if (!token) return;
-    localStorage.setItem("gh_pat_token", token.trim());
-    token = token.trim();
-  }
-
-  showAdminAlert("Запускаємо синхронізацію... ⏳");
+  showAdminAlert("Запускаємо синхронізацію з локальною базою... ⏳");
   
   try {
-    const response = await fetch("https://api.github.com/repos/nikolayantonyuk/kw-community-site/actions/workflows/sync.yml/dispatches", {
+    const response = await fetch("/api/sync", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Accept": "application/vnd.github.v3+json",
         "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ ref: "master" })
+      }
     });
 
     if (response.ok) {
-      showAdminAlert("✅ Синхронізація успішно запущена! Сайт оновиться через 2-5 хвилин.");
-    } else if (response.status === 401 || response.status === 403 || response.status === 404) {
-      localStorage.removeItem("gh_pat_token");
-      showAdminAlert("❌ Помилка доступу. Можливо, токен недійсний або не має прав. Токен видалено, оновіть сторінку і спробуйте ще раз.<br><br>Переконайтеся, що ви створили токен з правами 'repo' (для classic token).");
+      showAdminAlert("✅ Синхронізація успішно виконана! Сайт оновлено миттєво.");
+      // Оновити каталог після успішної синхронізації
+      if (typeof loadLiveCatalog === "function") {
+        setTimeout(loadLiveCatalog, 1000);
+      }
     } else {
       const errText = await response.text();
-      showAdminAlert("⚠️ Помилка запуску: " + response.status + " " + errText);
+      showAdminAlert("⚠️ Помилка синхронізації: " + response.status + " " + errText);
     }
   } catch (error) {
     showAdminAlert("Помилка мережі: " + error.message);
