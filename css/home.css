@@ -12,7 +12,7 @@
   overflow: hidden;
 }
 
-.hero-image {
+.hero-image, .hero-video {
   position: absolute;
   inset: 0;
   width: 100%;
