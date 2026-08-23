@@ -402,6 +402,8 @@ test.describe('Admin Panel E2E', () => {
       });
     });
 
+    await page.route('**/api/specialists', route => route.fulfill({ status: 200, body: '{}' }));
+    await page.route('**/api/sync', route => route.fulfill({ status: 200, body: '{}' }));
     await page.goto('/admin.html');
     await page.waitForFunction(() => typeof window.saveEdit === 'function');
 
