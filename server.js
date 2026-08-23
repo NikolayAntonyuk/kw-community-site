@@ -14,12 +14,18 @@ app.use(cors());
 app.use(express.json());
 
 // Firebase Initialization
-const serviceAccount = require('./firebase-key.json');
-initializeApp({
-  credential: cert(serviceAccount),
-  projectId: serviceAccount.project_id
-});
-const db = getFirestore();
+let db;
+if (process.env.NODE_ENV === 'test') {
+  // Use mock DB for tests
+  db = global.__TEST_DB__ || require('./tests/unit/mockDb.js');
+} else {
+  const serviceAccount = require('./firebase-key.json');
+  initializeApp({
+    credential: cert(serviceAccount),
+    projectId: serviceAccount.project_id
+  });
+  db = getFirestore();
+}
 
 // ===== API Routes =====
 
@@ -87,17 +93,18 @@ app.post('/api/specialists', async (req, res) => {
     if (id) {
       // Update existing
       console.log(`[CRUD] UPDATE specialist ID: ${id}`, { ...data, updatedAt: 'serverTimestamp' });
-      await db.collection('pending_specialists').doc(id).update({
+      await db.collection('pending_specialists').doc(id).set({
         ...data,
         updatedAt: timestamp,
         status: data.status || 'approved'
-      });
+      }, { merge: true });
       console.log(`[CRUD] ✅ Successfully updated ID: ${id}`);
       res.json({ success: true, id, message: 'Спеціаліста оновлено' });
     } else {
       // Create new
-      const newRef = await db.collection('pending_specialists').add({
-        id: data.id || newRef.id,
+      const newRef = db.collection('pending_specialists').doc(data.id || db.collection('pending_specialists').doc().id);
+      await newRef.set({
+        id: newRef.id,
         ...data,
         createdAt: timestamp,
         updatedAt: timestamp,
@@ -248,8 +255,14 @@ cron.schedule('0 3 * * *', async () => {
 app.use(express.static('.')); // Serve all files in current directory
 
 // ===== Start Server =====
-app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-  console.log(`🌐 Public URL will be: https://kw-ua-community.duckdns.org`);
-  console.log(`🔐 Firebase initialized: ${getApp().name}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`✅ Server running on http://localhost:${PORT}`);
+    console.log(`🌐 Public URL will be: https://kw-ua-community.duckdns.org`);
+    console.log(`🔐 Firebase initialized: ${getApp().name}`);
+  });
+}
+
+// Export for both CommonJS and ESM
+module.exports = app;
+module.exports.default = app;

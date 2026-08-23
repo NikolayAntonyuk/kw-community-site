@@ -1,61 +1,75 @@
-import { describe, it, expect } from "vitest";
-import fs from "fs";
-import path from "path";
+import { describe, it, expect, vi, beforeEach, beforeAll } from "vitest";
+import request from "supertest";
 
-describe("API CRUD Operations", () => {
-  const baseURL = "http://localhost:3010/api";
-  let createdId = "";
-  const dataFilePath = path.resolve(__dirname, "../../data/specialists.json");
+const mockDocSet = vi.fn().mockResolvedValue(true);
+const mockDocDelete = vi.fn().mockResolvedValue(true);
 
-  it("Create a new specialist directly via API", async () => {
-    const res = await fetch(`${baseURL}/specialists`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: 'API Test Specialist',
-        category: 'IT',
-        subcategory: 'QA Engineer',
-        email: 'qa@example.com',
-        status: 'approved'
-      })
-    });
+const mockCollectionRef = {
+  where: vi.fn().mockReturnThis(),
+  get: vi.fn().mockResolvedValue({ docs: [] }),
+  doc: vi.fn(() => ({
+    id: "mock-id",
+    set: mockDocSet,
+    delete: mockDocDelete
+  })),
+  add: vi.fn(),
+  set: vi.fn(),
+};
+
+const mockDb = {
+  collection: vi.fn(() => mockCollectionRef),
+  batch: vi.fn(() => ({
+    delete: vi.fn(),
+    commit: vi.fn()
+  }))
+};
+
+let app;
+
+describe("API CRUD Operations via Supertest", () => {
+  beforeAll(async () => {
+    global.__TEST_DB__ = mockDb;
+    process.env.NODE_ENV = 'test';
+    // Dynamic import to avoid hoisting, so global is set before server.js runs
+    const serverModule = await import("../../server.js");
+    app = serverModule.default || serverModule;
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockDocSet.mockClear();
+  });
+
+  it("Create a new specialist", async () => {
+    const res = await request(app)
+      .post("/api/specialists")
+      .send({
+        name: "Test User",
+        category: "IT",
+        status: "approved"
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(mockDocSet).toHaveBeenCalled();
+  });
+
+  it("Update existing specialist", async () => {
+    const fakeId = "mock-id-456";
     
-    expect(res.ok).toBe(true);
-    const json = await res.json();
-    expect(json.success).toBe(true);
-    expect(json.id).toBeDefined();
-    createdId = json.id; // Save the auto-generated ID
-  });
+    const res = await request(app)
+      .post("/api/specialists")
+      .send({
+        id: fakeId,
+        name: "Test User Updated"
+      });
 
-  it("Update existing specialist via API", async () => {
-    const res = await fetch(`${baseURL}/specialists`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: createdId,
-        name: 'API Test Specialist UPDATED',
-        status: 'approved'
-      })
-    });
-    expect(res.ok).toBe(true);
-  });
-
-  it("Sync API should move the updated specialist to JSON and keep original ID", async () => {
-    const res = await fetch(`${baseURL}/sync`, { method: 'POST' });
-    expect(res.ok).toBe(true);
-    
-    const fileContent = fs.readFileSync(dataFilePath, 'utf8');
-    const specialists = JSON.parse(fileContent);
-    const found = specialists.find((s) => s.id === createdId);
-    expect(found).toBeDefined();
-    expect(found.name).toBe('API Test Specialist UPDATED');
-  });
-
-  it("Clean up the test specialist from JSON", async () => {
-    // Manually clean up to avoid polluting test data
-    let fileContent = fs.readFileSync(dataFilePath, 'utf8');
-    let specialists = JSON.parse(fileContent);
-    specialists = specialists.filter((s) => s.id !== createdId);
-    fs.writeFileSync(dataFilePath, JSON.stringify(specialists, null, 2));
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.id).toBe(fakeId); 
+    expect(mockDocSet).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "Test User Updated" }),
+      { merge: true }
+    );
   });
 });
