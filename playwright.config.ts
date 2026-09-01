@@ -8,7 +8,8 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: [
     ['html'],
-    ['allure-playwright', { detail: true, outputFolder: 'allure-results' }]
+    ['allure-playwright', { detail: true, outputFolder: 'allure-results' }],
+    ['@testomatio/reporter/lib/adapter/playwright.js']
   ],
   use: {
     baseURL: 'http://127.0.0.1:8080',

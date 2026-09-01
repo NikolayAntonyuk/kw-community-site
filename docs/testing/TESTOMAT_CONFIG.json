@@ -1,0 +1,103 @@
+{
+  "project": {
+    "name": "KW Community",
+    "description": "Test Management для сайту KW Community Waterloo Region — каталог спеціалістів та послуг",
+    "type": "exploratory_testing"
+  },
+  "test_suites": [
+    {
+      "name": "Homepage",
+      "description": "Тестування головної сторінки",
+      "checklist_file": "docs/testing/checklist-homepage.md",
+      "priority": "high",
+      "modules": [
+        "Hero Section",
+        "Catalog Display",
+        "Search & Filter",
+        "Navigation",
+        "Performance",
+        "Accessibility"
+      ]
+    },
+    {
+      "name": "Catalog",
+      "description": "Тестування каталогу спеціалістів",
+      "checklist_file": "docs/testing/checklist-catalog.md",
+      "priority": "high",
+      "modules": [
+        "Display",
+        "Filters",
+        "Sorting",
+        "Mobile Responsiveness",
+        "Pagination",
+        "Contact Features"
+      ]
+    },
+    {
+      "name": "Admin Panel",
+      "description": "Тестування адмін-панелі",
+      "checklist_file": "docs/testing/checklist-admin.md",
+      "priority": "high",
+      "modules": [
+        "Authentication",
+        "List Management",
+        "Create Specialist",
+        "Edit Specialist",
+        "Delete Specialist",
+        "Validation",
+        "Sync",
+        "Security"
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "name": "Development",
+      "url": "http://localhost:8000",
+      "type": "local"
+    },
+    {
+      "name": "Staging (Cloudflare)",
+      "url": "https://hiking-stock-continually-southwest.trycloudflare.com",
+      "type": "remote_tunnel"
+    }
+  ],
+  "browsers": [
+    "Chrome (Desktop)",
+    "Safari (macOS)",
+    "Firefox (Desktop)",
+    "Chrome Mobile (Android)",
+    "Safari Mobile (iOS)"
+  ],
+  "bug_labels": [
+    "bug",
+    "critical",
+    "high",
+    "medium",
+    "low",
+    "ui",
+    "backend",
+    "mobile",
+    "performance",
+    "security",
+    "admin",
+    "feature-request"
+  ],
+  "integration": {
+    "github": {
+      "enabled": true,
+      "repo": "kw-community-site",
+      "labels_mapping": {
+        "critical": ["bug", "critical"],
+        "high": ["bug", "high"],
+        "medium": ["bug", "medium"],
+        "low": ["bug", "low"]
+      },
+      "auto_create_issue": true
+    }
+  },
+  "team": {
+    "qa_lead": "mykola.antoniyk@gmail.com",
+    "developers": "kw-community-team@example.com"
+  }
+}

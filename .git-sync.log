@@ -1,0 +1,224 @@
+[2026-08-23 15:20:33] Starting git auto-sync...
+[2026-08-23 15:20:33] New commits detected. Pulling...
+From https://github.com/NikolayAntonyuk/kw-community-site
+ * branch            master     -> FETCH_HEAD
+Already up to date.
+[2026-08-23 15:20:33] Running tests...
+
+> kw-community-site@1.0.0 test
+> npm run test:unit && npm run test:e2e
+
+
+> kw-community-site@1.0.0 test:unit
+> vitest run tests/unit
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /home/mykola/kw-community-site
+
+ ✓ tests/unit/filters.test.js (12 tests) 9ms
+ ✓ tests/unit/data.test.js (4 tests) 8ms
+stdout | tests/unit/api.crud.test.js > API CRUD Operations via Supertest > Create a new specialist
+[CRUD] CREATE specialist with ID: mock-id { name: 'Test User', category: 'IT', status: 'approved' }
+[CRUD] ✅ Successfully created ID: mock-id
+
+stdout | tests/unit/api.crud.test.js > API CRUD Operations via Supertest > Update existing specialist
+[CRUD] UPDATE specialist ID: mock-id-456 { name: 'Test User Updated', updatedAt: 'serverTimestamp' }
+[CRUD] ✅ Successfully updated ID: mock-id-456
+
+ ✓ tests/unit/api.crud.test.js (2 tests) 306ms
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  15:20:34
+   Duration  701ms (transform 69ms, setup 0ms, collect 139ms, tests 323ms, environment 1ms, prepare 197ms)
+
+
+> kw-community-site@1.0.0 test:e2e
+> playwright test
+
+[WebServer] (node:2120274) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+[WebServer] (Use `node --trace-deprecation ...` to show where the warning was created)
+
+
+Running 77 tests using 4 workers
+
+[1/77] [chromium] › tests/e2e/admin.spec.ts:48:7 › Admin Panel E2E › should explain when Firebase Authentication is not enabled
+[2/77] [chromium] › tests/e2e/admin.spec.ts:17:7 › Admin Panel E2E › should show error on wrong password
+[3/77] [chromium] › tests/e2e/admin.spec.ts:4:7 › Admin Panel E2E › should load the admin login page
+[4/77] [chromium] › tests/e2e/admin.spec.ts:76:7 › Admin Panel E2E › should display live catalog edit modal and populate fields
+[5/77] [chromium] › tests/e2e/admin.spec.ts:124:7 › Admin Panel E2E › should show warning when rejecting application without valid email
+[6/77] [chromium] › tests/e2e/admin.spec.ts:175:7 › Admin Panel E2E › should require confirmation before approving application
+[7/77] [chromium] › tests/e2e/admin.spec.ts:220:7 › Admin Panel E2E › should require confirmation before deleting live application
+[8/77] [chromium] › tests/e2e/admin.spec.ts:266:7 › Admin Panel E2E › should cancel rejection when dismiss is clicked on prompt
+[9/77] [chromium] › tests/e2e/admin.spec.ts:286:7 › Admin Panel E2E › should display formatted dates on live catalog cards
+[10/77] [chromium] › tests/e2e/admin.spec.ts:306:7 › Admin Panel E2E › should delete live application when confirmation is accepted
+[11/77] [chromium] › tests/e2e/admin.spec.ts:348:7 › Admin Panel E2E › should approve application when confirmation is accepted
+  1) [chromium] › tests/e2e/admin.spec.ts:348:7 › Admin Panel E2E › should approve application when confirmation is accepted 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      378 |     });
+      379 |
+    > 380 |     expect(dialogAppeared).toBeTruthy();
+          |                            ^
+      381 |     
+      382 |     // Card should be removed after approval
+      383 |     const cardExists = await page.evaluate(() => !!document.getElementById('card-approve-accept'));
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:380:28
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-7a02d-en-confirmation-is-accepted-chromium/error-context.md
+
+
+  2) [chromium] › tests/e2e/admin.spec.ts:220:7 › Admin Panel E2E › should require confirmation before deleting live application 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      254 |     });
+      255 |
+    > 256 |     expect(dialogAppeared).toBeTruthy();
+          |                            ^
+      257 |     expect(dialogMessage).toContain('видалити цього спеціаліста');
+      258 |     
+      259 |     const cardExists = await page.evaluate(() => {
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:256:28
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-86fe3-e-deleting-live-application-chromium/error-context.md
+
+
+  3) [chromium] › tests/e2e/admin.spec.ts:306:7 › Admin Panel E2E › should delete live application when confirmation is accepted 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      336 |     });
+      337 |
+    > 338 |     expect(dialogAppeared).toBeTruthy();
+          |                            ^
+      339 |     
+      340 |     // Card should be hidden after successful deletion
+      341 |     const cardHidden = await page.evaluate(() => {
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:338:28
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-c507d-en-confirmation-is-accepted-chromium/error-context.md
+
+
+  4) [chromium] › tests/e2e/admin.spec.ts:175:7 › Admin Panel E2E › should require confirmation before approving application 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      211 |
+      212 |     // Check if card still exists (action was cancelled)
+    > 213 |     expect(dialogAppeared).toBeTruthy();
+          |                            ^
+      214 |     expect(dialogMessage).toContain('хочете підтвердити');
+      215 |     
+      216 |     const cardExists = await page.evaluate(() => !!document.getElementById('card-approve1'));
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:213:28
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-2a1ef-efore-approving-application-chromium/error-context.md
+
+
+[12/77] [chromium] › tests/e2e/admin.spec.ts:556:8 › Admin Panel E2E › should center edit modal and apply correct width on mobile screens
+[13/77] [chromium] › tests/e2e/admin.spec.ts:508:7 › Admin Panel E2E › should show card IDs and keep search input usable while filtering
+[14/77] [chromium] › tests/e2e/admin.spec.ts:387:7 › Admin Panel E2E › should require confirmation before saving edit and proceed on accept
+[15/77] [chromium] › tests/e2e/admin.spec.ts:457:7 › Admin Panel E2E › should paginate live catalog 50 per page with working prev/next buttons
+[16/77] [chromium] › tests/e2e/admin.spec.ts:603:7 › Admin Panel E2E › should switch between tabs (new apps, live catalog, rejected apps)
+[17/77] [chromium] › tests/e2e/admin.spec.ts:654:7 › Admin Panel E2E › should display separate content areas for new applications, archive, and live catalog
+[18/77] [chromium] › tests/e2e/admin.spec.ts:684:8 › Admin Panel E2E › should keep modal responsive on mobile viewport
+[19/77] [chromium] › tests/e2e/form-validation.spec.ts:10:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should prevent submission with empty form
+[20/77] [chromium] › tests/e2e/form-validation.spec.ts:17:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should prevent submission with only email filled
+[21/77] [chromium] › tests/e2e/form-validation.spec.ts:32:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject invalid email format
+[22/77] [chromium] › tests/e2e/form-validation.spec.ts:42:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept valid email formats
+[23/77] [chromium] › tests/e2e/form-validation.spec.ts:57:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject email with maxlength exceeded
+[24/77] [chromium] › tests/e2e/form-validation.spec.ts:67:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject name with less than 2 characters
+[25/77] [chromium] › tests/e2e/form-validation.spec.ts:75:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept name with exactly 2 characters
+[26/77] [chromium] › tests/e2e/form-validation.spec.ts:83:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept name with 100 characters (max)
+[27/77] [chromium] › tests/e2e/form-validation.spec.ts:92:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject name exceeding 100 characters
+[28/77] [chromium] › tests/e2e/form-validation.spec.ts:102:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should require subcategory (min 2 chars)
+[29/77] [chromium] › tests/e2e/form-validation.spec.ts:110:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept valid subcategory
+  5) [chromium] › tests/e2e/admin.spec.ts:387:7 › Admin Panel E2E › should require confirmation before saving edit and proceed on accept 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      446 |     });
+      447 |
+    > 448 |     expect(dialogAppeared).toBeTruthy();
+          |                            ^
+      449 |     
+      450 |     const modalHidden = await page.evaluate(() => !document.getElementById('form-section')?.classList.contains('active'));
+      451 |     expect(modalHidden).toBeTruthy();
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:448:28
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-ed4b7--edit-and-proceed-on-accept-chromium/error-context.md
+
+
+[30/77] [chromium] › tests/e2e/form-validation.spec.ts:127:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept description with exactly 5 chars
+[31/77] [chromium] › tests/e2e/form-validation.spec.ts:135:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept description with 200 chars (max)
+[32/77] [chromium] › tests/e2e/form-validation.spec.ts:145:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should require category selection
+[33/77] [chromium] › tests/e2e/form-validation.spec.ts:153:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should require location selection
+[34/77] [chromium] › tests/e2e/form-validation.spec.ts:119:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject description less than 5 chars
+[35/77] [chromium] › tests/e2e/form-validation.spec.ts:161:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept valid category selection
+[36/77] [chromium] › tests/e2e/form-validation.spec.ts:170:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept valid phone formats
+[37/77] [chromium] › tests/e2e/form-validation.spec.ts:186:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject phone with invalid characters (letters)
+[38/77] [chromium] › tests/e2e/form-validation.spec.ts:195:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject phone with SQL injection attempt
+[39/77] [chromium] › tests/e2e/form-validation.spec.ts:205:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept valid telegram formats
+[40/77] [chromium] › tests/e2e/form-validation.spec.ts:221:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject telegram with less than 5 chars
+[41/77] [chromium] › tests/e2e/form-validation.spec.ts:230:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject telegram with special SQL characters
+[42/77] [chromium] › tests/e2e/form-validation.spec.ts:240:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept valid URLs
+[43/77] [chromium] › tests/e2e/form-validation.spec.ts:249:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject invalid URL format
+[44/77] [chromium] › tests/e2e/form-validation.spec.ts:258:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should restrict URL fields to HTTP(S) only via type=url
+[45/77] [chromium] › tests/e2e/form-validation.spec.ts:267:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should have price pattern validation (no letters)
+[46/77] [chromium] › tests/e2e/form-validation.spec.ts:275:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject price with letters
+[47/77] [chromium] › tests/e2e/form-validation.spec.ts:284:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject price with SQL injection
+[48/77] [chromium] › tests/e2e/form-validation.spec.ts:294:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject form with no contacts provided
+[49/77] [chromium] › tests/e2e/form-validation.spec.ts:332:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept form with at least one contact (phone)
+[50/77] [chromium] › tests/e2e/form-validation.spec.ts:352:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept notes up to 1000 characters
+[51/77] [chromium] › tests/e2e/form-validation.spec.ts:361:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should prevent notes exceeding 1000 characters
+[52/77] [chromium] › tests/e2e/form-validation.spec.ts:370:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject notes with HTML injection
+[53/77] [chromium] › tests/e2e/form-validation.spec.ts:380:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept address with special characters
+[54/77] [chromium] › tests/e2e/form-validation.spec.ts:388:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject address exceeding 150 characters
+[55/77] [chromium] › tests/e2e/form-validation.spec.ts:398:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should trim whitespace from all text inputs
+[56/77] [chromium] › tests/e2e/form-validation.spec.ts:408:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should have proper labels for all form fields
+[57/77] [chromium] › tests/e2e/form-validation.spec.ts:417:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should have required attribute on mandatory fields
+[58/77] [chromium] › tests/e2e/form.spec.ts:13:7 › Form E2E - Boundary Values, Pairwise & Validation › Повинні бути присутні всі необхідні поля (UI перевірка)
+[59/77] [chromium] › tests/e2e/form.spec.ts:23:7 › Form E2E - Boundary Values, Pairwise & Validation › BVA: Неможливо відправити форму з пустими обов'язковими полями
+[60/77] [chromium] › tests/e2e/form.spec.ts:28:7 › Form E2E - Boundary Values, Pairwise & Validation › BVA & Boundary: Мінімальні та максимальні значення для імені та опису
+[61/77] [chromium] › tests/e2e/form.spec.ts:51:7 › Form E2E - Boundary Values, Pairwise & Validation › Pairwise & Equivalence Partitioning: Перевірка валідації контактів (хоча б один контакт)
+[62/77] [chromium] › tests/e2e/form.spec.ts:71:7 › Form E2E - Boundary Values, Pairwise & Validation › Pairwise & Equivalence Partitioning: Інші комбінації одного контакту
+[63/77] [chromium] › tests/e2e/form.spec.ts:95:7 › Form E2E - Boundary Values, Pairwise & Validation › Equivalence Partitioning: Невалідні формати контактів (Phone, Telegram, Price)
+[64/77] [chromium] › tests/e2e/form.spec.ts:123:7 › Form E2E - Boundary Values, Pairwise & Validation › Security & Boundary: Обмеження довжини (Maxlength HTML5 enforced)
+[65/77] [chromium] › tests/e2e/home.spec.ts:4:7 › Homepage & Navigation E2E › should load the homepage with correct title and content
+[66/77] [chromium] › tests/e2e/home.spec.ts:18:7 › Homepage & Navigation E2E › should navigate to the catalog page
+[67/77] [chromium] › tests/e2e/i18n.spec.ts:7:7 › Language toggle (UA / EN) › показує SVG-прапор, а не емоджі (емоджі не рендеряться на Windows)
+[68/77] [chromium] › tests/e2e/i18n.spec.ts:27:7 › Language toggle (UA / EN) › перемикає мову на EN і назад на UA
+[69/77] [chromium] › tests/e2e/i18n.spec.ts:45:7 › Language toggle (UA / EN) › запам'ятовує вибрану мову між сторінками
+[70/77] [chromium] › tests/e2e/i18n.spec.ts:55:7 › Language toggle (UA / EN) › заголовок школи має SVG-прапор України
+[71/77] [chromium] › tests/e2e/i18n.spec.ts:64:7 › Language toggle (UA / EN) › каталог динамічно перекладає елементи без перезавантаження
+[72/77] [chromium] › tests/e2e/site.spec.js:59:5 › завантажує дані та показує картки спеціалістів
+[73/77] [chromium] › tests/e2e/site.spec.js:82:5 › пошук фільтрує картки за іменем/описом/підкатегорією
+[74/77] [chromium] › tests/e2e/site.spec.js:92:5 › перемикання категорії оновлює набір підкатегорій і карток
+[75/77] [chromium] › tests/e2e/site.spec.js:120:5 › локація фільтрує за містом з адреси або типу локації
+[76/77] [chromium] › tests/e2e/site.spec.js:137:5 › каталог має загальну шапку з кнопкою 'Додати спеціаліста'
+[77/77] [chromium] › tests/e2e/site.spec.js:147:5 › показує іконку категорії та посилання на форму зворотного зв'язку в модалці
+  5 failed
+    [chromium] › tests/e2e/admin.spec.ts:175:7 › Admin Panel E2E › should require confirmation before approving application 
+    [chromium] › tests/e2e/admin.spec.ts:220:7 › Admin Panel E2E › should require confirmation before deleting live application 
+    [chromium] › tests/e2e/admin.spec.ts:306:7 › Admin Panel E2E › should delete live application when confirmation is accepted 
+    [chromium] › tests/e2e/admin.spec.ts:348:7 › Admin Panel E2E › should approve application when confirmation is accepted 
+    [chromium] › tests/e2e/admin.spec.ts:387:7 › Admin Panel E2E › should require confirmation before saving edit and proceed on accept 
+  2 skipped
+  70 passed (15.5s)
+[2026-08-23 15:20:51] ❌ Tests failed! Reverting...
+HEAD is now at 593dfb2 feat: add auto-sync and module exports for tests
+[2026-08-23 15:20:51] ❌ Reverted to previous commit
+[2026-08-23 15:20:51] Git auto-sync completed
