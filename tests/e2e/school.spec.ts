@@ -4,14 +4,14 @@ test.describe('Ukrainian School Page', () => {
 
   test('should display school navigation link in the header', async ({ page }) => {
     await page.goto('/');
-    const headerSchoolLink = page.locator('header a[href="school.html"]');
-    await expect(headerSchoolLink).toBeVisible();
-    await expect(headerSchoolLink).toHaveText(/школа/i);
+    const navSchoolLink = page.locator('nav a[href="school.html"]');
+    await expect(navSchoolLink).toBeVisible();
+    await expect(navSchoolLink).toHaveText(/школа/i);
   });
 
   test('should display "Details" link in info section on home page', async ({ page }) => {
     await page.goto('/');
-    const infoSchoolLink = page.locator('.info-section a[href="school.html"]');
+    const infoSchoolLink = page.locator('.school a[href="school.html"]');
     await expect(infoSchoolLink).toBeVisible();
   });
 
@@ -24,9 +24,9 @@ test.describe('Ukrainian School Page', () => {
 
   test('should display sections for junior children, teens, and parents', async ({ page }) => {
     await page.goto('/school.html');
-    await expect(page.locator('text=Для молодших дітей')).toBeVisible();
-    await expect(page.locator('text=Для підлітків')).toBeVisible();
-    await expect(page.locator('text=Для батьків')).toBeVisible();
+    await expect(page.locator('h2', { hasText: 'Для молодших дітей' })).toBeVisible();
+    await expect(page.locator('h2', { hasText: 'Для підлітків' })).toBeVisible();
+    await expect(page.locator('h2', { hasText: 'Для батьків' })).toBeVisible();
   });
 
   test('should contain correct registration and contact links', async ({ page }) => {
