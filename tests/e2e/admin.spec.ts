@@ -636,8 +636,11 @@ test.describe('Admin Panel E2E', () => {
     await expect(newAppsContent).not.toHaveClass(/active/);
 
     // Click "Архів" tab (third tab, index 2)
-    const archiveTab = page.locator('.admin-tab').nth(2);
+    const archiveTab = page.locator('.admin-tab').nth(3); // Changed from 2 to 3
     await archiveTab.click();
+
+    // Wait a moment for rendering
+    await page.waitForTimeout(300);
 
     // Archive should become active
     await expect(archiveTab).toHaveClass(/active/);
@@ -653,34 +656,37 @@ test.describe('Admin Panel E2E', () => {
     await expect(newAppsContent).toHaveClass(/active/);
   });
 
-  test('should display separate content areas for new applications, archive, and live catalog', async ({ page }) => {
+  // -------------------------------------------------------------
+  // Verify UI Layout
+  // -------------------------------------------------------------
+  test('should display separate content areas for new applications, archive, feedback, and live catalog', async ({ page }) => {
     await page.goto('/admin.html');
 
-    // Wait for admin.js to load and inject modal
-    await page.waitForFunction(() => typeof window.editApp === 'function');
-
+    // Wait for admin.js to load
+    await page.waitForFunction(() => typeof window.goToPage === 'function');
+    
     // Show dashboard
     await page.evaluate(() => {
       document.getElementById('dashboard-section')!.style.display = 'block'; const style = document.createElement('style'); style.innerHTML = '#dashboard-section { display: block !important; }'; document.head.appendChild(style);
     });
 
-    // Wait for tabs to render
     await page.waitForSelector('.admin-tab');
 
-    // Verify all three tab sections exist and have correct IDs
-    expect(await page.locator('#new-apps').count()).toBeGreaterThan(0);
-    expect(await page.locator('#live-catalog').count()).toBeGreaterThan(0);
-    expect(await page.locator('#rejected-apps').count()).toBeGreaterThan(0);
-
-    // Verify all three tabs are clickable
+    // Verify tabs exist
     const tabs = page.locator('.admin-tab');
     const tabCount = await tabs.count();
-    expect(tabCount).toBe(3);
+    expect(tabCount).toBe(4); // Changed from 3 to 4
 
     // Verify tab labels
     await expect(tabs.nth(0)).toContainText('Нові заявки');
     await expect(tabs.nth(1)).toContainText('Живий каталог');
-    await expect(tabs.nth(2)).toContainText('Архів');
+    await expect(tabs.nth(2)).toContainText('Звіти про помилки'); // Added
+    await expect(tabs.nth(3)).toContainText('Архів'); // Changed from 2 to 3
+
+    // Verify content sections exist
+    const contentSections = page.locator('.tab-content');
+    const sectionCount = await contentSections.count();
+    expect(sectionCount).toBe(5); // new-apps, live-catalog, feedback-section, rejected-apps, form-section (form-section is also a tab-content)
   });
 
   test.skip('should keep modal responsive on mobile viewport', async ({ page }) => {
