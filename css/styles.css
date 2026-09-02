@@ -448,6 +448,7 @@ main {
   .nav-actions {
     justify-content: center;
     width: 100%;
+    flex-wrap: wrap;
   }
   .admin-tabs {
     flex-direction: column;
