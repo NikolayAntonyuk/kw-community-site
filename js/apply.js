@@ -1,7 +1,7 @@
 import { db } from "./firebase.js";
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const ADMIN_EMAILS = "mykola.antoniyk@gmail.com";
+const ADMIN_EMAILS = "mykola.antoniyk@gmail.com, tetyana.chuchkevych@gmail.com";
 const form = document.getElementById("apply-form");
 const submitBtn = document.getElementById("submit-btn");
 const formMessage = document.getElementById("form-message");

@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const EMAILJS_SERVICE_ID = "service_e521b5c";
         const EMAILJS_TEMPLATE_ID = "template_kvwa447";
         const EMAILJS_PUBLIC_KEY = "064MymkRcVYVYhuJE";
-        const ADMIN_EMAILS = "mykola.antoniyk@gmail.com";
+        const ADMIN_EMAILS = "mykola.antoniyk@gmail.com, tetyana.chuchkevych@gmail.com";
 
         if (window.emailjs) {
           emailjs.init(EMAILJS_PUBLIC_KEY);
