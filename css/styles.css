@@ -39,6 +39,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .brand {
@@ -437,6 +439,8 @@ main {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 @media (max-width: 600px) {
   .top-nav {
