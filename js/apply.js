@@ -60,15 +60,27 @@ form.addEventListener("submit", async (e) => {
 
       if (window.emailjs) {
         emailjs.init(EMAILJS_PUBLIC_KEY);
-          const adminUrl = "https://nikolayantonyuk.github.io/kw-community-site/admin.html#edit-pending-" + docRef.id;
-          const msgHTML = `<b>Опис:</b><br>${specialistData.description || "Без додаткового опису"}<br><br>👉 <a href="${adminUrl}">Переглянути та модерувати заявку</a>`;
+        const currentHost = window.location.origin;
+        const adminUrl = `${currentHost}/admin.html?id=${docRef.id}`;
+        const catalogUrl = `${currentHost}/catalog.html`;
+        const msgHTML = `
+          <h3>Нова заявка від ${specialistData.name}</h3>
+          <p><strong>Категорія:</strong> ${specialistData.category}</p>
+          <p><strong>Підкатегорія:</strong> ${specialistData.subcategory}</p>
+          <p><strong>Опис:</strong> ${specialistData.description || "Без додаткового опису"}</p>
+          <hr>
+          <p>
+            👉 <a href="${adminUrl}">Редагувати заявку в адмінці</a><br>
+            <a href="${catalogUrl}">Переглянути каталог</a>
+          </p>`;
 
-          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-            to_email: ADMIN_EMAILS,
-            from_name: specialistData.name,
-            category: specialistData.category,
-            message: msgHTML,
-            admin_link: adminUrl
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          to_email: ADMIN_EMAILS,
+          from_name: specialistData.name,
+          category: specialistData.category,
+          message: msgHTML,
+          admin_link: adminUrl,
+          spec_id: docRef.id
         });
       } else {
         console.warn("EmailJS Template ID для нових заявок не встановлено. Лист адміну не відправлено.");

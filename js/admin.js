@@ -13,6 +13,75 @@ window.showAdminAlert = function(htmlMsg) {
   m.removeAttribute("hidden");
 };
 
+window.openInaccuracyReport = function(specId, specName) {
+  let modal = document.getElementById("inaccuracy-modal");
+  if (!modal) {
+    const html = `<div id="inaccuracy-modal" hidden style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:2000;">
+      <div style="background:white;padding:2rem;border-radius:8px;max-width:500px;width:90%;">
+        <h2>⚠️ Звіт про неточність</h2>
+        <p><strong>Спеціаліст:</strong> <span id="report-spec-name">${specName}</span> (ID: <span id="report-spec-id">${specId}</span>)</p>
+        <div style="margin:1.5rem 0;">
+          <label style="display:block;margin-bottom:0.5rem;">Ваше ім'я:</label>
+          <input type="text" id="report-sender-name" placeholder="Ім'я" style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;">
+        </div>
+        <div style="margin:1.5rem 0;">
+          <label style="display:block;margin-bottom:0.5rem;">Контакт (email/telegram):</label>
+          <input type="text" id="report-contact" placeholder="ваш@email.com" style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;">
+        </div>
+        <div style="margin:1.5rem 0;">
+          <label style="display:block;margin-bottom:0.5rem;">Що саме неточно:</label>
+          <textarea id="report-message" placeholder="Опишіть неточність..." style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;min-height:100px;"></textarea>
+        </div>
+        <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+          <button class="btn btn-approve" style="flex:1;" onclick="window.submitInaccuracyReport('${specId}')">Відправити</button>
+          <button class="btn" style="flex:1;background:#ccc;color:#000;" onclick="document.getElementById('inaccuracy-modal').setAttribute('hidden', '')">Скасувати</button>
+        </div>
+      </div>
+    </div>`;
+    document.body.insertAdjacentHTML("beforeend", html);
+    modal = document.getElementById("inaccuracy-modal");
+  }
+  document.getElementById("report-spec-id").textContent = specId;
+  document.getElementById("report-spec-name").textContent = specName;
+  document.getElementById("report-sender-name").value = "";
+  document.getElementById("report-contact").value = "";
+  document.getElementById("report-message").value = "";
+  modal.removeAttribute("hidden");
+};
+
+window.submitInaccuracyReport = async function(specId) {
+  const senderName = document.getElementById("report-sender-name").value.trim();
+  const contact = document.getElementById("report-contact").value.trim();
+  const message = document.getElementById("report-message").value.trim();
+
+  if (!senderName || !contact || !message) {
+    showAdminAlert("Будь ласка, заповніть усі поля.");
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        specialistId: specId,
+        senderName: senderName,
+        contactInfo: contact,
+        message: message,
+        status: 'new',
+        createdAt: new Date().toISOString()
+      })
+    });
+
+    if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+    document.getElementById("inaccuracy-modal").setAttribute("hidden", "");
+    showAdminAlert("✅ Звіт успішно відправлено! Дякуємо за допомогу.");
+  } catch (error) {
+    showAdminAlert("Помилка при відправленні звіту: " + error.message);
+  }
+};
+
 const authSection = document.getElementById("auth-section");
 const dashboardSection = document.getElementById("dashboard-section");
 const loginForm = document.getElementById("login-form");
@@ -599,6 +668,7 @@ function renderLiveCatalog() {
         <p><strong>Вебсайт:</strong> <span id="live-display-web-${itemId}">${item.website || '—'}</span></p>
         <div class="application-actions">
           <button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${itemId}', true)">Редагувати</button>
+          <button class="btn" style="background:#ff6b35;" onclick="window.openInaccuracyReport('${itemId}', '${item.name || ''}')">⚠️ Звіт</button>
           <button class="btn btn-reject" onclick="window.deleteLiveApp('${itemId}')">Видалити</button>
         </div>
         <p class="card-admin-dates">ID: ${itemId} | Створено: ${createdStr} | Відредаговано: ${updatedStr}</p>

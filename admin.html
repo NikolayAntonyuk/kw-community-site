@@ -219,5 +219,26 @@
   </script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script type="module" src="js/admin.js"></script>
+  <script>
+    // Auto-load specialist for editing if ?id=<spec-id> is in URL
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const specId = params.get('id');
+      if (specId) {
+        // Wait for dashboard to load, then auto-open edit form
+        const checkInterval = setInterval(() => {
+          if (typeof window.editApp === 'function') {
+            clearInterval(checkInterval);
+            // Switch to live-catalog tab & open edit form
+            setTimeout(() => {
+              const liveTab = document.querySelector('#tab-live-catalog');
+              if (liveTab) liveTab.click();
+              setTimeout(() => window.editApp(specId, true), 300);
+            }, 500);
+          }
+        }, 100);
+      }
+    })();
+  </script>
 </body>
 </html>

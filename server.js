@@ -172,7 +172,30 @@ app.patch('/api/admin/restore/:id', async (req, res) => {
   }
 });
 
-// 9. SYNC to JSON
+// 9. FEEDBACK (Inaccuracy Reports)
+app.post('/api/feedback', async (req, res) => {
+  try {
+    const { specialistId, senderName, contactInfo, message, status } = req.body;
+    const timestamp = FieldValue.serverTimestamp();
+
+    const docRef = await db.collection('feedback').add({
+      specialistId: specialistId || null,
+      senderName: senderName || 'Anonymous',
+      contactInfo: contactInfo || '',
+      message: message || '',
+      status: status || 'new',
+      createdAt: timestamp
+    });
+
+    console.log(`[FEEDBACK] Created report ${docRef.id} for specialist ${specialistId}`);
+    res.json({ success: true, id: docRef.id, message: 'Звіт успішно відправлено' });
+  } catch (err) {
+    console.error(`[FEEDBACK] Error:`, err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 10. SYNC to JSON
 app.post('/api/sync', async (req, res) => {
   try {
     const approvedSnapshot = await db.collection('pending_specialists')
