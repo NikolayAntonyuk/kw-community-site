@@ -54,11 +54,38 @@ test.describe('Homepage & Navigation E2E', () => {
     // We want to guarantee that the video is the correct 7.9MB drone view, not a tiny stub/rabbit
     const response = await request.get('/assets/hero.mp4');
     expect(response.ok()).toBeTruthy();
-    
+
     const buffer = await response.body();
     const sizeInMB = buffer.length / (1024 * 1024);
-    
+
     // The correct drone video is > 5MB. This guarantees we didn't fallback to a small stub.
     expect(sizeInMB).toBeGreaterThan(5);
+  });
+
+  test('hero video should load without network errors', async ({ page }) => {
+    // Listen for any console errors
+    const consoleErrors = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        consoleErrors.push(msg.text());
+      }
+    });
+
+    await page.goto('/');
+
+    // Wait for video to be loaded
+    const video = page.locator('video.hero-video');
+    await expect(video).toBeVisible();
+
+    // Check that video has actually started loading or is ready
+    const videoElement = await video.elementHandle();
+    const readyState = await videoElement?.evaluate((el: HTMLVideoElement) => el.readyState);
+
+    // readyState >= 2 means at least metadata is loaded
+    expect(readyState).toBeGreaterThanOrEqual(2);
+
+    // Ensure no console errors related to video
+    const videoErrors = consoleErrors.filter(e => e.toLowerCase().includes('video') || e.toLowerCase().includes('media'));
+    expect(videoErrors).toHaveLength(0);
   });
 });
