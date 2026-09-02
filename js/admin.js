@@ -202,39 +202,58 @@ window.editApp = async (id, isLive = false) => {
   document.getElementById('edit-id').value = id;
   document.getElementById('edit-islive').value = isLive ? "true" : "false";
   
+  let name="", desc="", cat="", subcat="", loc="", address="", phone="", tg="", inst="", fb="", web="", price="", notes="";
+
   let prefix = isLive ? 'live-' : '';
-  document.getElementById('edit-name').value = document.getElementById(`${prefix}display-name-${id}`).innerText;
-  document.getElementById('edit-desc').value = document.getElementById(`${prefix}display-desc-${id}`).innerText;
-
-  const catText = document.getElementById(`${prefix}display-cat-${id}`).innerText.split(" > ");
-  document.getElementById('edit-category').value = (catText[0] || '').trim();
-  document.getElementById('edit-subcategory').value = (catText[1] || '').trim();
+  const nameEl = document.getElementById(`${prefix}display-name-${id}`);
   
-  const loc = document.getElementById(`${prefix}display-loc-${id}`).innerText;
+  if (nameEl) {
+    name = nameEl.innerText;
+    desc = document.getElementById(`${prefix}display-desc-${id}`).innerText;
+    const catText = document.getElementById(`${prefix}display-cat-${id}`).innerText.split(" > ");
+    cat = (catText[0] || '').trim();
+    subcat = (catText[1] || '').trim();
+    loc = document.getElementById(`${prefix}display-loc-${id}`).innerText;
+    address = document.getElementById(`${prefix}display-address-${id}`).innerText;
+    phone = document.getElementById(`${prefix}display-phone-${id}`).innerText;
+    tg = document.getElementById(`${prefix}display-tg-${id}`).innerText;
+    inst = document.getElementById(`${prefix}display-inst-${id}`).innerText;
+    fb = document.getElementById(`${prefix}display-fb-${id}`).innerText;
+    web = document.getElementById(`${prefix}display-web-${id}`).innerText;
+    price = document.getElementById(`${prefix}display-price-${id}`).innerText;
+    notes = document.getElementById(`${prefix}display-notes-${id}`).innerText;
+  } else if (isLive && typeof liveCatalogData !== 'undefined') {
+    const item = liveCatalogData.find(i => i.id === id);
+    if (item) {
+      name = item.name || '';
+      desc = item.description || '';
+      cat = item.category || '';
+      subcat = item.subcategory || '';
+      loc = item.locationType || '';
+      address = item.address || '';
+      phone = item.phone || '';
+      tg = item.telegram || '';
+      inst = item.instagram || '';
+      fb = item.facebook || '';
+      web = item.website || '';
+      price = item.price || '';
+      notes = item.notes || '';
+    }
+  }
+
+  document.getElementById('edit-name').value = name;
+  document.getElementById('edit-desc').value = desc;
+  document.getElementById('edit-category').value = cat;
+  document.getElementById('edit-subcategory').value = subcat;
+  
   document.getElementById('edit-loc').value = loc === '—' ? '' : loc;
-
-  const address = document.getElementById(`${prefix}display-address-${id}`).innerText;
   document.getElementById('edit-address').value = address === '—' ? '' : address;
-
-  const phone = document.getElementById(`${prefix}display-phone-${id}`).innerText;
   document.getElementById('edit-phone').value = phone === '—' ? '' : phone;
-
-  const tg = document.getElementById(`${prefix}display-tg-${id}`).innerText;
   document.getElementById('edit-tg').value = tg === '—' ? '' : tg;
-  
-  const inst = document.getElementById(`${prefix}display-inst-${id}`).innerText;
   document.getElementById('edit-inst').value = inst === '—' ? '' : inst;
-  
-  const fb = document.getElementById(`${prefix}display-fb-${id}`).innerText;
   document.getElementById('edit-fb').value = fb === '—' ? '' : fb;
-  
-  const web = document.getElementById(`${prefix}display-web-${id}`).innerText;
   document.getElementById('edit-web').value = web === '—' ? '' : web;
-
-  const price = document.getElementById(`${prefix}display-price-${id}`).innerText;
   document.getElementById('edit-price').value = price === '—' ? '' : price;
-
-  const notes = document.getElementById(`${prefix}display-notes-${id}`).innerText;
   document.getElementById('edit-notes').value = notes === '—' ? '' : notes;
   
   // Navigate to form section, hide tabs
@@ -646,15 +665,82 @@ window.restoreApp = async (id) => {
   }
 };
 
-// Hook into loadApplications so it loads both
+// --- Feedback / Reports Fetcher ---
+async function loadFeedback() {
+  const fbList = document.getElementById("feedback-list");
+  if (!fbList) return;
+  fbList.innerHTML = "Завантаження...";
+  
+  // load "new" feedback
+  const q = query(collection(db, "feedback"), where("status", "==", "new"));
+  try {
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+      fbList.innerHTML = "<p>Немає нових звітів про помилки.</p>";
+      return;
+    }
+    
+    let html = "";
+    querySnapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const createdStr = data.createdAt && typeof data.createdAt.toDate === 'function' ? data.createdAt.toDate().toLocaleDateString("uk-UA", {hour:'2-digit', minute:'2-digit'}) : 'Невідомо';
+      
+      const specIdText = data.specialistId ? `ID: ${data.specialistId}` : "Загальний звіт";
+      const editButton = data.specialistId ? `<button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${data.specialistId}', true)">Редагувати картку</button>` : '';
+
+      html += `
+        <div class="application-card" id="fb-card-${docSnap.id}" style="background: #fff8e1; border-color: #ffeeba;">
+          <h3 style="margin-bottom: 0.5rem;"><span style="color:#856404;">⚠️ Звіт про неточність</span> <small>(${specIdText})</small></h3>
+          <p><strong>Від кого:</strong> ${data.senderName || '—'} (Контакт: ${data.contactInfo || '—'})</p>
+          <p><strong>Повідомлення:</strong> <span style="background: white; padding: 5px; display: block; border: 1px solid #ddd; margin-top: 5px;">${data.message || '—'}</span></p>
+          <div class="application-actions" style="margin-top: 1rem;">
+            ${editButton}
+            <button class="btn btn-approve" style="background: #28a745;" onclick="window.resolveFeedback('${docSnap.id}')">Позначити як вирішене</button>
+          </div>
+          <p class="card-admin-dates" style="margin-top: 0.5rem;">Відправлено: ${createdStr}</p>
+        </div>
+      `;
+    });
+    fbList.innerHTML = html;
+  } catch (error) {
+    console.error("Помилка завантаження відгуків: ", error);
+    fbList.innerHTML = "<p style='color:red;'>Помилка завантаження. Перевірте консоль.</p>";
+  }
+}
+
+window.resolveFeedback = async (id) => {
+  if (!confirm("Закрити цей звіт?")) return;
+  try {
+    await updateDoc(doc(db, "feedback", id), {
+      status: "resolved",
+      resolvedAt: serverTimestamp()
+    });
+    document.getElementById(`fb-card-${id}`).remove();
+    showAdminAlert("Звіт позначено як вирішений!");
+  } catch (error) {
+    showAdminAlert("Помилка: " + error.message);
+  }
+};
+
 const originalLoad = loadApplications;
 loadApplications = async () => {
   await originalLoad();
   await loadLiveCatalog();
   await loadRejectedApplications();
+  await loadFeedback();
+
+  if (window.location.hash.startsWith('#edit-live-')) {
+    const editId = window.location.hash.replace('#edit-live-', '');
+    setTimeout(() => {
+      window.editApp(editId, true);
+    }, 500);
+  } else if (window.location.hash.startsWith('#edit-pending-')) {
+    const editId = window.location.hash.replace('#edit-pending-', '');
+    setTimeout(() => {
+      window.editApp(editId, false);
+    }, 500);
+  }
 };
-
-
 
 window.triggerSync = async () => {
   showAdminAlert("Запускаємо синхронізацію з локальною базою... ⏳");

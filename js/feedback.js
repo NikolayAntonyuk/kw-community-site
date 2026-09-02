@@ -42,15 +42,13 @@ document.addEventListener("DOMContentLoaded", () => {
           
           const baseURL = window.location.origin + window.location.pathname.replace(/\/feedback\.html$/, '');
           const catalogLink = form.specialistId.value ? `${baseURL}/catalog.html?id=${form.specialistId.value}` : 'Не вказано (загальне)';
-          const adminLink = `${baseURL}/admin.html`;
+          const adminLink = form.specialistId.value ? `${baseURL}/admin.html#edit-live-${form.specialistId.value}` : `${baseURL}/admin.html`;
           
-          const fullMessage = `Контакт: ${form.contactInfo.value}
-
-Повідомлення:
-${form.message.value}
-
-🔗 Картка в каталозі: ${catalogLink}
-⚙️ Адмінка: ${adminLink}`;
+          const fullMessage = `<b>Контакт:</b> ${form.contactInfo.value}<br><br>
+<b>Повідомлення:</b><br>
+${form.message.value}<br><br>
+🔗 <a href="${catalogLink}">Переглянути в каталозі</a><br>
+⚙️ <a href="${adminLink}">Відкрити для редагування в адмінці</a>`;
 
           await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
             to_email: ADMIN_EMAILS,

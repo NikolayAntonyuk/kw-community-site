@@ -60,12 +60,15 @@ form.addEventListener("submit", async (e) => {
 
       if (window.emailjs) {
         emailjs.init(EMAILJS_PUBLIC_KEY);
-        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-          to_email: ADMIN_EMAILS,
-          from_name: specialistData.name,
-          category: specialistData.category,
-          message: specialistData.description || "Без додаткового опису",
-          admin_link: "https://nikolayantonyuk.github.io/kw-community-site/admin.html#card-" + docRef.id
+          const adminUrl = "https://nikolayantonyuk.github.io/kw-community-site/admin.html#edit-pending-" + docRef.id;
+          const msgHTML = `<b>Опис:</b><br>${specialistData.description || "Без додаткового опису"}<br><br>👉 <a href="${adminUrl}">Переглянути та модерувати заявку</a>`;
+
+          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            to_email: ADMIN_EMAILS,
+            from_name: specialistData.name,
+            category: specialistData.category,
+            message: msgHTML,
+            admin_link: adminUrl
         });
       } else {
         console.warn("EmailJS Template ID для нових заявок не встановлено. Лист адміну не відправлено.");
