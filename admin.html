@@ -88,20 +88,21 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
-  <nav class="top-nav" style="background: var(--color-surface); padding: 1rem; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; z-index: 100;">
-    <a href="index.html" class="brand" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; color: var(--color-text); font-weight: 600; min-width: 200px;">
-      <span class="brand-mark" aria-hidden="true" style="width: 24px; height: 24px; background: var(--color-primary); border-radius: 4px;"></span>
-      <h1 style="font-size: 1.25rem; margin: 0; font-weight: 600;">Адмін-панель</h1>
+  <nav class="top-nav">
+    <a href="index.html" class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span data-i18n="nav_brand">Разом KW</span>
     </a>
-    <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; flex: 1; justify-content: flex-end;">
-
-      <a href="index.html" style="text-decoration: none; color: #0056b3; margin-left: 0.5rem;">Головна</a>
-      <a href="catalog.html" style="text-decoration: none; color: #0056b3; font-weight: bold; margin-left: 0.5rem;">Каталог →</a>
-      <button id="logout-btn" class="btn" style="flex: 0 0 auto; padding: 0.4rem 0.8rem; font-size: 0.85rem; background: #dc3545; display: none; margin-left: 0.5rem;">Вийти</button>
+    <div class="nav-actions">
+      <a href="index.html" class="nav-link">Головна</a>
+      <a href="catalog.html" class="nav-link" data-i18n="nav_catalog">Каталог</a>
+      <a href="school.html" class="nav-link" data-i18n="nav_school">Школа</a>
+      <button id="logout-btn" class="nav-cta" style="background: #dc3545; display: none; cursor: pointer; border: none; font-family: inherit; font-size: inherit;">Вийти</button>
     </div>
   </nav>
 
   <main class="admin-container">
+    <h1 style="text-align: center; margin-bottom: 2rem;">Адмін-панель</h1>
     <div id="auth-section" class="auth-section">
       <h2>Вхід для адміністраторів</h2>
       <form id="login-form">

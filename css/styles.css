@@ -464,3 +464,17 @@ main {
   }
 }
 .application-card { word-break: break-word; overflow-wrap: break-word; }
+
+.nav-link {
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  transition: color 0.2s ease;
+  font-family: var(--font-body);
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: var(--color-brick);
+}
