@@ -2,7 +2,7 @@
   {
     "category": "Beauty",
     "subcategory": "Перукар/Барбер",
-    "name": "Tanya",
+    "name": "Tanya UPDATED",
     "description": "Перукар",
     "locationType": "Kitchener",
     "address": "Kitchener, 90 Spadina road East",
@@ -12,10 +12,11 @@
     "facebook": "",
     "website": "",
     "price": "",
-    "notes": "",
-    "id": 1,
+    "notes": "Updated from script",
+    "id": "1",
     "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-08-13T12:00:00.000Z"
+    "updatedAt": "2026-09-04T21:26:38.899Z",
+    "status": "approved"
   },
   {
     "category": "Beauty",
@@ -1412,14 +1413,15 @@
     "address": "",
     "phone": "",
     "telegram": "",
-    "instagram": "https://www.google.com/url?q=https://www.instagram.com/katrin_baron?igsh%3Dem8zenlpN2xqMjU3%26utm_source%3Dqr&sa=D&source=editors&ust=1723779148985917&usg=AOvVaw04fUUQorN0Pk4Zx_QRjTl3",
+    "instagram": "https://whttps://www.instagram.com/katrin_baron",
     "facebook": "",
     "website": "",
     "price": "50-150$",
     "notes": "",
-    "id": 86,
+    "id": "86",
     "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-08-13T12:00:00.000Z"
+    "updatedAt": "2026-09-04T21:18:22.567Z",
+    "status": "approved"
   },
   {
     "category": "Лікарі/ветеринари",
@@ -1512,24 +1514,6 @@
     "updatedAt": "2026-08-13T12:00:00.000Z"
   },
   {
-    "category": "Legal and bookkeeping",
-    "subcategory": "Бухгалтер/Податки",
-    "name": "Анна Педченко",
-    "description": "Bookkeeping for small businesses/self employed, T1 Tax Returns. \"Я надаю професійні послуги з бухгалтерського обліку (bookkeeping) для малого бізнесу та самозайнятих осіб у Канаді. Допомагаю вести фінансову документацію, організовано обліковувати доходи й витрати, а також готувати звітність згідно з чинними податковими вимогами.\nОкрім цього, пропоную послуги з підготовки та подачі особистих податкових декларацій T1, включно з податковими кредитами, відрахуваннями, доходами від самозайнятості та іншими джерелами прибутку.\"",
-    "locationType": "По всьому Waterloo регіону",
-    "address": "",
-    "phone": "5197224783",
-    "telegram": "",
-    "instagram": "https://www.instagram.com/anna__pedchenko?igsh=ejZhdHBhbzR4c3l3&utm_source=qr",
-    "facebook": "",
-    "website": "",
-    "price": "",
-    "notes": "",
-    "id": 94,
-    "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-08-13T12:00:00.000Z"
-  },
-  {
     "category": "IT",
     "subcategory": "Інше",
     "name": "Валерій",
@@ -1583,4 +1567,3 @@
     "updatedAt": "2026-08-20T17:53:36.486Z"
   }
 ]
-

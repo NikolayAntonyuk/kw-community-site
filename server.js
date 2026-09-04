@@ -195,6 +195,21 @@ app.post('/api/feedback', async (req, res) => {
   }
 });
 
+// 9.1 RESOLVE FEEDBACK
+app.patch('/api/feedback/:id/resolve', async (req, res) => {
+  try {
+    await db.collection('feedback').doc(req.params.id).update({
+      status: 'resolved',
+      resolvedAt: FieldValue.serverTimestamp()
+    });
+    console.log(`[FEEDBACK] Resolved report ${req.params.id}`);
+    res.json({ success: true, message: 'Звіт позначено як вирішений' });
+  } catch (err) {
+    console.error(`[FEEDBACK] Error resolving:`, err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // 10. SYNC to JSON
 app.post('/api/sync', async (req, res) => {
   try {
@@ -250,6 +265,18 @@ app.post('/api/sync', async (req, res) => {
     deletes.forEach(dId => {
       staticData = staticData.filter(s => String(s.id) !== String(dId));
     });
+
+    // Унікальність ID (видаляємо дублікати, залишаючи останній оновлений варіант)
+    const seen = new Set();
+    const finalData = [];
+    for (let i = staticData.length - 1; i >= 0; i--) {
+      const sId = String(staticData[i].id);
+      if (!seen.has(sId)) {
+        seen.add(sId);
+        finalData.unshift(staticData[i]);
+      }
+    }
+    staticData = finalData;
 
     fs.writeFileSync(specialistsPath, JSON.stringify(staticData, null, 2));
     await batch.commit();
