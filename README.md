@@ -86,8 +86,8 @@ npm run test:e2e  # playwright, tests/e2e
 `js/i18n.js` тримає словник UA/EN і підміняє вміст елементів з атрибутом `data-i18n`.
 Мова за замовчуванням — українська, вибір зберігається в `localStorage`.
 
-Прапори — **SVG-файли** (`assets/flags/ua.svg`, `assets/flags/us.svg`), а не емоджі:
-емоджі-прапори (🇺🇦/🇺🇸) не рендеряться на Windows і показуються як літери «UA»/«US».
+Прапори — **SVG-файли** (`assets/flags/ua.svg`, `assets/flags/ca.svg`), а не емоджі:
+емоджі-прапори (🇺🇦/🇨🇦) не рендеряться на Windows і показуються як літери «UA»/«CA».
 
 ## Деплой на GitHub Pages
 

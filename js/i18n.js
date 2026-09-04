@@ -72,7 +72,7 @@ window.dictionary = {
     "apply_success": "Ваша заявка успішно відправлена та очікує на модерацію!",
     "apply_error": "Сталася помилка при відправленні. Спробуйте пізніше.",
     "nav_catalog_back": "← Назад до каталогу",
-    "lang_toggle": "<img src=\"assets/flags/us.svg\" alt=\"English\" width=\"24\" height=\"16\">"
+    "lang_toggle": "<img src=\"assets/flags/ca.svg\" alt=\"English\" width=\"24\" height=\"16\">"
   },
   en: {
     "nav_brand": "Razom KW",
