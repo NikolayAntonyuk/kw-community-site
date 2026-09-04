@@ -48,6 +48,18 @@
         "Sync",
         "Security"
       ]
+    },
+    {
+      "name": "Ukrainian School",
+      "description": "Тестування сторінки української школи та локалізації",
+      "checklist_file": "docs/testing/checklist-school.md",
+      "priority": "high",
+      "modules": [
+        "Navigation",
+        "Content & Links",
+        "Localization (UA/EN)",
+        "Mobile Responsiveness"
+      ]
     }
   ],
   "environments": [

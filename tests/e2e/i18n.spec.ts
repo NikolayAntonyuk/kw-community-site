@@ -77,4 +77,36 @@ test.describe('Language toggle (UA / EN)', () => {
     await expect(page.locator('#search-input')).toHaveAttribute('placeholder', 'Search by name, description, or subcategory...');
     await expect(page.locator('#status')).toContainText('Found');
   });
+
+  test('перекладає сторінку школи (school.html) на EN і назад на UA', async ({ page }) => {
+    await page.goto('/school.html');
+
+    // Початковий український текст
+    await expect(page).toHaveTitle(/Українська школа Ватерлу/);
+    await expect(page.locator('h1')).toContainText('Українська школа в регіоні Ватерлу');
+    await expect(page.locator('h2', { hasText: 'Для молодших дітей' })).toBeVisible();
+    await expect(page.locator('h2', { hasText: 'Для підлітків' })).toBeVisible();
+    await expect(page.locator('h2', { hasText: 'Для батьків' })).toBeVisible();
+
+    // Перемикаємо на англійську
+    const toggle = page.locator('#lang-toggle');
+    await toggle.click();
+
+    // Перевіряємо англійський переклад
+    await expect(page).toHaveTitle(/Ukrainian School Waterloo/);
+    await expect(page.locator('h1')).toContainText('Ukrainian School in Waterloo Region');
+    await expect(page.locator('h2', { hasText: 'For Younger Children' })).toBeVisible();
+    await expect(page.locator('h2', { hasText: 'For Teens' })).toBeVisible();
+    await expect(page.locator('h2', { hasText: 'For Parents' })).toBeVisible();
+    await expect(page.locator('nav a.nav-link[href="school.html"]')).toHaveText('School');
+    await expect(page.locator('nav a.nav-link[href="index.html"]')).toHaveText('Home');
+
+    // Перемикаємо назад на українську
+    await toggle.click();
+    await expect(page).toHaveTitle(/Українська школа Ватерлу/);
+    await expect(page.locator('h1')).toContainText('Українська школа в регіоні Ватерлу');
+    await expect(page.locator('h2', { hasText: 'Для молодших дітей' })).toBeVisible();
+    await expect(page.locator('nav a.nav-link[href="school.html"]')).toHaveText('Школа');
+  });
 });
+

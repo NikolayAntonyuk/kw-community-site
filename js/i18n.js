@@ -2,7 +2,8 @@ window.dictionary = {
   ua: {
     "nav_brand": "Разом KW",
     "nav_catalog": "Каталог спеціалістів",
-    "nav_home": "← Головна",
+    "nav_home": "Головна",
+    "nav_school": "Школа",
     "hero_eyebrow": "Kitchener · Waterloo · Cambridge",
     "hero_title": "Українська громада Waterloo Region",
     "hero_lede": "Ми — українці, що знайшли дім у Kitchener–Waterloo. Тримаємось разом: святкуємо, вчимо дітей мови, підтримуємо ЗСУ й одне одного.",
@@ -12,6 +13,24 @@ window.dictionary = {
     "school_title": "<img class=\"inline-flag\" src=\"assets/flags/ua.svg\" alt=\"\" width=\"24\" height=\"16\"> Українська школа вихідного дня",
     "school_text": "В регіоні Ватерлу діє суботня українська школа для дітей різного віку. Тут діти вивчають українську мову, літературу, історію та традиції в дружньому середовищі.",
     "school_soon": "[Детальна інформація про розклад, адресу та контакти буде додана незабаром]",
+    "school_html_title": "Українська школа Ватерлу | Разом KW",
+    "school_page_title": "🇺🇦 Українська школа в регіоні Ватерлу",
+    "school_page_intro": "Шановні батьки нашого регіону! Якщо ви хочете зберегти українську мову у вашій родині, запрошуємо до української школи в місті Кітченер.",
+    "school_sec_junior_title": "Для молодших дітей (JK до 8 класу)",
+    "school_sec_junior_p1": "Розпочалася реєстрація на осінь 2026 року. Запрошуємо заповнювати окремі форми на всіх ваших дітей, навіть якщо вони не зможуть відвідувати школу кожної суботи.",
+    "school_sec_junior_p2": "Бюджет програми закладається заздалегідь, і кількість вчителів прямо залежить від кількості зареєстрованих дітей.",
+    "school_sec_junior_link": "Форма реєстрації для молодших дітей",
+    "school_sec_teens_title": "Для підлітків (9-12 клас)",
+    "school_sec_teens_intro": "Існує дві опції для старшокласників:",
+    "school_sec_teens_vol_title": "Волонтерство:",
+    "school_sec_teens_vol_desc": "Підлітки можуть стати волонтерами і допомагати вчителям. Надається підтвердження годин.",
+    "school_sec_teens_vol_contact": "Звертайтеся до Оксани Григорашик:",
+    "school_sec_teens_credit_title": "Канадський шкільний кредит:",
+    "school_sec_teens_credit_desc": "Вивчення української мови онлайн.",
+    "school_sec_teens_credit_link": "Реєстрація на онлайн програму",
+    "school_sec_parents_title": "Для батьків",
+    "school_sec_parents_p1": "Під час суботніх занять батьки збираються на каву та чай у затишній атмосфері в центрі через дорогу від школи.",
+    "school_sec_parents_link": "Долучайтеся до нашого WhatsApp чату для батьків та вчителів",
     "activity_title": "Що відбувається у громаді",
     "footer_tagline": "Разом сильніші. Разом — громада.",
     "cat_title": "Каталог спеціалістів",
@@ -58,7 +77,8 @@ window.dictionary = {
   en: {
     "nav_brand": "Razom KW",
     "nav_catalog": "Specialists Directory",
-    "nav_home": "← Home",
+    "nav_home": "Home",
+    "nav_school": "School",
     "hero_eyebrow": "Kitchener · Waterloo · Cambridge",
     "hero_title": "Ukrainian Community of Waterloo Region",
     "hero_lede": "We are Ukrainians who found a home in Kitchener-Waterloo. We stick together: celebrating, teaching our children the language, supporting the Armed Forces, and each other.",
@@ -68,6 +88,24 @@ window.dictionary = {
     "school_title": "<img class=\"inline-flag\" src=\"assets/flags/ua.svg\" alt=\"\" width=\"24\" height=\"16\"> Saturday Ukrainian School",
     "school_text": "There is a Saturday Ukrainian school in the Waterloo region for children of all ages. Here children study Ukrainian language, literature, history, and traditions in a friendly environment.",
     "school_soon": "[Detailed information on schedule, address, and contacts will be added soon]",
+    "school_html_title": "Ukrainian School Waterloo | Razom KW",
+    "school_page_title": "🇺🇦 Ukrainian School in Waterloo Region",
+    "school_page_intro": "Dear parents of our region! If you want to preserve the Ukrainian language in your family, we invite you to the Ukrainian school in Kitchener.",
+    "school_sec_junior_title": "For Younger Children (JK to Grade 8)",
+    "school_sec_junior_p1": "Registration for Fall 2026 is now open. Please fill out separate forms for all your children, even if they cannot attend school every Saturday.",
+    "school_sec_junior_p2": "The program budget is planned in advance, and the number of teachers depends directly on the number of registered children.",
+    "school_sec_junior_link": "Registration form for younger children",
+    "school_sec_teens_title": "For Teens (Grades 9-12)",
+    "school_sec_teens_intro": "There are two options for high school students:",
+    "school_sec_teens_vol_title": "Volunteering:",
+    "school_sec_teens_vol_desc": "Teens can volunteer and assist teachers. Volunteer hours confirmation is provided.",
+    "school_sec_teens_vol_contact": "Contact Oksana Hryhorashyk:",
+    "school_sec_teens_credit_title": "Canadian High School Credit:",
+    "school_sec_teens_credit_desc": "Learning Ukrainian online.",
+    "school_sec_teens_credit_link": "Registration for the online program",
+    "school_sec_parents_title": "For Parents",
+    "school_sec_parents_p1": "During Saturday classes, parents gather for coffee and tea in a cozy atmosphere at the center across from the school.",
+    "school_sec_parents_link": "Join our WhatsApp chat for parents and teachers",
     "activity_title": "Community Events",
     "footer_tagline": "Stronger together. Together — community.",
     "cat_title": "Specialists Directory",
@@ -132,6 +170,9 @@ window.applyLanguage = function(lang) {
     if (window.dictionary[lang] && window.dictionary[lang][key]) {
       if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
         el.placeholder = window.dictionary[lang][key];
+      } else if (el.tagName === 'TITLE') {
+        document.title = window.dictionary[lang][key];
+        el.innerHTML = window.dictionary[lang][key];
       } else {
         el.innerHTML = window.dictionary[lang][key];
       }
