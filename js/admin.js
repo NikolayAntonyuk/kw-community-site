@@ -13,11 +13,19 @@ window.showAdminAlert = function(htmlMsg) {
   m.removeAttribute("hidden");
 };
 
+window.closeInaccuracyReport = function() {
+  const modal = document.getElementById("inaccuracy-modal");
+  if (modal) {
+    modal.setAttribute("hidden", "");
+    modal.style.display = "none";
+  }
+};
+
 window.openInaccuracyReport = function(specId, specName) {
   let modal = document.getElementById("inaccuracy-modal");
   if (!modal) {
-    const html = `<div id="inaccuracy-modal" hidden style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:2000;">
-      <div style="background:white;padding:2rem;border-radius:8px;max-width:500px;width:90%;">
+    const html = `<div id="inaccuracy-modal" hidden style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:2000;">
+      <div style="background:white;padding:2rem;border-radius:8px;max-width:500px;width:90%;box-shadow:0 4px 16px rgba(0,0,0,0.2);">
         <h2>⚠️ Звіт про неточність</h2>
         <p><strong>Спеціаліст:</strong> <span id="report-spec-name">${specName}</span> (ID: <span id="report-spec-id">${specId}</span>)</p>
         <div style="margin:1.5rem 0;">
@@ -33,13 +41,25 @@ window.openInaccuracyReport = function(specId, specName) {
           <textarea id="report-message" placeholder="Опишіть неточність..." style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;min-height:100px;"></textarea>
         </div>
         <div style="display:flex;gap:1rem;margin-top:1.5rem;">
-          <button class="btn btn-approve" style="flex:1;" onclick="window.submitInaccuracyReport('${specId}')">Відправити</button>
-          <button class="btn" style="flex:1;background:#ccc;color:#000;" onclick="document.getElementById('inaccuracy-modal').setAttribute('hidden', '')">Скасувати</button>
+          <button type="button" class="btn btn-approve" style="flex:1;" onclick="window.submitInaccuracyReport('${specId}')">Відправити</button>
+          <button type="button" class="btn" id="inaccuracy-cancel-btn" style="flex:1;background:#ccc;color:#000;" onclick="window.closeInaccuracyReport()">Скасувати</button>
         </div>
       </div>
     </div>`;
     document.body.insertAdjacentHTML("beforeend", html);
     modal = document.getElementById("inaccuracy-modal");
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        window.closeInaccuracyReport();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal && !modal.hasAttribute("hidden")) {
+        window.closeInaccuracyReport();
+      }
+    });
   }
   document.getElementById("report-spec-id").textContent = specId;
   document.getElementById("report-spec-name").textContent = specName;
@@ -47,6 +67,7 @@ window.openInaccuracyReport = function(specId, specName) {
   document.getElementById("report-contact").value = "";
   document.getElementById("report-message").value = "";
   modal.removeAttribute("hidden");
+  modal.style.display = "flex";
 };
 
 window.submitInaccuracyReport = async function(specId) {
@@ -75,7 +96,7 @@ window.submitInaccuracyReport = async function(specId) {
 
     if (!response.ok) throw new Error(`API error: ${response.status}`);
 
-    document.getElementById("inaccuracy-modal").setAttribute("hidden", "");
+    window.closeInaccuracyReport();
     showAdminAlert("✅ Звіт успішно відправлено! Дякуємо за допомогу.");
   } catch (error) {
     showAdminAlert("Помилка при відправленні звіту: " + error.message);

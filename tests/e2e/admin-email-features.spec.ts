@@ -153,12 +153,45 @@ test.describe('Email Features & Admin Panel (New Requirements)', () => {
 
     // Modal should be visible
     const modal = page.locator('#inaccuracy-modal');
+    await expect(modal).toBeVisible();
     await expect(modal).not.toHaveAttribute('hidden');
 
     // Click cancel button
     await page.locator('#inaccuracy-modal button:has-text("Скасувати")').click();
 
-    // Modal should be hidden
+    // Modal should be visually hidden and have hidden attribute
+    await expect(modal).toBeHidden();
     await expect(modal).toHaveAttribute('hidden');
+  });
+
+  // @T8: Escape key and backdrop click close inaccuracy modal
+  test('@T8 should close inaccuracy report modal on Escape key and backdrop click', async ({ page }) => {
+    await page.goto('/admin.html');
+
+    // Open modal
+    await page.evaluate(() => {
+      if (typeof window.openInaccuracyReport === 'function') {
+        window.openInaccuracyReport('39', 'Test Specialist');
+      }
+    });
+
+    const modal = page.locator('#inaccuracy-modal');
+    await expect(modal).toBeVisible();
+
+    // Press Escape
+    await page.keyboard.press('Escape');
+    await expect(modal).toBeHidden();
+
+    // Reopen modal
+    await page.evaluate(() => {
+      if (typeof window.openInaccuracyReport === 'function') {
+        window.openInaccuracyReport('39', 'Test Specialist');
+      }
+    });
+    await expect(modal).toBeVisible();
+
+    // Click on backdrop (outside the inner dialog card)
+    await page.mouse.click(10, 10);
+    await expect(modal).toBeHidden();
   });
 });
