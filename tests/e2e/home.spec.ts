@@ -88,4 +88,66 @@ test.describe('Homepage & Navigation E2E', () => {
     const videoErrors = consoleErrors.filter(e => e.toLowerCase().includes('video') || e.toLowerCase().includes('media'));
     expect(videoErrors).toHaveLength(0);
   });
+
+  test.describe('School CTA layout and spacing requirements', () => {
+    test('school CTA button should be left-aligned on desktop', async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.goto('/');
+
+      const ctaWrap = page.locator('.school-cta-wrap');
+      await expect(ctaWrap).toBeVisible();
+
+      // Check justify-content property on desktop
+      const justifyContent = await ctaWrap.evaluate(el => window.getComputedStyle(el).justifyContent);
+      expect(justifyContent).toBe('flex-start');
+
+      // Verify button is left-aligned relative to the section container
+      const schoolBox = await page.locator('.school').boundingBox();
+      const buttonBox = await page.locator('.school-cta-wrap a').boundingBox();
+      expect(schoolBox).not.toBeNull();
+      expect(buttonBox).not.toBeNull();
+      expect(buttonBox!.x).toBeLessThan(schoolBox!.x + 50);
+    });
+
+    test('school CTA button should be centered on mobile devices', async ({ page }) => {
+      await page.setViewportSize({ width: 375, height: 667 });
+      await page.goto('/');
+
+      const ctaWrap = page.locator('.school-cta-wrap');
+      await expect(ctaWrap).toBeVisible();
+
+      // Check justify-content property on mobile (< 768px)
+      const justifyContent = await ctaWrap.evaluate(el => window.getComputedStyle(el).justifyContent);
+      expect(justifyContent).toBe('center');
+
+      // Verify button center roughly matches viewport center
+      const buttonBox = await page.locator('.school-cta-wrap a').boundingBox();
+      expect(buttonBox).not.toBeNull();
+      const buttonCenter = buttonBox!.x + buttonBox!.width / 2;
+      expect(Math.abs(buttonCenter - 375 / 2)).toBeLessThan(15);
+    });
+
+    test('should have generous vertical spacing between school CTA and activity events', async ({ page }) => {
+      await page.goto('/');
+
+      const buttonBox = await page.locator('.school-cta-wrap a').boundingBox();
+      const activityHeadingBox = await page.locator('#activity-heading').boundingBox();
+
+      expect(buttonBox).not.toBeNull();
+      expect(activityHeadingBox).not.toBeNull();
+
+      const verticalGap = activityHeadingBox!.y - (buttonBox!.y + buttonBox!.height);
+      // Separation should be at least 40px
+      expect(verticalGap).toBeGreaterThanOrEqual(40);
+    });
+
+    test('should not duplicate text in school section', async ({ page }) => {
+      await page.goto('/');
+
+      const schoolParagraph = page.locator('.school p');
+      const text = await schoolParagraph.textContent();
+      const count = (text?.match(/В регіоні Ватерлу діє суботня українська школа/g) || []).length;
+      expect(count).toBe(1);
+    });
+  });
 });

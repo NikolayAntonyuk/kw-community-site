@@ -118,6 +118,40 @@
   color: var(--color-text-muted);
 }
 
+/* --- School info section --- */
+
+.school {
+  max-width: 720px;
+  margin: 3.5rem auto 5.5rem;
+  padding: 0 1.5rem;
+}
+
+.school h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.7rem;
+  margin: 0 0 1rem;
+}
+
+.school p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+.school-cta-wrap {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+@media (max-width: 767px) {
+  .school-cta-wrap {
+    justify-content: center;
+  }
+}
+
 /* --- Activity carousel --- */
 
 .activity {

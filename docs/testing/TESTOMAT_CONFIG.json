@@ -12,6 +12,7 @@
       "priority": "high",
       "modules": [
         "Hero Section",
+        "School Section (CTA & Layout)",
         "Catalog Display",
         "Search & Filter",
         "Navigation",
