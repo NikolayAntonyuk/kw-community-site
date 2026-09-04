@@ -1581,31 +1581,6 @@
     "price": "",
     "notes": "",
     "updatedAt": "2026-08-20T17:53:36.486Z"
-  },
-  {
-    "id": "H7v0wdIDdp9hoWKPXUGK",
-    "name": "Test User",
-    "category": "IT",
-    "createdAt": "2026-08-23T19:16:57.973Z",
-    "updatedAt": "2026-08-23T19:16:57.973Z"
-  },
-  {
-    "id": "fhAzw4o3YBCXZaBMMK5D",
-    "name": "Test User",
-    "category": "IT",
-    "createdAt": "2026-08-23T19:17:12.520Z",
-    "updatedAt": "2026-08-23T19:17:12.520Z"
-  },
-  {
-    "id": "gIVfZutQze2WBhazwiUO",
-    "name": "Test User",
-    "category": "IT",
-    "createdAt": "2026-08-23T19:16:39.268Z",
-    "updatedAt": "2026-08-23T19:16:39.268Z"
-  },
-  {
-    "name": "Test User Updated",
-    "updatedAt": "2026-08-23T19:17:12.662Z",
-    "id": 97
   }
 ]
+
