@@ -2,6 +2,12 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Email Features & Admin Panel (New Requirements)', () => {
 
+  test.beforeEach(async ({ page }) => {
+    await page.route("**/api/feedback", (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true }) }));
+    await page.route("https://firestore.googleapis.com/**", (route) => route.abort());
+    await page.route("https://api.emailjs.com/**", (route) => route.abort());
+  });
+
   // @T1: Specialist ID as clickable link to edit
   test('@T1 should auto-load specialist for editing when ?id=<spec-id> URL param is present', async ({ page }) => {
     const testSpecId = '39'; // Using a known specialist ID

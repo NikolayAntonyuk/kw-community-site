@@ -3,6 +3,8 @@ import { test, expect } from "@playwright/test";
 test.describe("Form Validation and Security (Test Design / Boundary / Edge Cases)", () => {
 
   test.beforeEach(async ({ page }) => {
+    await page.route("https://firestore.googleapis.com/**", (route) => route.abort());
+    await page.route("https://api.emailjs.com/**", (route) => route.abort());
     await page.goto("http://localhost:8080/apply.html");
   });
 
