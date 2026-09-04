@@ -63,22 +63,32 @@ form.addEventListener("submit", async (e) => {
         const currentHost = window.location.origin;
         const adminUrl = `${currentHost}/admin.html?id=${docRef.id}`;
         const catalogUrl = `${currentHost}/catalog.html`;
-        const msgHTML = `
-          <h3>Нова заявка від ${specialistData.name}</h3>
-          <p><strong>Категорія:</strong> ${specialistData.category}</p>
-          <p><strong>Підкатегорія:</strong> ${specialistData.subcategory}</p>
-          <p><strong>Опис:</strong> ${specialistData.description || "Без додаткового опису"}</p>
-          <hr>
-          <p>
-            👉 <a href="${adminUrl}">Редагувати заявку в адмінці</a><br>
-            <a href="${catalogUrl}">Переглянути каталог</a>
-          </p>`;
+        const messageText = [
+          `Підкатегорія: ${specialistData.subcategory}`,
+          `Місто / Локація: ${specialistData.locationType}`,
+          specialistData.address ? `Адреса: ${specialistData.address}` : null,
+          specialistData.phone ? `Телефон: ${specialistData.phone}` : null,
+          specialistData.email ? `Email: ${specialistData.email}` : null,
+          specialistData.telegram ? `Telegram: ${specialistData.telegram}` : null,
+          specialistData.instagram ? `Instagram: ${specialistData.instagram}` : null,
+          specialistData.facebook ? `Facebook: ${specialistData.facebook}` : null,
+          specialistData.website ? `Сайт: ${specialistData.website}` : null,
+          specialistData.price ? `Ціна: ${specialistData.price}` : null,
+          `Опис: ${specialistData.description || "Без додаткового опису"}`,
+          specialistData.notes ? `Нотатки: ${specialistData.notes}` : null,
+          "",
+          `Редагувати заявку в адмінці:`,
+          adminUrl,
+          "",
+          `Переглянути каталог:`,
+          catalogUrl
+        ].filter(line => line !== null).join("\n");
 
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
           to_email: ADMIN_EMAILS,
           from_name: specialistData.name,
           category: specialistData.category,
-          message: msgHTML,
+          message: messageText,
           admin_link: adminUrl,
           spec_id: docRef.id
         });
