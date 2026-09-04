@@ -3,3 +3,4 @@ test-results/
 playwright-report/
 allure-results/
 allure-report/
+firebase-key.json
