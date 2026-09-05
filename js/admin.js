@@ -380,15 +380,14 @@ window.showAddForm = () => {
 window.cancelForm = () => {
   document.querySelector('.admin-tabs').style.display = 'flex';
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  // Determine which tab to go back to. Let's default to live catalog for Add, or previous one for edit.
-  // We can just rely on the active tab from before, but we removed .active from .admin-tab ? 
-  // No, we didn't remove .active from .admin-tab when hiding .admin-tabs. 
-  // So we just re-activate the content that matches the active tab.
+  
   const activeTab = document.querySelector('.admin-tab.active');
   if (activeTab) {
     if (activeTab.id === 'tab-new-apps') document.getElementById('new-apps').classList.add('active');
     else if (activeTab.id === 'tab-live-catalog') document.getElementById('live-catalog').classList.add('active');
     else if (activeTab.id === 'tab-rejected-apps') document.getElementById('rejected-apps').classList.add('active');
+    else if (activeTab.id === 'tab-feedback') document.getElementById('feedback-section').classList.add('active');
+    else if (activeTab.id === 'tab-archived-catalog') document.getElementById('archived-catalog').classList.add('active');
   } else {
     document.getElementById('live-catalog').classList.add('active');
   }
@@ -435,41 +434,62 @@ window.saveEdit = async () => {
 
     if (!id) {
       // Create new
-      id = "ext-" + Math.random().toString(36).substr(2, 9);
-      console.log(`[CRUD] Creating new specialist with ID: ${id}`, payload);
-      const response = await fetch('/api/specialists', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...payload, id })
+      await addDoc(collection(db, "pending_specialists"), {
+        name: newName,
+        description: newDesc,
+        category: newCategory,
+        subcategory: newSubcategory,
+        locationType: newLoc,
+        address: newAddress,
+        phone: newPhone,
+        telegram: newTg,
+        instagram: newInst,
+        facebook: newFb,
+        website: newWeb,
+        price: newPrice,
+        notes: newNotes,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        status: "approved"
       });
-      if (!response.ok) throw new Error(`API error: ${response.status}`);
-      const result = await response.json();
-      console.log(`[CRUD] Created successfully:`, result);
       msg = "Спеціаліста успішно додано!";
     } else if (isLive) {
-      // Update existing (FIX: was using addDoc before, now using API update)
-      console.log(`[CRUD] Updating specialist ID: ${id}`, payload);
-      const response = await fetch('/api/specialists', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, ...payload })
+      await addDoc(collection(db, "pending_specialists"), {
+        id: id,
+        name: newName,
+        description: newDesc,
+        category: newCategory,
+        subcategory: newSubcategory,
+        locationType: newLoc,
+        address: newAddress,
+        phone: newPhone,
+        telegram: newTg,
+        instagram: newInst,
+        facebook: newFb,
+        website: newWeb,
+        price: newPrice,
+        notes: newNotes,
+        updatedAt: serverTimestamp(),
+        status: "approved"
       });
-      if (!response.ok) throw new Error(`API error: ${response.status}`);
-      const result = await response.json();
-      console.log(`[CRUD] Updated successfully:`, result);
-      msg = "Спеціаліста успішно оновлено!";
-      fetch("/api/sync", {method: "POST"}).catch(console.error);
+      msg = "Зміни збережено в базу! Щоб вони з'явилися в каталозі зараз, <br><a href='#' onclick='window.triggerSync(); return false;' style='color:#1f6feb; text-decoration:underline;'>запустіть синхронізацію вручну тут</a>.";
     } else {
-      // Update pending application
-      console.log(`[CRUD] Updating pending application ID: ${id}`, payload);
-      const response = await fetch('/api/specialists', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, ...payload, status: 'pending' })
+      await updateDoc(doc(db, "pending_specialists", id), {
+        name: newName,
+        description: newDesc,
+        category: newCategory,
+        subcategory: newSubcategory,
+        locationType: newLoc,
+        address: newAddress,
+        phone: newPhone,
+        telegram: newTg,
+        instagram: newInst,
+        facebook: newFb,
+        website: newWeb,
+        price: newPrice,
+        notes: newNotes,
+        updatedAt: serverTimestamp()
       });
-      if (!response.ok) throw new Error(`API error: ${response.status}`);
-      const result = await response.json();
-      console.log(`[CRUD] Pending updated successfully:`, result);
       msg = "Зміни успішно збережено!";
     }
 
@@ -558,8 +578,7 @@ window.deleteLiveApp = async (id) => {
       id: id,
       status: "deleted"
     });
-    showAdminAlert("Спеціаліста успішно видалено!");
-    fetch("/api/sync", {method: "POST"}).catch(console.error);
+    showAdminAlert("Запит на видалення надіслано! Спеціаліст зникне з каталогу після наступної синхронізації (за кілька хвилин).");
     const el = document.getElementById(`live-card-${id}`);
     if (el) el.style.display = 'none';
   } catch (error) {
@@ -846,10 +865,10 @@ async function loadFeedback() {
 window.resolveFeedback = async (id) => {
   if (!confirm("Закрити цей звіт?")) return;
   try {
-    const response = await fetch(`/api/feedback/${id}/resolve`, {
-      method: 'PATCH'
+    await updateDoc(doc(db, "feedback", id), {
+      status: "resolved",
+      resolvedAt: serverTimestamp()
     });
-    if (!response.ok) throw new Error(`API error: ${response.status}`);
     document.getElementById(`fb-card-${id}`).remove();
     showAdminAlert("Звіт позначено як вирішений!");
   } catch (error) {
@@ -879,25 +898,35 @@ loadApplications = async () => {
 };
 
 window.triggerSync = async () => {
-  showAdminAlert("Запускаємо синхронізацію з локальною базою... ⏳");
+  let token = localStorage.getItem("gh_pat_token");
+  if (!token) {
+    token = prompt("Для автоматичного запуску через API потрібен GitHub Personal Access Token (classic: 'repo' scope, або fine-grained: 'Actions: read&write'). Введіть його тут (збережеться в браузері):");
+    if (!token) return;
+    localStorage.setItem("gh_pat_token", token.trim());
+    token = token.trim();
+  }
+
+  showAdminAlert("Запускаємо синхронізацію... ⏳");
   
   try {
-    const response = await fetch("/api/sync", {
+    const response = await fetch("https://api.github.com/repos/nikolayantonyuk/kw-community-site/actions/workflows/sync.yml/dispatches", {
       method: "POST",
       headers: {
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/vnd.github.v3+json",
         "Content-Type": "application/json"
-      }
+      },
+      body: JSON.stringify({ ref: "master" })
     });
 
     if (response.ok) {
-      showAdminAlert("✅ Синхронізація успішно виконана! Сайт оновлено миттєво.");
-      // Оновити каталог після успішної синхронізації
-      if (typeof loadLiveCatalog === "function") {
-        setTimeout(loadLiveCatalog, 1000);
-      }
+      showAdminAlert("✅ Синхронізація успішно запущена! Сайт оновиться через 2-5 хвилин.");
+    } else if (response.status === 401 || response.status === 403 || response.status === 404) {
+      localStorage.removeItem("gh_pat_token");
+      showAdminAlert("❌ Помилка доступу. Можливо, токен недійсний або не має прав. Токен видалено, оновіть сторінку і спробуйте ще раз.<br><br>Переконайтеся, що ви створили токен з правами 'repo' (для classic token).");
     } else {
       const errText = await response.text();
-      showAdminAlert("⚠️ Помилка синхронізації: " + response.status + " " + errText);
+      showAdminAlert("⚠️ Помилка запуску: " + response.status + " " + errText);
     }
   } catch (error) {
     showAdminAlert("Помилка мережі: " + error.message);
