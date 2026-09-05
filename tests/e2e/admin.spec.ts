@@ -675,18 +675,19 @@ test.describe('Admin Panel E2E', () => {
     // Verify tabs exist
     const tabs = page.locator('.admin-tab');
     const tabCount = await tabs.count();
-    expect(tabCount).toBe(4); // Changed from 3 to 4
+    expect(tabCount).toBe(5);
 
     // Verify tab labels
     await expect(tabs.nth(0)).toContainText('Нові заявки');
     await expect(tabs.nth(1)).toContainText('Живий каталог');
-    await expect(tabs.nth(2)).toContainText('Звіти про помилки'); // Added
-    await expect(tabs.nth(3)).toContainText('Архів'); // Changed from 2 to 3
+    await expect(tabs.nth(2)).toContainText('Звіти про помилки');
+    await expect(tabs.nth(3)).toContainText('Архів заявок');
+    await expect(tabs.nth(4)).toContainText('Архів каталогу');
 
     // Verify content sections exist
     const contentSections = page.locator('.tab-content');
     const sectionCount = await contentSections.count();
-    expect(sectionCount).toBe(5); // new-apps, live-catalog, feedback-section, rejected-apps, form-section (form-section is also a tab-content)
+    expect(sectionCount).toBe(6); // new-apps, live-catalog, feedback-section, rejected-apps, archived-catalog, form-section
   });
 
   test.skip('should keep modal responsive on mobile viewport', async ({ page }) => {

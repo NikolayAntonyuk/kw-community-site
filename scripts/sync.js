@@ -65,7 +65,7 @@ async function sync() {
         data.updatedAt = data.updatedAt.toDate().toISOString();
       }
 
-      const existingIndex = currentData.findIndex(s => s.id === data.id);
+      const existingIndex = currentData.findIndex(s => String(s.id) === String(data.id));
       
       const isDeleted = doc.data().status === "deleted";
 

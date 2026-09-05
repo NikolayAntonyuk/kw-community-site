@@ -4,7 +4,22 @@ test.describe('Email Features & Admin Panel (New Requirements)', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.route("**/api/feedback", (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true }) }));
-    await page.route("https://firestore.googleapis.com/**", (route) => route.abort());
+    await page.route("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js", (route) => {
+      route.fulfill({
+        contentType: 'application/javascript',
+        body: `
+          export const collection = () => {};
+          export const query = () => {};
+          export const where = () => {};
+          export const getDocs = async () => ({ empty: true, forEach: () => {} });
+          export const updateDoc = async () => {};
+          export const doc = () => {};
+          export const addDoc = async () => {};
+          export const serverTimestamp = () => {};
+          export const getFirestore = () => ({});
+        `
+      });
+    });
     await page.route("https://api.emailjs.com/**", (route) => route.abort());
   });
 

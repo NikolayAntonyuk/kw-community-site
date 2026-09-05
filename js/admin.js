@@ -81,20 +81,14 @@ window.submitInaccuracyReport = async function(specId) {
   }
 
   try {
-    const response = await fetch('/api/feedback', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        specialistId: specId,
-        senderName: senderName,
-        contactInfo: contact,
-        message: message,
-        status: 'new',
-        createdAt: new Date().toISOString()
-      })
+    await addDoc(collection(db, "feedback"), {
+      specialistId: specId,
+      senderName: senderName,
+      contactInfo: contact,
+      message: message,
+      status: 'new',
+      createdAt: serverTimestamp()
     });
-
-    if (!response.ok) throw new Error(`API error: ${response.status}`);
 
     window.closeInaccuracyReport();
     showAdminAlert("✅ Звіт успішно відправлено! Дякуємо за допомогу.");
@@ -287,10 +281,20 @@ window.rejectApp = async (id, userEmail, userName) => {
 // Edit Application Modal logic
 
 
-window.editApp = async (id, isLive = false) => {
+window.editApp = async (id, isLive = false, feedbackMsg = "") => {
   document.getElementById('form-title').innerText = "Редагувати заявку";
   document.getElementById('edit-id').value = id;
   document.getElementById('edit-islive').value = isLive ? "true" : "false";
+  
+  const helperContainer = document.getElementById('feedback-helper-container');
+  const helperText = document.getElementById('feedback-helper-text');
+  if (feedbackMsg) {
+    helperText.innerText = feedbackMsg;
+    helperContainer.style.display = 'block';
+  } else {
+    helperText.innerText = "";
+    helperContainer.style.display = 'none';
+  }
   
   let name="", desc="", cat="", subcat="", loc="", address="", phone="", tg="", inst="", fb="", web="", price="", notes="";
 
@@ -357,6 +361,11 @@ window.showAddForm = () => {
   document.getElementById('edit-id').value = "";
   document.getElementById('edit-islive').value = "true"; // Added directly to live
   
+  const helperContainer = document.getElementById('feedback-helper-container');
+  const helperText = document.getElementById('feedback-helper-text');
+  if (helperContainer) helperContainer.style.display = 'none';
+  if (helperText) helperText.innerText = "";
+
   document.getElementById('edit-name').value = "";
   document.getElementById('edit-desc').value = "";
   document.getElementById('edit-category').value = "";
@@ -378,17 +387,40 @@ window.showAddForm = () => {
 };
 
 window.cancelForm = () => {
+  const helperContainer = document.getElementById('feedback-helper-container');
+  const helperText = document.getElementById('feedback-helper-text');
+  if (helperContainer) helperContainer.style.display = 'none';
+  if (helperText) helperText.innerText = "";
+
+  const activeTab = document.querySelector('.admin-tab.active');
+  console.log('[ADMIN] cancelForm: activeTab before tabs show', activeTab ? activeTab.id : 'none');
+
   document.querySelector('.admin-tabs').style.display = 'flex';
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  
-  const activeTab = document.querySelector('.admin-tab.active');
+
   if (activeTab) {
-    if (activeTab.id === 'tab-new-apps') document.getElementById('new-apps').classList.add('active');
-    else if (activeTab.id === 'tab-live-catalog') document.getElementById('live-catalog').classList.add('active');
-    else if (activeTab.id === 'tab-rejected-apps') document.getElementById('rejected-apps').classList.add('active');
-    else if (activeTab.id === 'tab-feedback') document.getElementById('feedback-section').classList.add('active');
-    else if (activeTab.id === 'tab-archived-catalog') document.getElementById('archived-catalog').classList.add('active');
+    if (activeTab.id === 'tab-new-apps') {
+      console.log('[ADMIN] Restoring tab: new-apps');
+      document.getElementById('new-apps').classList.add('active');
+    }
+    else if (activeTab.id === 'tab-live-catalog') {
+      console.log('[ADMIN] Restoring tab: live-catalog');
+      document.getElementById('live-catalog').classList.add('active');
+    }
+    else if (activeTab.id === 'tab-rejected-apps') {
+      console.log('[ADMIN] Restoring tab: rejected-apps');
+      document.getElementById('rejected-apps').classList.add('active');
+    }
+    else if (activeTab.id === 'tab-feedback') {
+      console.log('[ADMIN] Restoring tab: feedback-section');
+      document.getElementById('feedback-section').classList.add('active');
+    }
+    else if (activeTab.id === 'tab-archived-catalog') {
+      console.log('[ADMIN] Restoring tab: archived-catalog');
+      document.getElementById('archived-catalog').classList.add('active');
+    }
   } else {
+    console.log('[ADMIN] No activeTab found, defaulting to live-catalog');
     document.getElementById('live-catalog').classList.add('active');
   }
 };
@@ -414,6 +446,7 @@ window.saveEdit = async () => {
   if (!confirm("Зберегти зміни?")) return;
 
   try {
+    console.log('[ADMIN] saveEdit called', { id, isLive, name: newName });
     let msg = "";
     const payload = {
       name: newName,
@@ -433,7 +466,7 @@ window.saveEdit = async () => {
     };
 
     if (!id) {
-      // Create new
+      console.log('[ADMIN] Creating new specialist');
       await addDoc(collection(db, "pending_specialists"), {
         name: newName,
         description: newDesc,
@@ -454,6 +487,7 @@ window.saveEdit = async () => {
       });
       msg = "Спеціаліста успішно додано!";
     } else if (isLive) {
+      console.log('[ADMIN] Updating live specialist via new document approach', { id });
       await addDoc(collection(db, "pending_specialists"), {
         id: id,
         name: newName,
@@ -474,6 +508,7 @@ window.saveEdit = async () => {
       });
       msg = "Зміни збережено в базу! Щоб вони з'явилися в каталозі зараз, <br><a href='#' onclick='window.triggerSync(); return false;' style='color:#1f6feb; text-decoration:underline;'>запустіть синхронізацію вручну тут</a>.";
     } else {
+      console.log('[ADMIN] Updating pending specialist', { id });
       await updateDoc(doc(db, "pending_specialists", id), {
         name: newName,
         description: newDesc,
@@ -840,7 +875,8 @@ async function loadFeedback() {
       const createdStr = data.createdAt && typeof data.createdAt.toDate === 'function' ? data.createdAt.toDate().toLocaleDateString("uk-UA", {hour:'2-digit', minute:'2-digit'}) : 'Невідомо';
       
       const specIdText = data.specialistId ? `ID: ${data.specialistId}` : "Загальний звіт";
-      const editButton = data.specialistId ? `<button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${data.specialistId}', true)">Редагувати картку</button>` : '';
+      const encodedMsg = encodeURIComponent(data.message || '').replace(/'/g, "%27");
+      const editButton = data.specialistId ? `<button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${data.specialistId}', true, decodeURIComponent('${encodedMsg}'))">Редагувати картку</button>` : '';
 
       html += `
         <div class="application-card" id="fb-card-${docSnap.id}" style="background: #fff8e1; border-color: #ffeeba;">

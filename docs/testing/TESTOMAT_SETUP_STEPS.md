@@ -47,6 +47,7 @@
    - Google Sheets Sync
    - Accessibility
    - Security
+   - Error Reports & Feedback (Звіти про помилки)
 3. Імпортувати з: `docs/testing/checklist-admin.md`
 
 ---
