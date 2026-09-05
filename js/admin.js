@@ -313,7 +313,7 @@ window.editApp = async (id, isLive = false) => {
     price = document.getElementById(`${prefix}display-price-${id}`).innerText;
     notes = document.getElementById(`${prefix}display-notes-${id}`).innerText;
   } else if (isLive && typeof liveCatalogData !== 'undefined') {
-    const item = liveCatalogData.find(i => i.id === id);
+    const item = liveCatalogData.find(i => String(i.id) === String(id));
     if (item) {
       name = item.name || '';
       desc = item.description || '';
@@ -505,7 +505,7 @@ window.saveEdit = async () => {
     window.cancelForm();
     if (!id || isLive) {
       if (id && isLive) {
-        const item = liveCatalogData.find(i => i.id === id);
+        const item = liveCatalogData.find(i => String(i.id) === String(id));
         if (item) {
           item.name = newName;
           item.description = newDesc;
@@ -615,7 +615,7 @@ window.filterLiveCatalog = (query) => {
     liveCatalogFiltered = liveCatalogData.filter(item => 
       (item.name || "").toLowerCase().includes(lower) ||
       (item.description || "").toLowerCase().includes(lower) ||
-      (item.id || "").toLowerCase().includes(lower) ||
+      String(item.id || "").toLowerCase().includes(lower) ||
       (item.category || "").toLowerCase().includes(lower) ||
       (item.subcategory || "").toLowerCase().includes(lower)
     );
@@ -802,10 +802,10 @@ async function loadFeedback() {
 window.resolveFeedback = async (id) => {
   if (!confirm("Закрити цей звіт?")) return;
   try {
-    await updateDoc(doc(db, "feedback", id), {
-      status: "resolved",
-      resolvedAt: serverTimestamp()
+    const response = await fetch(`/api/feedback/${id}/resolve`, {
+      method: 'PATCH'
     });
+    if (!response.ok) throw new Error(`API error: ${response.status}`);
     document.getElementById(`fb-card-${id}`).remove();
     showAdminAlert("Звіт позначено як вирішений!");
   } catch (error) {
