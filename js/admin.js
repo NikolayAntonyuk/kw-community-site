@@ -757,6 +757,50 @@ window.restoreApp = async (id) => {
 };
 
 // --- Feedback / Reports Fetcher ---
+async function loadArchivedCatalog() {
+  const arcList = document.getElementById("archived-catalog-list");
+  if (!arcList) return;
+  arcList.innerHTML = "Завантаження...";
+  try {
+    const res = await fetch("data/archived_specialists.json");
+    if (!res.ok) {
+      if (res.status === 404) {
+        arcList.innerHTML = "<p>Архів порожній.</p>";
+        return;
+      }
+      throw new Error("Network response was not ok");
+    }
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      // If it's malformed JSON (or empty file)
+      arcList.innerHTML = "<p>Архів порожній.</p>";
+      return;
+    }
+    if (!data || data.length === 0) {
+      arcList.innerHTML = "<p>Архів порожній.</p>";
+      return;
+    }
+    let html = "";
+    data.forEach(item => {
+      html += `
+        <div class="application-card" style="background: #fdfdfd; border-color: #ddd;">
+          <h3 style="margin-bottom: 0.5rem;"><span style="color:#6c757d; font-family:monospace;">#${item.id}</span> ${item.name} <small>(${item.category} > ${item.subcategory})</small></h3>
+          <p style="margin-bottom: 0.5rem;"><strong>Причина архівації:</strong> <span style="color: #856404; font-weight: bold;">${item.archiveReason || 'Не вказано'}</span></p>
+          <p style="margin-bottom: 0.5rem;"><strong>Email/Контакти:</strong> ${item.email || item.telegram || item.instagram || '—'}</p>
+          <p class="card-admin-dates" style="margin-top: 0.5rem;">Архівовано: ${item.archivedAt ? new Date(item.archivedAt).toLocaleDateString("uk-UA") : 'Невідомо'}</p>
+        </div>
+      `;
+    });
+    arcList.innerHTML = html;
+  } catch (error) {
+    console.error("Помилка завантаження архіву каталогу: ", error);
+    arcList.innerHTML = "<p style='color:red;'>Не вдалося завантажити архів.</p>";
+  }
+}
+
 async function loadFeedback() {
   const fbList = document.getElementById("feedback-list");
   if (!fbList) return;
@@ -818,6 +862,7 @@ loadApplications = async () => {
   await originalLoad();
   await loadLiveCatalog();
   await loadRejectedApplications();
+  await loadArchivedCatalog();
   await loadFeedback();
 
   if (window.location.hash.startsWith('#edit-live-')) {

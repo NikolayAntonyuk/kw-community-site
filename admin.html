@@ -129,7 +129,8 @@
         <div class="admin-tab active" id="tab-new-apps" onclick="window.goToPage(this, 'new-apps')">Нові заявки</div>
         <div class="admin-tab" id="tab-live-catalog" onclick="window.goToPage(this, 'live-catalog')">Живий каталог</div>
         <div class="admin-tab" id="tab-feedback" onclick="window.goToPage(this, 'feedback-section')">Звіти про помилки</div>
-        <div class="admin-tab" id="tab-rejected-apps" onclick="window.goToPage(this, 'rejected-apps')">Архів</div>
+        <div class="admin-tab" id="tab-rejected-apps" onclick="window.goToPage(this, 'rejected-apps')">Архів заявок</div>
+        <div class="admin-tab" id="tab-archived-catalog" onclick="window.goToPage(this, 'archived-catalog')">Архів каталогу</div>
       </div>
 
       <div id="new-apps" class="tab-content active">
@@ -146,6 +147,15 @@
           <h2>Звіти про неточність (Відгуки)</h2>
         </div>
         <div id="feedback-list">
+          Завантаження...
+        </div>
+      </div>
+
+      <div id="archived-catalog" class="tab-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+          <h2>Архів каталогу (Видалені спеціалісти)</h2>
+        </div>
+        <div id="archived-catalog-list">
           Завантаження...
         </div>
       </div>
