@@ -41,8 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
           emailjs.init(EMAILJS_PUBLIC_KEY);
           
           const baseURL = window.location.origin + window.location.pathname.replace(/\/feedback\.html$/, '');
-          const catalogLink = form.specialistId.value ? `${baseURL}/catalog.html?id=${form.specialistId.value}` : 'Не вказано (загальне)';
-          const adminLink = form.specialistId.value ? `${baseURL}/admin.html#edit-live-${form.specialistId.value}` : `${baseURL}/admin.html`;
+          const encodedFeedback = encodeURIComponent(form.message.value || '');
+          const adminLink = form.specialistId.value ? `${baseURL}/admin.html?id=${form.specialistId.value}&feedback=${encodedFeedback}#edit-live-${form.specialistId.value}` : `${baseURL}/admin.html`;
           
           const fullMessage = [
             `Контакт: ${form.contactInfo.value}`,

@@ -317,6 +317,33 @@ window.editApp = async (id, isLive = false, feedbackMsg = "") => {
   
   const helperContainer = document.getElementById('feedback-helper-container');
   const helperText = document.getElementById('feedback-helper-text');
+  
+  // 1. If not passed directly, check URL query parameters
+  if (!feedbackMsg) {
+    const urlParams = new URLSearchParams(window.location.search);
+    feedbackMsg = urlParams.get('feedback') || urlParams.get('msg') || '';
+  }
+
+  // 2. If still empty, check Firestore for active "new" error reports for this specialist ID
+  if (!feedbackMsg && typeof db !== 'undefined' && id) {
+    try {
+      const qFb = query(collection(db, "feedback"), where("specialistId", "==", String(id)), where("status", "==", "new"));
+      const fbSnap = await getDocs(qFb);
+      if (!fbSnap.empty) {
+        const msgs = [];
+        fbSnap.forEach(d => {
+          const dData = d.data();
+          if (dData && dData.message) msgs.push(dData.message);
+        });
+        if (msgs.length > 0) {
+          feedbackMsg = msgs.join("\n\n---\n\n");
+        }
+      }
+    } catch (e) {
+      console.warn("Could not check feedback reports for specialist:", e);
+    }
+  }
+
   if (feedbackMsg) {
     helperText.innerText = feedbackMsg;
     helperContainer.style.display = 'block';
@@ -1023,16 +1050,24 @@ loadApplications = async () => {
   await loadArchivedCatalog();
   await loadFeedback();
 
-  if (window.location.hash.startsWith('#edit-live-')) {
+  const params = new URLSearchParams(window.location.search);
+  const specIdFromUrl = params.get('id');
+  const feedbackFromUrl = params.get('feedback') || params.get('msg') || '';
+
+  if (specIdFromUrl) {
+    setTimeout(() => {
+      window.editApp(specIdFromUrl, true, feedbackFromUrl);
+    }, 400);
+  } else if (window.location.hash.startsWith('#edit-live-')) {
     const editId = window.location.hash.replace('#edit-live-', '');
     setTimeout(() => {
-      window.editApp(editId, true);
-    }, 500);
+      window.editApp(editId, true, feedbackFromUrl);
+    }, 400);
   } else if (window.location.hash.startsWith('#edit-pending-')) {
     const editId = window.location.hash.replace('#edit-pending-', '');
     setTimeout(() => {
-      window.editApp(editId, false);
-    }, 500);
+      window.editApp(editId, false, feedbackFromUrl);
+    }, 400);
   }
 };
 
