@@ -26,6 +26,7 @@ test.describe('Error Reports Requirements (Звіти про помилки)', (
           export const query = () => {};
           export const where = () => {};
           export const getDocs = async () => ({ empty: true, forEach: () => {} });
+          export const getDoc = async () => ({ exists: () => false, data: () => ({}) });
           export const updateDoc = async () => {};
           export const doc = () => {};
           export const addDoc = async () => {};
@@ -37,14 +38,14 @@ test.describe('Error Reports Requirements (Звіти про помилки)', (
     await page.route("https://api.emailjs.com/**", (route) => route.abort());
   });
 
-  // @T9: Admin can open edit form from error report card
-  test('@T9 Admin should be able to open edit form from an error report card', async ({ page }) => {
+  // @T9: Admin can open edit form from error report card and card data is fully pre-populated
+  test('@T9 Admin should be able to open edit form from an error report card with pre-populated data', async ({ page }) => {
     await page.goto('/admin.html');
     await page.waitForFunction(() => typeof window.editApp === 'function');
 
-    // Call editApp as if triggered from error report card
-    await page.evaluate(() => {
-      window.editApp('39', true, 'Змініть адресу на Main St 12');
+    // Call editApp for specialist ID "1" as if triggered from error report card
+    await page.evaluate(async () => {
+      await window.editApp('1', true, 'Змініть адресу на Main St 12');
     });
 
     // Form section should become active
@@ -53,21 +54,27 @@ test.describe('Error Reports Requirements (Звіти про помилки)', (
 
     // ID field must be populated with the specialist ID
     const editId = page.locator('#edit-id');
-    await expect(editId).toHaveValue('39');
+    await expect(editId).toHaveValue('1');
+
+    // Form fields must be pre-populated with specialist data from catalog
+    await expect(page.locator('#edit-name')).toHaveValue('Tanya UPDATED');
+    await expect(page.locator('#edit-category')).toHaveValue('Beauty');
+    await expect(page.locator('#edit-subcategory')).toHaveValue('Перукар/Барбер');
+    await expect(page.locator('#edit-phone')).toHaveValue('7809916939');
 
     // Form title should be "Редагувати заявку"
     const formTitle = page.locator('#form-title');
     await expect(formTitle).toHaveText('Редагувати заявку');
   });
 
-  // @T10: Admin should see auxiliary field with suggested changes
-  test('@T10 Admin should see an auxiliary field with suggested changes when editing a report', async ({ page }) => {
+  // @T10: Admin should see auxiliary field with suggested changes and copy button
+  test('@T10 Admin should see an auxiliary field with suggested changes and copy button when editing a report', async ({ page }) => {
     await page.goto('/admin.html');
-    await page.waitForFunction(() => typeof window.editApp === 'function');
+    await page.waitForFunction(() => typeof window.editApp === 'function' && typeof window.copyFeedbackText === 'function');
 
     const suggestion = 'Рекомендовано змінити номер телефону на +1 519 555 0199 та оновити соцмережі';
-    await page.evaluate((msg) => {
-      window.editApp('39', true, msg);
+    await page.evaluate(async (msg) => {
+      await window.editApp('1', true, msg);
     }, suggestion);
 
     // Helper container must be visible
@@ -77,6 +84,11 @@ test.describe('Error Reports Requirements (Звіти про помилки)', (
     // Helper text must contain the suggested message
     const helperText = page.locator('#feedback-helper-text');
     await expect(helperText).toHaveText(suggestion);
+
+    // Copy button must be visible inside helper container
+    const copyBtn = page.locator('#btn-copy-feedback');
+    await expect(copyBtn).toBeVisible();
+    await expect(copyBtn).toHaveText(/Копіювати/);
 
     // Verify user-select style is set to "all" for easy copying
     const userSelect = await helperText.evaluate((el) => window.getComputedStyle(el).userSelect);

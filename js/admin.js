@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase.js";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { collection, query, where, getDocs, updateDoc, doc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, query, where, getDocs, getDoc, updateDoc, doc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 window.showAdminAlert = function(htmlMsg) {
   let m = document.getElementById("custom-alert-modal");
@@ -281,6 +281,35 @@ window.rejectApp = async (id, userEmail, userName) => {
 // Edit Application Modal logic
 
 
+window.copyFeedbackText = () => {
+  const helperText = document.getElementById('feedback-helper-text');
+  const btn = document.getElementById('btn-copy-feedback');
+  if (helperText && helperText.innerText) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(helperText.innerText).then(() => {
+        if (btn) {
+          const oldText = btn.innerHTML;
+          btn.innerHTML = "✅ Скопійовано!";
+          setTimeout(() => { btn.innerHTML = oldText; }, 2000);
+        }
+      }).catch(err => {
+        console.warn("Clipboard copy failed, selecting text:", err);
+        const range = document.createRange();
+        range.selectNodeContents(helperText);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      });
+    } else {
+      const range = document.createRange();
+      range.selectNodeContents(helperText);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  }
+};
+
 window.editApp = async (id, isLive = false, feedbackMsg = "") => {
   document.getElementById('form-title').innerText = "Редагувати заявку";
   document.getElementById('edit-id').value = id;
@@ -302,22 +331,53 @@ window.editApp = async (id, isLive = false, feedbackMsg = "") => {
   const nameEl = document.getElementById(`${prefix}display-name-${id}`);
   
   if (nameEl) {
-    name = nameEl.innerText;
-    desc = document.getElementById(`${prefix}display-desc-${id}`).innerText;
-    const catText = document.getElementById(`${prefix}display-cat-${id}`).innerText.split(" > ");
+    name = nameEl.innerText || "";
+    desc = (document.getElementById(`${prefix}display-desc-${id}`) || {}).innerText || "";
+    const catEl = document.getElementById(`${prefix}display-cat-${id}`);
+    const catText = (catEl ? catEl.innerText : "").split(" > ");
     cat = (catText[0] || '').trim();
     subcat = (catText[1] || '').trim();
-    loc = document.getElementById(`${prefix}display-loc-${id}`).innerText;
-    address = document.getElementById(`${prefix}display-address-${id}`).innerText;
-    phone = document.getElementById(`${prefix}display-phone-${id}`).innerText;
-    tg = document.getElementById(`${prefix}display-tg-${id}`).innerText;
-    inst = document.getElementById(`${prefix}display-inst-${id}`).innerText;
-    fb = document.getElementById(`${prefix}display-fb-${id}`).innerText;
-    web = document.getElementById(`${prefix}display-web-${id}`).innerText;
-    price = document.getElementById(`${prefix}display-price-${id}`).innerText;
-    notes = document.getElementById(`${prefix}display-notes-${id}`).innerText;
-  } else if (isLive && typeof liveCatalogData !== 'undefined') {
-    const item = liveCatalogData.find(i => String(i.id) === String(id));
+    loc = (document.getElementById(`${prefix}display-loc-${id}`) || {}).innerText || "";
+    address = (document.getElementById(`${prefix}display-address-${id}`) || {}).innerText || "";
+    phone = (document.getElementById(`${prefix}display-phone-${id}`) || {}).innerText || "";
+    tg = (document.getElementById(`${prefix}display-tg-${id}`) || {}).innerText || "";
+    inst = (document.getElementById(`${prefix}display-inst-${id}`) || {}).innerText || "";
+    fb = (document.getElementById(`${prefix}display-fb-${id}`) || {}).innerText || "";
+    web = (document.getElementById(`${prefix}display-web-${id}`) || {}).innerText || "";
+    price = (document.getElementById(`${prefix}display-price-${id}`) || {}).innerText || "";
+    notes = (document.getElementById(`${prefix}display-notes-${id}`) || {}).innerText || "";
+  } else {
+    let item = null;
+    if (typeof liveCatalogData !== 'undefined' && Array.isArray(liveCatalogData) && liveCatalogData.length > 0) {
+      item = liveCatalogData.find(i => String(i.id) === String(id));
+    }
+
+    if (!item) {
+      try {
+        const res = await fetch(`data/specialists.json?v=${new Date().getTime()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            liveCatalogData = data;
+            item = liveCatalogData.find(i => String(i.id) === String(id));
+          }
+        }
+      } catch (e) {
+        console.warn("Could not fetch specialists.json:", e);
+      }
+    }
+
+    if (!item && typeof db !== 'undefined') {
+      try {
+        const docSnap = await getDoc(doc(db, "pending_specialists", String(id)));
+        if (docSnap && docSnap.exists && docSnap.exists()) {
+          item = { id: docSnap.id, ...docSnap.data() };
+        }
+      } catch (e) {
+        console.warn("Firestore lookup in pending_specialists failed:", e);
+      }
+    }
+
     if (item) {
       name = item.name || '';
       desc = item.description || '';
@@ -354,6 +414,7 @@ window.editApp = async (id, isLive = false, feedbackMsg = "") => {
   document.querySelector('.admin-tabs').style.display = 'none';
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.getElementById('form-section').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 window.showAddForm = () => {
