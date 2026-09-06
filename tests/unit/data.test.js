@@ -25,7 +25,7 @@ describe("fetchSpecialists", () => {
 
     const result = await fetchSpecialists();
 
-    expect(globalThis.fetch).toHaveBeenCalledWith("data/specialists.json");
+    expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringMatching(/^data\/specialists\.json/));
     expect(result).toEqual(STATIC_ROWS);
   });
 

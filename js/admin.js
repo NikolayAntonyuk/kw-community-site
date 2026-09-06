@@ -567,7 +567,7 @@ window.saveEdit = async () => {
         updatedAt: serverTimestamp(),
         status: "approved"
       });
-      msg = "Зміни збережено в базу! Щоб вони з'явилися в каталозі зараз, <br><a href='#' onclick='window.triggerSync(); return false;' style='color:#1f6feb; text-decoration:underline;'>запустіть синхронізацію вручну тут</a>.";
+      msg = "✅ Зміни успішно збережено в базі!";
     } else {
       console.log('[ADMIN] Updating pending specialist', { id });
       await updateDoc(doc(db, "pending_specialists", id), {
@@ -586,7 +586,7 @@ window.saveEdit = async () => {
         notes: newNotes,
         updatedAt: serverTimestamp()
       });
-      msg = "Зміни успішно збережено!";
+      msg = "✅ Зміни успішно збережено!";
     }
 
     if (id && document.getElementById('live-display-name-' + id) && isLive) {
@@ -671,12 +671,16 @@ window.deleteLiveApp = async (id) => {
   if (!confirm("Ви впевнені, що хочете видалити цього спеціаліста?")) return;
   try {
     await addDoc(collection(db, "pending_specialists"), {
-      id: id,
-      status: "deleted"
+      id: String(id),
+      status: "deleted",
+      updatedAt: serverTimestamp()
     });
-    showAdminAlert("Запит на видалення надіслано! Спеціаліст зникне з каталогу після наступної синхронізації (за кілька хвилин).");
+    showAdminAlert("✅ Спеціаліста видалено з каталогу!");
     const el = document.getElementById(`live-card-${id}`);
     if (el) el.style.display = 'none';
+    liveCatalogData = liveCatalogData.filter(i => String(i.id) !== String(id));
+    const searchVal = document.getElementById('live-search') ? document.getElementById('live-search').value : '';
+    window.filterLiveCatalog(searchVal);
   } catch (error) {
     showAdminAlert("Помилка при видаленні: " + error.message);
   }
@@ -694,11 +698,49 @@ async function loadLiveCatalog() {
   liveList.innerHTML = "Завантаження каталогу...";
   
   try {
-    // Add cache buster to ensure fresh data
-    const res = await fetch(`data/specialists.json?v=${new Date().getTime()}`);
-    if (!res.ok) throw new Error("Failed to fetch catalog");
-    const data = await res.json();
+    // 1. Fetch static JSON
+    let staticSpecialists = [];
+    try {
+      const res = await fetch(`data/specialists.json?v=${new Date().getTime()}`);
+      if (res.ok) {
+        staticSpecialists = await res.json();
+      }
+    } catch (e) {
+      console.warn("Could not fetch static specialists:", e);
+    }
     
+    // 2. Fetch Firebase live approved / deleted updates
+    const uniqueMap = new Map();
+    staticSpecialists.forEach(item => {
+      if (item.id != null) {
+        uniqueMap.set(String(item.id), item);
+      }
+    });
+
+    try {
+      const q = query(collection(db, "pending_specialists"), where("status", "in", ["approved", "deleted"]));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const itemId = data.id || docSnap.id;
+        if (data.status === "deleted") {
+          if (itemId) uniqueMap.delete(String(itemId));
+        } else if (data.status === "approved") {
+          if (data.createdAt && typeof data.createdAt.toDate === 'function') {
+            data.createdAt = data.createdAt.toDate().toISOString();
+          }
+          if (data.updatedAt && typeof data.updatedAt.toDate === 'function') {
+            data.updatedAt = data.updatedAt.toDate().toISOString();
+          }
+          uniqueMap.set(String(itemId), { ...data, id: String(itemId) });
+        }
+      });
+    } catch (e) {
+      console.warn("Could not fetch live specialists from Firebase:", e);
+    }
+
+    const data = Array.from(uniqueMap.values());
+
     if (!data || data.length === 0) {
       liveList.innerHTML = "<p>Каталог порожній.</p>";
       const emptyPagination = document.getElementById("live-pagination");
@@ -994,38 +1036,3 @@ loadApplications = async () => {
   }
 };
 
-window.triggerSync = async () => {
-  let token = localStorage.getItem("gh_pat_token");
-  if (!token) {
-    token = prompt("Для автоматичного запуску через API потрібен GitHub Personal Access Token (classic: 'repo' scope, або fine-grained: 'Actions: read&write'). Введіть його тут (збережеться в браузері):");
-    if (!token) return;
-    localStorage.setItem("gh_pat_token", token.trim());
-    token = token.trim();
-  }
-
-  showAdminAlert("Запускаємо синхронізацію... ⏳");
-  
-  try {
-    const response = await fetch("https://api.github.com/repos/nikolayantonyuk/kw-community-site/actions/workflows/sync.yml/dispatches", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Accept": "application/vnd.github.v3+json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ ref: "master" })
-    });
-
-    if (response.ok) {
-      showAdminAlert("✅ Синхронізація успішно запущена! Сайт оновиться через 2-5 хвилин.");
-    } else if (response.status === 401 || response.status === 403 || response.status === 404) {
-      localStorage.removeItem("gh_pat_token");
-      showAdminAlert("❌ Помилка доступу. Можливо, токен недійсний або не має прав. Токен видалено, оновіть сторінку і спробуйте ще раз.<br><br>Переконайтеся, що ви створили токен з правами 'repo' (для classic token).");
-    } else {
-      const errText = await response.text();
-      showAdminAlert("⚠️ Помилка запуску: " + response.status + " " + errText);
-    }
-  } catch (error) {
-    showAdminAlert("Помилка мережі: " + error.message);
-  }
-};
