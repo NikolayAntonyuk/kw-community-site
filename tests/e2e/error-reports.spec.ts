@@ -168,4 +168,51 @@ test.describe('Error Reports Requirements (Звіти про помилки)', (
     await expect(page.locator('#form-section')).not.toHaveClass(/active/);
   });
 
+  // @T14: Opening admin via email link with query parameter or hash auto-opens edit form with helper
+  test('@T14 Opening admin via email link with feedback parameter auto-opens edit form with helper box', async ({ page }) => {
+    const feedbackParam = 'Прошу оновити номер телефону та категорію';
+    await page.goto(`/admin.html?id=1&feedback=${encodeURIComponent(feedbackParam)}`);
+    await page.waitForFunction(() => typeof window.editApp === 'function');
+
+    // Form section should be active
+    const formSection = page.locator('#form-section');
+    await expect(formSection).toHaveClass(/active/);
+
+    // Specialist data pre-filled
+    await expect(page.locator('#edit-id')).toHaveValue('1');
+    await expect(page.locator('#edit-name')).toHaveValue('Tanya UPDATED');
+
+    // Helper container with feedback message from URL
+    const helperContainer = page.locator('#feedback-helper-container');
+    await expect(helperContainer).toBeVisible();
+    const helperText = page.locator('#feedback-helper-text');
+    await expect(helperText).toHaveText(feedbackParam);
+
+    // Copy button is present
+    await expect(page.locator('#btn-copy-feedback')).toBeVisible();
+  });
+
+  // @T15: Direct database saving without GitHub token prompts
+  test('@T15 Saving card executes direct database update without GitHub token prompt', async ({ page }) => {
+    await page.goto('/admin.html');
+    await page.waitForFunction(() => typeof window.editApp === 'function' && typeof window.saveEdit === 'function');
+
+    let promptCalled = false;
+    page.on('dialog', async (dialog) => {
+      if (dialog.type() === 'prompt') {
+        promptCalled = true;
+      }
+      await dialog.accept();
+    });
+
+    await page.evaluate(async () => {
+      await window.editApp('1', true, 'Зміна');
+    });
+
+    await page.locator('#edit-name').fill('Tanya Pro');
+    await page.locator('#form-section button:has-text("Зберегти")').click();
+
+    expect(promptCalled).toBe(false);
+  });
+
 });
