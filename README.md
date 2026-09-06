@@ -3,7 +3,7 @@
 Статичний сайт-каталог спеціалістів та сервісів української громади Kitchener–Waterloo–Cambridge–Guelph.
 Хостинг — GitHub Pages, бекенду немає: дані лежать у репозиторії, а нові заявки й модерація йдуть через Firebase.
 
-🔗 Сайт: https://nikolayantonyuk.github.io/kw-community-site/
+🔗 Сайт: https://ukrainianskw.ca/ (дзеркало: https://nikolayantonyuk.github.io/kw-community-site/)
 
 ## Архітектура
 
