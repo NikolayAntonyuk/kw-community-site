@@ -301,8 +301,26 @@ cron.schedule('0 3 * * *', async () => {
   }
 });
 
-// ===== Static Files (GitHub Pages fallback) =====
-app.use(express.static('.')); // Serve all files in current directory
+// ===== Static Files & Cache Headers =====
+app.use((req, res, next) => {
+  if (req.path.endsWith('.html') || req.path.endsWith('.js') || req.path.endsWith('.json') || req.path === '/' || req.path.startsWith('/api/')) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+  }
+  next();
+});
+
+app.use(express.static('.', {
+  etag: false,
+  lastModified: false,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html') || filePath.endsWith('.js') || filePath.endsWith('.json')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    }
+  }
+}));
 
 // ===== Start Server =====
 if (process.env.NODE_ENV !== 'test') {
