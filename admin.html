@@ -130,6 +130,7 @@
         <div class="admin-tab active" id="tab-new-apps" onclick="window.goToPage(this, 'new-apps')">Нові заявки</div>
         <div class="admin-tab" id="tab-live-catalog" onclick="window.goToPage(this, 'live-catalog')">Живий каталог</div>
         <div class="admin-tab" id="tab-feedback" onclick="window.goToPage(this, 'feedback-section')">Звіти про помилки</div>
+        <div class="admin-tab" id="tab-emails" onclick="window.loadEmails(); window.goToPage(this, 'emails-section')">✉️ Пошта</div>
         <div class="admin-tab" id="tab-rejected-apps" onclick="window.goToPage(this, 'rejected-apps')">Архів заявок</div>
         <div class="admin-tab" id="tab-archived-catalog" onclick="window.goToPage(this, 'archived-catalog')">Архів каталогу</div>
       </div>
@@ -183,6 +184,16 @@
         <div id="live-pagination"></div>
         <div id="live-catalog-list">
           Завантаження...
+        </div>
+      </div>
+
+      <div id="emails-section" class="tab-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+          <h2>Пошта (ukrskw@gmail.com)</h2>
+          <button class="btn" style="background: #0056b3; max-width: 150px;" onclick="window.loadEmails()">🔄 Оновити</button>
+        </div>
+        <div id="emails-list" style="max-height: 600px; overflow-y: auto;">
+          Завантаження листів...
         </div>
       </div>
 

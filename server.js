@@ -6,6 +6,8 @@ const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const path = require('path');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
+const Imap = require('imap');
+const { simpleParser } = require('mailparser');
 
 const app = express();
 const PORT = process.env.PORT || 3010;
@@ -355,6 +357,137 @@ app.post('/api/send-rejection-email', async (req, res) => {
     await transporter.sendMail(mailOptions);
     console.log(`[EMAIL] ✅ Rejection email sent to ${to_email}, CC: ${emailUser}`);
     res.json({ success: true, message: 'Email sent successfully' });
+  } catch (err) {
+    console.error('[EMAIL] Error:', err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 12. GET EMAILS from IMAP (Gmail inbox)
+app.get('/api/emails', async (req, res) => {
+  try {
+    const emailUser = process.env.GMAIL_USER || 'ukrskw@gmail.com';
+    const emailPass = process.env.GMAIL_PASS;
+
+    if (!emailPass) {
+      return res.status(400).json({ success: false, error: 'GMAIL_PASS not configured' });
+    }
+
+    const emails = [];
+    const imap = new Imap({
+      user: emailUser,
+      password: emailPass,
+      host: 'imap.gmail.com',
+      port: 993,
+      tls: true,
+      tlsOptions: { rejectUnauthorized: false }
+    });
+
+    imap.openBox('INBOX', false, async (err, box) => {
+      if (err) {
+        console.error('[IMAP] Error opening inbox:', err.message);
+        return res.status(500).json({ success: false, error: err.message });
+      }
+
+      const searchCriteria = ['ALL'];
+      imap.search(searchCriteria, (err, results) => {
+        if (err) {
+          console.error('[IMAP] Search error:', err.message);
+          imap.closeBox(false, () => imap.end());
+          return res.status(500).json({ success: false, error: err.message });
+        }
+
+        if (results.length === 0) {
+          imap.closeBox(false, () => imap.end());
+          return res.json({ success: true, emails: [] });
+        }
+
+        const f = imap.fetch(results, { bodies: '' });
+        f.on('message', (msg, seqno) => {
+          const emailData = { seqno };
+
+          msg.on('body', (stream) => {
+            simpleParser(stream, async (err, parsed) => {
+              if (err) {
+                console.error('[IMAP] Parse error:', err.message);
+                return;
+              }
+
+              emailData.from = parsed.from?.text || 'Unknown';
+              emailData.subject = parsed.subject || '(no subject)';
+              emailData.text = parsed.text || parsed.html || '';
+              emailData.html = parsed.html || '';
+              emailData.date = parsed.date || new Date();
+              emails.push(emailData);
+            });
+          });
+
+          msg.once('attributes', (attrs) => {
+            emailData.flags = attrs.flags;
+          });
+        });
+
+        f.once('error', (err) => {
+          console.error('[IMAP] Fetch error:', err.message);
+          imap.closeBox(false, () => imap.end());
+          return res.status(500).json({ success: false, error: err.message });
+        });
+
+        f.once('end', () => {
+          imap.closeBox(false, () => {
+            imap.end();
+            setTimeout(() => {
+              res.json({ success: true, emails: emails.sort((a, b) => new Date(b.date) - new Date(a.date)) });
+            }, 1000);
+          });
+        });
+      });
+    });
+
+    imap.openBox('INBOX', false, () => {});
+    imap.connect();
+  } catch (err) {
+    console.error('[IMAP] Error:', err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 13. SEND REPLY EMAIL
+app.post('/api/send-reply-email', async (req, res) => {
+  try {
+    const { to_email, subject, reply_text, original_subject } = req.body;
+
+    if (!to_email || !reply_text) {
+      return res.status(400).json({ success: false, error: 'Missing required fields' });
+    }
+
+    const emailUser = process.env.GMAIL_USER || 'ukrskw@gmail.com';
+    const emailPass = process.env.GMAIL_PASS;
+
+    if (!emailPass) {
+      return res.status(400).json({ success: false, error: 'GMAIL_PASS not configured' });
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: emailUser,
+        pass: emailPass
+      }
+    });
+
+    const mailOptions = {
+      from: emailUser,
+      to: to_email,
+      cc: emailUser,
+      subject: `Re: ${original_subject || subject || 'Reply'}`,
+      text: reply_text,
+      html: `<p>${reply_text.replace(/\n/g, '<br>')}</p>`
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`[EMAIL] ✅ Reply sent to ${to_email}`);
+    res.json({ success: true, message: 'Reply sent successfully' });
   } catch (err) {
     console.error('[EMAIL] Error:', err.message);
     res.status(500).json({ success: false, error: err.message });

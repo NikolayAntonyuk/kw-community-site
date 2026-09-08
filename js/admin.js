@@ -1046,6 +1046,163 @@ window.resolveFeedback = async (id) => {
   }
 };
 
+// LOAD EMAILS from IMAP
+window.loadEmails = async () => {
+  const emailsList = document.getElementById("emails-list");
+  emailsList.innerHTML = "Завантаження листів...";
+  try {
+    const response = await fetch(`${window.apiBaseUrl}/api/emails`, {
+      method: 'GET'
+    });
+    const result = await response.json();
+
+    if (!result.success || !result.emails) {
+      emailsList.innerHTML = "<p style='color:red;'>Помилка завантаження листів</p>";
+      return;
+    }
+
+    const emails = result.emails || [];
+    if (emails.length === 0) {
+      emailsList.innerHTML = "<p style='text-align:center;color:#666;'>Немає листів</p>";
+      return;
+    }
+
+    let html = "";
+    emails.forEach((email, idx) => {
+      const date = new Date(email.date).toLocaleString('uk-UA');
+      const fromEmail = email.from.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)?.[0] || email.from;
+      const preview = email.text.substring(0, 100).replace(/\n/g, " ") + (email.text.length > 100 ? "..." : "");
+
+      html += `
+        <div style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 6px; background: #fafafa;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+            <div style="flex: 1;">
+              <strong style="font-size: 1.05rem; display: block; margin-bottom: 0.3rem;">📧 ${email.subject}</strong>
+              <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                <div><strong>Від:</strong> ${fromEmail}</div>
+                <div><strong>Дата:</strong> ${date}</div>
+              </div>
+              <div style="background: white; padding: 0.75rem; border-radius: 4px; border-left: 3px solid #0056b3; margin: 0.75rem 0; font-size: 0.95rem; line-height: 1.4;">
+                ${preview}
+              </div>
+            </div>
+            <button class="btn" style="background: #0056b3; padding: 0.6rem 1rem; width: auto;" onclick="window.showEmailDetail(${idx})">Переглянути</button>
+          </div>
+        </div>
+      `;
+    });
+
+    emailsList.innerHTML = html;
+  } catch (error) {
+    console.error("Помилка завантаження листів:", error);
+    emailsList.innerHTML = "<p style='color:red;'>Помилка: " + error.message + "</p>";
+  }
+};
+
+// SHOW FULL EMAIL & REPLY FORM
+window.showEmailDetail = (idx) => {
+  let modal = document.getElementById("email-detail-modal");
+  if (!modal) {
+    const html = `<div id="email-detail-modal" hidden style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:2000;overflow-y:auto;padding:1rem;">
+      <div style="background:white;padding:2rem;border-radius:8px;max-width:700px;width:90%;box-shadow:0 4px 16px rgba(0,0,0,0.2);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+          <h2>Деталі листа</h2>
+          <button type="button" class="btn" style="background:#6c757d;width:auto;" onclick="window.closeEmailModal()">✕ Закрити</button>
+        </div>
+        <div id="email-detail-content" style="margin-bottom:1.5rem;"></div>
+        <hr style="margin:1.5rem 0;">
+        <div id="email-reply-form" style="display:none;">
+          <h3>Відповідь</h3>
+          <textarea id="reply-text" placeholder="Напишіть відповідь..." style="width:100%;height:120px;padding:0.75rem;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;margin-bottom:1rem;"></textarea>
+          <div style="display:flex;gap:0.5rem;">
+            <button class="btn btn-approve" style="flex:1;" onclick="window.sendEmailReply()">Відправити відповідь</button>
+            <button class="btn" style="flex:1;background:#6c757d;" onclick="document.getElementById('email-reply-form').style.display='none';">Скасувати</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+    document.body.insertAdjacentHTML("beforeend", html);
+    modal = document.getElementById("email-detail-modal");
+  }
+
+  // Load email data from emails-list
+  const emailsList = document.getElementById("emails-list");
+  const emailDivs = emailsList.querySelectorAll('[style*="border: 1px solid #ddd"]');
+  const emailDiv = emailDivs[idx];
+
+  if (!emailDiv) return;
+
+  const subject = emailDiv.querySelector('strong').textContent;
+  const fromText = emailDiv.textContent.match(/Від:([^\n]+)/)?.[1]?.trim() || 'Unknown';
+  const dateText = emailDiv.textContent.match(/Дата:([^\n]+)/)?.[1]?.trim() || '';
+  const contentDiv = emailDiv.querySelector('[style*="border-left"]');
+  const fullText = contentDiv ? contentDiv.textContent : 'No content';
+
+  window.currentEmailIdx = idx;
+  window.currentEmailFrom = fromText;
+  window.currentEmailSubject = subject;
+
+  const detailHtml = `
+    <div style="background:#f5f5f5;padding:1rem;border-radius:6px;margin-bottom:1rem;">
+      <div><strong>Тема:</strong> ${subject}</div>
+      <div><strong>Від:</strong> ${fromText}</div>
+      <div><strong>Дата:</strong> ${dateText}</div>
+    </div>
+    <div style="background:white;padding:1rem;border:1px solid #ddd;border-radius:6px;min-height:150px;white-space:pre-wrap;word-break:break-word;line-height:1.5;">
+      ${fullText}
+    </div>
+  `;
+
+  document.getElementById("email-detail-content").innerHTML = detailHtml;
+  document.getElementById("email-reply-form").style.display = "block";
+  document.getElementById("reply-text").value = "";
+  modal.removeAttribute("hidden");
+  modal.style.display = "flex";
+};
+
+// CLOSE EMAIL MODAL
+window.closeEmailModal = () => {
+  const modal = document.getElementById("email-detail-modal");
+  if (modal) {
+    modal.setAttribute("hidden", "");
+    modal.style.display = "none";
+  }
+};
+
+// SEND EMAIL REPLY
+window.sendEmailReply = async () => {
+  const replyText = document.getElementById("reply-text").value.trim();
+  if (!replyText) {
+    alert("Напишіть відповідь");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${window.apiBaseUrl}/api/send-reply-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to_email: window.currentEmailFrom,
+        subject: "Re: " + window.currentEmailSubject,
+        original_subject: window.currentEmailSubject,
+        reply_text: replyText
+      })
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      showAdminAlert("✅ Відповідь відправлена!");
+      window.closeEmailModal();
+      setTimeout(() => window.loadEmails(), 1000);
+    } else {
+      showAdminAlert("❌ Помилка: " + result.error);
+    }
+  } catch (error) {
+    console.error("Помилка відправки відповіді:", error);
+    showAdminAlert("❌ Помилка: " + error.message);
+  }
+};
+
 const originalLoad = loadApplications;
 loadApplications = async () => {
   await originalLoad();
