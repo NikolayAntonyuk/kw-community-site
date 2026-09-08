@@ -12,7 +12,8 @@ const categoryTranslations = {
   "Legal": "Юридичні послуги",
   "Legal and bookkeeping": "Юридичні послуги",
   "Real Estate": "Нерухомість",
-  "Food": "Їжа та Кондитери"
+  "Food": "Їжа та Кондитери",
+  "Photo/Video": "Фото/Відео"
 };
 
 function translateCategory(englishName) {
