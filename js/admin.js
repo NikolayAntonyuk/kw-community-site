@@ -1149,12 +1149,13 @@ window.updateEmailBadge = async () => {
     const badge = document.getElementById('email-unread-count');
     const badgeBtn = document.getElementById('email-badge-btn');
 
-    if (unreadCount > 0) {
+    if (badgeBtn) badgeBtn.style.display = window.currentUser ? 'inline-block' : 'none';
+
+    if (unreadCount > 0 && badge) {
       badge.textContent = unreadCount;
       badge.style.display = 'flex';
-      badgeBtn.style.display = 'inline-block';
-    } else {
-      badgeBtn.style.display = 'none';
+    } else if (badge) {
+      badge.style.display = 'none';
     }
   } catch (err) {
     console.error('Error updating email badge:', err);
