@@ -7,6 +7,21 @@ import { renderSpecialists, getIconClass, openModal } from "./render.js";
 
 const ALL_LOCATIONS_VALUE = "";
 
+const categoryTranslations = {
+  "Beauty": "Краса та догляд",
+  "Health": "Здоров'я та Медицина",
+  "Education": "Освіта / Дитсадки / Гуртки",
+  "Services": "Побутові та інші послуги",
+  "Auto": "Авто послуги",
+  "Legal": "Юридичні послуги",
+  "Real Estate": "Нерухомість",
+  "Food": "Їжа та Кондитери"
+};
+
+function translateCategory(englishName) {
+  return categoryTranslations[englishName] || englishName;
+}
+
 const state = {
   category: "",
   subcategory: "",
@@ -58,7 +73,7 @@ function renderCategoryPills() {
     activePill.type = "button";
     activePill.className = "pill active";
     activePill.dataset.category = state.category;
-    activePill.innerHTML = `<i class="fas ${getIconClass(null, state.category)}"></i> ${state.category}`;
+    activePill.innerHTML = `<i class="fas ${getIconClass(null, state.category)}"></i> ${translateCategory(state.category)}`;
     activePill.setAttribute("aria-pressed", "true");
     activePill.addEventListener("click", resetCategory);
     els.categoryPills.appendChild(activePill);
@@ -77,7 +92,7 @@ function renderCategoryPills() {
     pill.type = "button";
     pill.className = "pill";
     pill.dataset.category = category;
-    pill.innerHTML = `<i class="fas ${getIconClass(null, category)}"></i> ${category}`;
+    pill.innerHTML = `<i class="fas ${getIconClass(null, category)}"></i> ${translateCategory(category)}`;
     pill.setAttribute("aria-pressed", "false");
     pill.addEventListener("click", () => {
       state.category = category;

@@ -2,6 +2,21 @@ import { auth, db } from "./firebase.js";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { collection, query, where, getDocs, getDoc, updateDoc, doc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+const categoryTranslations = {
+  "Beauty": "Краса та догляд",
+  "Health": "Здоров'я та Медицина",
+  "Education": "Освіта / Дитсадки / Гуртки",
+  "Services": "Побутові та інші послуги",
+  "Auto": "Авто послуги",
+  "Legal": "Юридичні послуги",
+  "Real Estate": "Нерухомість",
+  "Food": "Їжа та Кондитери"
+};
+
+function translateCategory(englishName) {
+  return categoryTranslations[englishName] || englishName;
+}
+
 // GLOBAL: Switch between admin tabs
 window.goToPage = function(tabElement, contentId) {
   // Hide all tab contents
@@ -234,7 +249,7 @@ async function loadApplications() {
       const updatedStr = data.updatedAt && typeof data.updatedAt.toDate === 'function' ? data.updatedAt.toDate().toLocaleDateString("uk-UA") : (data.updatedAt ? new Date(data.updatedAt).toLocaleDateString("uk-UA") : 'Невідомо');
       html += `
         <div class="application-card" id="card-${docSnap.id}">
-          <h3><span style="color:#007bff; font-family:monospace;">#${docSnap.id}</span> <span id="display-name-${docSnap.id}">${data.name}</span> <small>(<span id="display-cat-${docSnap.id}">${data.category} > ${data.subcategory}</span>)</small></h3>
+          <h3><span style="color:#007bff; font-family:monospace;">#${docSnap.id}</span> <span id="display-name-${docSnap.id}">${data.name}</span> <small>(<span id="display-cat-${docSnap.id}">${translateCategory(data.category)} > ${data.subcategory}</span>)</small></h3>
           <p><strong>Email:</strong> ${data.email}</p>
           <p><strong>Опис:</strong> <span id="display-desc-${docSnap.id}">${data.description}</span></p>
           <p><strong>Локація:</strong> <span id="display-loc-${docSnap.id}">${data.locationType || '—'}</span></p>
@@ -674,7 +689,7 @@ window.saveEdit = async () => {
 
     if (id && document.getElementById('live-display-name-' + id) && isLive) {
       document.getElementById('live-display-name-' + id).innerText = newName;
-      document.getElementById('live-display-cat-' + id).innerText = `${newCategory} > ${newSubcategory}`;
+      document.getElementById('live-display-cat-' + id).innerText = `${translateCategory(newCategory)} > ${newSubcategory}`;
       document.getElementById('live-display-desc-' + id).innerText = newDesc;
       document.getElementById('live-display-loc-' + id).innerText = newLoc || '—';
       document.getElementById('live-display-address-' + id).innerText = newAddress || '—';
@@ -687,7 +702,7 @@ window.saveEdit = async () => {
       document.getElementById('live-display-notes-' + id).innerText = newNotes || '—';
     } else if (id && document.getElementById('display-name-' + id) && !isLive) {
       document.getElementById('display-name-' + id).innerText = newName;
-      document.getElementById('display-cat-' + id).innerText = `${newCategory} > ${newSubcategory}`;
+      document.getElementById('display-cat-' + id).innerText = `${translateCategory(newCategory)} > ${newSubcategory}`;
       document.getElementById('display-desc-' + id).innerText = newDesc;
       document.getElementById('display-loc-' + id).innerText = newLoc || '—';
       document.getElementById('display-address-' + id).innerText = newAddress || '—';
@@ -916,7 +931,7 @@ function renderLiveCatalog() {
 
     html += `
       <div class="application-card" id="live-card-${itemId}">
-        <h3><span style="color:#007bff; font-family:monospace;">#${itemId}</span> <span id="live-display-name-${itemId}">${item.name}</span> <small>(<span id="live-display-cat-${itemId}">${item.category} > ${item.subcategory}</span>)</small></h3>
+        <h3><span style="color:#007bff; font-family:monospace;">#${itemId}</span> <span id="live-display-name-${itemId}">${item.name}</span> <small>(<span id="live-display-cat-${itemId}">${translateCategory(item.category)} > ${item.subcategory}</span>)</small></h3>
         <p><strong>Опис:</strong> <span id="live-display-desc-${itemId}">${item.description || ''}</span></p>
         <p><strong>Локація:</strong> <span id="live-display-loc-${itemId}">${item.locationType || '—'}</span></p>
         <p><strong>Адреса:</strong> <span id="live-display-address-${itemId}">${item.address || '—'}</span></p>
@@ -963,7 +978,7 @@ async function loadRejectedApplications() {
       const updatedStr = data.updatedAt && typeof data.updatedAt.toDate === 'function' ? data.updatedAt.toDate().toLocaleDateString("uk-UA") : (data.updatedAt ? new Date(data.updatedAt).toLocaleDateString("uk-UA") : 'Невідомо');
       html += `
         <div class="application-card" id="rejected-card-${docSnap.id}" style="background: #fff5f5; border-color: #ffcccc;">
-          <h3 style="margin-bottom: 0.5rem;"><span style="color:#dc3545; font-family:monospace;">#${docSnap.id}</span> ${data.name} <small>(${data.category} > ${data.subcategory})</small></h3>
+          <h3 style="margin-bottom: 0.5rem;"><span style="color:#dc3545; font-family:monospace;">#${docSnap.id}</span> ${data.name} <small>(${translateCategory(data.category)} > ${data.subcategory})</small></h3>
           <p style="margin-bottom: 0.5rem;"><strong>Причина відхилення:</strong> <span style="color: #dc3545; font-weight: bold;">${data.rejectReason || 'Не вказано'}</span></p>
           <p style="margin-bottom: 0.5rem;"><strong>Email:</strong> ${data.email || '—'}</p>
           <p style="margin-bottom: 0.5rem;"><strong>Опис:</strong> ${data.description || '—'}</p>

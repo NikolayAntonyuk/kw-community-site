@@ -812,9 +812,9 @@
   },
   {
     "category": "Освіта/Дитсадки/Гуртки",
-    "subcategory": "Репетитор мов",
+    "subcategory": "Перекладач",
     "name": "Марта Шмигельська",
-    "description": "переклад, уроки англійської",
+    "description": "Official translations (English - Ukrainian), Community Interpreting, Переклад письмовий/усний",
     "locationType": "По всьому Waterloo регіону",
     "address": "",
     "phone": "",
@@ -822,11 +822,12 @@
     "instagram": "",
     "facebook": "",
     "website": "https://kwmulticultural.ca/interpreters",
-    "price": "за домовленыстю",
-    "notes": "",
-    "id": 51,
+    "price": "за домовленістю",
+    "notes": "Also an English Tutor\nтакож викладач англійської мови",
+    "id": "51",
     "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-08-13T12:00:00.000Z"
+    "updatedAt": "2026-09-08T17:21:42.922Z",
+    "status": "approved"
   },
   {
     "category": "Освіта/Дитсадки/Гуртки",
@@ -1547,5 +1548,24 @@
     "price": "",
     "notes": "",
     "updatedAt": "2026-08-20T17:53:36.486Z"
+  },
+  {
+    "instagram": "https://www.instagram.com/victoria.usik",
+    "locationType": "Kitchener",
+    "phone": "",
+    "description": "Фуд-фотографія для ресторанів та меню. Затишні сімейні лайвстайл-зйомки та індивідуальні портрети",
+    "name": "Victoria Usik",
+    "website": "",
+    "email": "viktoriia.usik@gmail.com",
+    "notes": "",
+    "price": "$150",
+    "telegram": "@victoria_usik",
+    "facebook": "https://www.facebook.com/share/1Dmzc9nXpd/",
+    "subcategory": "Фотограф",
+    "category": "Services",
+    "address": "",
+    "createdAt": "2026-09-04T19:42:33.473Z",
+    "status": "approved",
+    "id": "zf3bsO5MVVuRN61qOqwS"
   }
 ]
