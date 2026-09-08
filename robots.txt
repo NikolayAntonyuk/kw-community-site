@@ -1,0 +1,18 @@
+# robots.txt for https://ukrainianskw.ca
+User-agent: *
+Allow: /
+Allow: /catalog.html
+Allow: /school.html
+Allow: /apply.html
+Allow: /feedback.html
+Allow: /assets/
+Allow: /css/
+Allow: /js/
+Allow: /data/
+
+# Protect admin panel and backend endpoints from search engines
+Disallow: /admin.html
+Disallow: /api/admin/
+Disallow: /api/sync
+
+Sitemap: https://ukrainianskw.ca/sitemap.xml

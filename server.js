@@ -5,6 +5,7 @@ const { initializeApp, cert, getApp } = require('firebase-admin/app');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const path = require('path');
 const fs = require('fs');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3010;
@@ -26,6 +27,27 @@ if (process.env.NODE_ENV === 'test') {
   });
   db = getFirestore();
 }
+
+// ===== SEO Routes =====
+app.get('/robots.txt', (req, res) => {
+  const robotsPath = path.join(__dirname, 'robots.txt');
+  if (fs.existsSync(robotsPath)) {
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    return res.sendFile(robotsPath);
+  }
+  res.status(404).send('robots.txt not found');
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  const sitemapPath = path.join(__dirname, 'sitemap.xml');
+  if (fs.existsSync(sitemapPath)) {
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    return res.sendFile(sitemapPath);
+  }
+  res.status(404).send('sitemap.xml not found');
+});
 
 // ===== API Routes =====
 
@@ -284,6 +306,58 @@ app.post('/api/sync', async (req, res) => {
     res.json({ success: true, synced: updates.length, deleted: deletes.length });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// 11. SEND REJECTION EMAIL via SMTP
+app.post('/api/send-rejection-email', async (req, res) => {
+  try {
+    const { to_email, reject_reason, to_name } = req.body;
+
+    if (!to_email || !to_email.includes('@')) {
+      return res.status(400).json({ success: false, error: 'Invalid recipient email' });
+    }
+
+    const emailUser = process.env.GMAIL_USER || 'ukrskw@gmail.com';
+    const emailPass = process.env.GMAIL_PASS;
+
+    if (!emailPass) {
+      console.warn('[EMAIL] Warning: GMAIL_PASS not set. Using test mode.');
+      return res.json({ success: true, message: 'Email would be sent (test mode)', testMode: true });
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: emailUser,
+        pass: emailPass
+      }
+    });
+
+    const mailOptions = {
+      from: emailUser,
+      to: to_email,
+      cc: emailUser,
+      subject: 'Відповідь на вашу заявку - Разом KW',
+      html: `
+        <p>Привіт <strong>${to_name || 'друже'}</strong>,</p>
+        <p>Дякуємо за вашу заявку до каталогу <strong>Разом KW</strong>!</p>
+        <p>На жаль, ми не можемо підтвердити вашу заявку на цей момент з наступної причини:</p>
+        <blockquote style="background:#f5f5f5;padding:1rem;border-left:4px solid #007bff;">
+          <strong>${reject_reason || 'Не відповідає правилам спільноти'}</strong>
+        </blockquote>
+        <p>Якщо у вас є запитання або ви хочете внести зміни, напишіть нам на <strong>ukrskw@gmail.com</strong>.</p>
+        <p>З повагою,<br><strong>Команда Разом KW</strong><br>
+        <a href="https://ukrainianskw.ca" style="color:#007bff;">ukrainianskw.ca</a></p>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`[EMAIL] ✅ Rejection email sent to ${to_email}, CC: ${emailUser}`);
+    res.json({ success: true, message: 'Email sent successfully' });
+  } catch (err) {
+    console.error('[EMAIL] Error:', err.message);
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 

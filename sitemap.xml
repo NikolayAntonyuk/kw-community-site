@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://ukrainianskw.ca/</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://ukrainianskw.ca/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://ukrainianskw.ca/" />
+  </url>
+  <url>
+    <loc>https://ukrainianskw.ca/catalog.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://ukrainianskw.ca/catalog.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://ukrainianskw.ca/catalog.html" />
+  </url>
+  <url>
+    <loc>https://ukrainianskw.ca/school.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://ukrainianskw.ca/school.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://ukrainianskw.ca/school.html" />
+  </url>
+  <url>
+    <loc>https://ukrainianskw.ca/apply.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://ukrainianskw.ca/apply.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://ukrainianskw.ca/apply.html" />
+  </url>
+  <url>
+    <loc>https://ukrainianskw.ca/feedback.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://ukrainianskw.ca/feedback.html" />
+  </url>
+</urlset>

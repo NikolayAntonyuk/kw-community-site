@@ -241,37 +241,41 @@ window.approveApp = async (id) => {
 window.rejectApp = async (id, userEmail, userName) => {
   const reason = prompt("Вкажіть причину відхилення (або залиште порожнім):");
   if (reason === null) return; // Cancelled
-  
+
   try {
     await updateDoc(doc(db, "pending_specialists", id), {
       status: "rejected",
       rejectReason: reason
     });
-    
-    const EMAILJS_SERVICE_ID = "service_e521b5c";
-    const EMAILJS_TEMPLATE_ID = "template_gu2b17w";
-    const EMAILJS_PUBLIC_KEY = "064MymkRcVYVYhuJE";
-    
+
     let trimmedEmail = userEmail ? userEmail.trim() : "";
 
     if (!trimmedEmail || !trimmedEmail.includes("@")) {
       showAdminAlert("Заявку відхилено. Лист не відправлено, оскільки у спеціаліста немає валідного email.");
     } else {
-      if (EMAILJS_TEMPLATE_ID !== "YOUR_TEMPLATE_ID" && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
-        emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-          to_email: trimmedEmail,
-          to_name: userName,
-          reject_reason: reason || "Не відповідає правилам спільноти."
+      try {
+        const response = await fetch('/api/send-rejection-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to_email: trimmedEmail,
+            to_name: userName,
+            reject_reason: reason || "Не відповідає правилам спільноти."
+          })
         });
-        console.log("Email sent successfully to: " + trimmedEmail);
-        showAdminAlert("Заявка відхилена. Лист успішно відправлено!");
-      } else {
-        console.warn("EmailJS не налаштовано повністю. Лист не відправлено.");
-        showAdminAlert("Заявка відхилена.");
+
+        const result = await response.json();
+        if (result.success) {
+          showAdminAlert("Заявка відхилена. Лист успішно відправлено від ukrskw@gmail.com!");
+        } else {
+          showAdminAlert("Заявка відхилена, але помилка при надсиланні листа: " + (result.error || "unknown"));
+        }
+      } catch (emailError) {
+        console.error("Error sending rejection email:", emailError);
+        showAdminAlert("Заявка відхилена, але помилка при надсиланні листа.");
       }
     }
-    
+
     document.getElementById(`card-${id}`).remove();
   } catch (error) {
     showAdminAlert("Помилка при відхиленні: " + error.message);
