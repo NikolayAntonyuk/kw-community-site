@@ -103,7 +103,32 @@ const loginForm = document.getElementById("login-form");
 const authError = document.getElementById("auth-error");
 const applicationsList = document.getElementById("applications-list");
 const logoutBtn = document.getElementById("logout-btn");
+const logoutBtnMenu = document.getElementById("logout-btn-menu");
+const emailBadgeBtn = document.getElementById("email-badge-btn");
 const refreshBtn = document.getElementById("refresh-btn");
+
+// Handle logout from main button
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.reload();
+  });
+}
+
+// Handle logout from menu button
+if (logoutBtnMenu) {
+  logoutBtnMenu.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.reload();
+  });
+}
+
+// Handle email badge click
+if (emailBadgeBtn) {
+  emailBadgeBtn.addEventListener("click", async () => {
+    await window.goToEmailSection();
+  });
+}
 
 // Handle Authentication State
 onAuthStateChanged(auth, (user) => {
@@ -112,6 +137,9 @@ onAuthStateChanged(auth, (user) => {
     dashboardSection.style.display = "block";
     logoutBtn.style.display = "inline-block";
     if (refreshBtn) refreshBtn.style.display = "inline-block";
+    // Update email badge periodically
+    window.updateEmailBadge();
+    setInterval(() => window.updateEmailBadge(), 60000); // Every minute
     loadApplications();
   } else {
     authSection.style.display = "block";
@@ -1046,6 +1074,50 @@ window.resolveFeedback = async (id) => {
   }
 };
 
+// TOGGLE ADMIN MENU
+window.toggleAdminMenu = function(e) {
+  e.preventDefault();
+  const menu = document.getElementById("admin-menu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+};
+
+// GO TO EMAIL SECTION
+window.goToEmailSection = async () => {
+  const emailTab = document.querySelector('#tab-emails') || document.querySelector('#admin-tab[id*="email"]');
+  if (!emailTab) {
+    // Create email tab if doesn't exist
+    document.querySelector('.admin-tabs').insertAdjacentHTML('beforeend', '<div class="admin-tab" id="tab-emails" onclick="window.goToPage(this, \'emails-section\'); window.loadEmails();">✉️ Пошта</div>');
+  }
+  document.getElementById('emails-section').classList.add('active');
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  (document.querySelector('#tab-emails') || emailTab).classList.add('active');
+  await window.loadEmails();
+};
+
+// UPDATE EMAIL BADGE
+window.updateEmailBadge = async () => {
+  try {
+    const response = await fetch(`${window.apiBaseUrl}/api/emails`, {
+      method: 'GET'
+    });
+    const result = await response.json();
+    const unreadCount = result.unreadCount || 0;
+
+    const badge = document.getElementById('email-unread-count');
+    const badgeBtn = document.getElementById('email-badge-btn');
+
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = 'flex';
+      badgeBtn.style.display = 'inline-block';
+    } else {
+      badgeBtn.style.display = 'none';
+    }
+  } catch (err) {
+    console.error('Error updating email badge:', err);
+  }
+};
+
 // LOAD EMAILS from IMAP
 window.loadEmails = async () => {
   const emailsList = document.getElementById("emails-list");
@@ -1066,6 +1138,9 @@ window.loadEmails = async () => {
       emailsList.innerHTML = "<p style='text-align:center;color:#666;'>Немає листів</p>";
       return;
     }
+
+    // Update badge count
+    window.updateEmailBadge();
 
     let html = "";
     emails.forEach((email, idx) => {
