@@ -7,8 +7,10 @@ const categoryTranslations = {
   "Health": "Здоров'я та Медицина",
   "Education": "Освіта / Дитсадки / Гуртки",
   "Services": "Побутові та інші послуги",
-  "Auto": "Авто послуги",
+  "Service": "Інші послуги",
+  "Auto": "Авто",
   "Legal": "Юридичні послуги",
+  "Legal and bookkeeping": "Юридичні послуги",
   "Real Estate": "Нерухомість",
   "Food": "Їжа та Кондитери"
 };
