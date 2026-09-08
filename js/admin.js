@@ -1075,23 +1075,20 @@ window.resolveFeedback = async (id) => {
 };
 
 // TOGGLE ADMIN MENU
-window.toggleAdminMenu = function(e) {
-  e.preventDefault();
-  const menu = document.getElementById("admin-menu");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-};
-
 // GO TO EMAIL SECTION
 window.goToEmailSection = async () => {
-  const emailTab = document.querySelector('#tab-emails') || document.querySelector('#admin-tab[id*="email"]');
-  if (!emailTab) {
-    // Create email tab if doesn't exist
-    document.querySelector('.admin-tabs').insertAdjacentHTML('beforeend', '<div class="admin-tab" id="tab-emails" onclick="window.goToPage(this, \'emails-section\'); window.loadEmails();">✉️ Пошта</div>');
+  const tabs = document.querySelectorAll('.admin-tab');
+  let emailTab = null;
+  for (let tab of tabs) {
+    if (tab.textContent.includes('Пошта') || tab.id === 'tab-emails') {
+      emailTab = tab;
+      break;
+    }
   }
-  document.getElementById('emails-section').classList.add('active');
-  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-  (document.querySelector('#tab-emails') || emailTab).classList.add('active');
-  await window.loadEmails();
+  if (emailTab) {
+    window.goToPage(emailTab, 'emails-section');
+    await window.loadEmails?.();
+  }
 };
 
 // UPDATE EMAIL BADGE
