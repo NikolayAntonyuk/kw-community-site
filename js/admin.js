@@ -2,6 +2,27 @@ import { auth, db } from "./firebase.js";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { collection, query, where, getDocs, getDoc, updateDoc, doc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// GLOBAL: Switch between admin tabs
+window.goToPage = function(tabElement, contentId) {
+  // Hide all tab contents
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+
+  // Show selected content
+  const content = document.getElementById(contentId);
+  if (content) {
+    content.classList.add('active');
+  }
+
+  // Mark tab as active
+  if (tabElement && tabElement.classList) {
+    tabElement.classList.add('active');
+  } else if (contentId) {
+    const tab = document.getElementById('tab-' + contentId.replace('-section', '').replace('-', '-'));
+    if (tab) tab.classList.add('active');
+  }
+};
+
 window.showAdminAlert = function(htmlMsg) {
   let m = document.getElementById("custom-alert-modal");
   if (!m) {
