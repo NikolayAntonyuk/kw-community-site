@@ -132,6 +132,7 @@ if (emailBadgeBtn) {
 
 // Handle Authentication State
 onAuthStateChanged(auth, (user) => {
+  window.currentUser = user;
   if (user) {
     authSection.style.display = "none";
     dashboardSection.style.display = "block";
