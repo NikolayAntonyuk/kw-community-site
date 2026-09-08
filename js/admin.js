@@ -1101,18 +1101,12 @@ window.resolveFeedback = async (id) => {
 // TOGGLE ADMIN MENU
 // GO TO EMAIL SECTION
 window.goToEmailSection = async () => {
-  const tabs = document.querySelectorAll('.admin-tab');
-  let emailTab = null;
-  for (let tab of tabs) {
-    if (tab.textContent.includes('Пошта') || tab.id === 'tab-emails') {
-      emailTab = tab;
-      break;
-    }
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  const emailSection = document.getElementById('emails-section');
+  if (emailSection) {
+    emailSection.classList.add('active');
   }
-  if (emailTab) {
-    window.goToPage(emailTab, 'emails-section');
-    await window.loadEmails?.();
-  }
+  await window.loadEmails?.();
 };
 
 // TOGGLE ADMIN PANEL MENU
