@@ -21,7 +21,7 @@
   {
     "category": "Beauty",
     "subcategory": "Перукар/Барбер",
-    "name": "(без імені в анкеті)",
+    "name": "Olha Ohman",
     "description": "Перукар",
     "locationType": "Waterloo",
     "address": "",
@@ -32,9 +32,9 @@
     "website": "",
     "price": "",
     "notes": "Instagram",
-    "id": 2,
+    "id": "2",
     "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-08-13T12:00:00.000Z"
+    "updatedAt": "2026-09-06T02:28:11.061Z"
   },
   {
     "category": "Beauty",
