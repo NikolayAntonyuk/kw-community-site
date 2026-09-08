@@ -137,6 +137,7 @@ onAuthStateChanged(auth, (user) => {
     dashboardSection.style.display = "block";
     logoutBtn.style.display = "inline-block";
     if (refreshBtn) refreshBtn.style.display = "inline-block";
+    showAdminPanelWhenLogged();
     // Update email badge periodically
     window.updateEmailBadge();
     setInterval(() => window.updateEmailBadge(), 60000); // Every minute
@@ -146,6 +147,7 @@ onAuthStateChanged(auth, (user) => {
     dashboardSection.style.display = "none";
     logoutBtn.style.display = "none";
     if (refreshBtn) refreshBtn.style.display = "none";
+    showAdminPanelWhenLogged();
   }
 });
 
@@ -1090,6 +1092,49 @@ window.goToEmailSection = async () => {
     await window.loadEmails?.();
   }
 };
+
+// TOGGLE ADMIN PANEL MENU
+window.toggleAdminPanelMenu = function(e) {
+  e.stopPropagation();
+  const dropdown = document.getElementById('admin-panel-dropdown');
+  dropdown.classList.toggle('show');
+};
+
+// GO TO ADMIN TAB
+window.goToAdminTab = function(pageId) {
+  const dropdown = document.getElementById('admin-panel-dropdown');
+  dropdown.classList.remove('show');
+
+  const tabId = pageId.replace('section', 'apps').replace('feedback', 'feedback').replace('rejected', 'rejected-apps');
+  const actualTabId =
+    pageId === 'new-apps' ? 'tab-new-apps' :
+    pageId === 'live-catalog' ? 'tab-live-catalog' :
+    pageId === 'feedback-section' ? 'tab-feedback' :
+    pageId === 'rejected-apps' ? 'tab-rejected-apps' :
+    pageId === 'archived-catalog' ? 'tab-archived-catalog' : null;
+
+  const tab = document.getElementById(actualTabId);
+  if (tab) {
+    window.goToPage(tab, pageId);
+  }
+};
+
+// SHOW ADMIN PANEL WHEN LOGGED IN
+const showAdminPanelWhenLogged = () => {
+  const adminMenu = document.getElementById('admin-panel-menu');
+  if (adminMenu) {
+    adminMenu.style.display = window.currentUser ? 'inline-block' : 'none';
+  }
+};
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('admin-panel-dropdown');
+  const menu = document.getElementById('admin-panel-menu');
+  if (menu && !menu.contains(e.target) && dropdown) {
+    dropdown.classList.remove('show');
+  }
+});
 
 // UPDATE EMAIL BADGE
 window.updateEmailBadge = async () => {
