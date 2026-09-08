@@ -2,7 +2,7 @@
   {
     "category": "Beauty",
     "subcategory": "Перукар/Барбер",
-    "name": "Tanya UPDATED",
+    "name": "Tanya ",
     "description": "Перукар",
     "locationType": "Kitchener",
     "address": "Kitchener, 90 Spadina road East",
@@ -15,7 +15,7 @@
     "notes": "Updated from script",
     "id": "1",
     "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-09-04T21:26:38.899Z",
+    "updatedAt": "2026-09-07T17:37:56.388Z",
     "status": "approved"
   },
   {
@@ -31,10 +31,10 @@
     "facebook": "https://www.facebook.com/profile.php?id=100018010001374",
     "website": "",
     "price": "",
-    "notes": "Instagram",
+    "notes": "",
     "id": "2",
     "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-09-06T02:28:11.061Z"
+    "updatedAt": "2026-09-07T17:37:21.653Z"
   },
   {
     "category": "Beauty",
