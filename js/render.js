@@ -157,11 +157,33 @@ export function openModal(specialist) {
       const link = document.createElement("a");
       link.className = `card-contact card-contact-${field}`;
       link.href = href(specialist[field]);
-      link.textContent = field === "phone" ? specialist[field] : label;
-      if (field !== "phone") {
+
+      if (field === "phone") {
+        const icon = document.createElement("i");
+        icon.className = "fas fa-phone";
+        link.appendChild(icon);
+
+        const phoneNumber = specialist[field];
+        const digitsOnly = phoneNumber.replace(/\D/g, "");
+        let formatted;
+        if (digitsOnly.length === 10) {
+          formatted = `(${digitsOnly.slice(0, 3)}) ${digitsOnly.slice(3, 6)}-${digitsOnly.slice(6)}`;
+        } else if (digitsOnly.length === 11 && digitsOnly[0] === "1") {
+          formatted = `+1 (${digitsOnly.slice(1, 4)}) ${digitsOnly.slice(4, 7)}-${digitsOnly.slice(7)}`;
+        } else {
+          formatted = phoneNumber;
+        }
+
+        const span = document.createElement("span");
+        span.style.marginLeft = "8px";
+        span.textContent = formatted;
+        link.appendChild(span);
+      } else {
+        link.textContent = label;
         link.target = "_blank";
         link.rel = "noopener noreferrer";
       }
+
       contactsEl.appendChild(link);
     });
   }
