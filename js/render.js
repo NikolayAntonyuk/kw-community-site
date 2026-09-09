@@ -157,7 +157,7 @@ export function openModal(specialist) {
       const link = document.createElement("a");
       link.className = `card-contact card-contact-${field}`;
       link.href = href(specialist[field]);
-      link.textContent = label;
+      link.textContent = field === "phone" ? specialist[field] : label;
       if (field !== "phone") {
         link.target = "_blank";
         link.rel = "noopener noreferrer";
