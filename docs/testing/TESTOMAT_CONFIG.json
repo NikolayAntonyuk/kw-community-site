@@ -62,6 +62,23 @@
         "Localization (UA/EN)",
         "Mobile Responsiveness"
       ]
+    },
+    {
+      "name": "CRM Management",
+      "description": "Тестування панелі керування CRM для адміністрування спеціалістами, заявками та зворотніми зв'язків",
+      "checklist_file": "docs/testing/checklist-crm.md",
+      "priority": "high",
+      "modules": [
+        "Authentication & Login",
+        "Navigation & Tab Switching",
+        "Dashboard",
+        "Specialists Catalog",
+        "Applications Queue",
+        "Emails",
+        "Archived Specialists",
+        "Feedback & Error Reports",
+        "Error Handling & Resilience"
+      ]
     }
   ],
   "environments": [

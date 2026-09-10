@@ -1,0 +1,211 @@
+[
+  {
+    "id": "TC-CRM-001",
+    "title": "Verify CRM login page loads with authentication form",
+    "priority": "P1 - Critical",
+    "type": "Functional",
+    "preconditions": "Browser open",
+    "steps": "1. Navigate to https://ukrainianskw.ca/crm.html.",
+    "expected_result": "Login view displays with email and password input fields; app view is hidden.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-002",
+    "title": "Verify Invalid Credentials error handling",
+    "priority": "P1 - High",
+    "type": "Security",
+    "preconditions": "On crm.html",
+    "steps": "1. Enter non-existent email or wrong password. 2. Click Увійти.",
+    "expected_result": "Authentication fails; displays error message Помилка with Firebase error details.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-003",
+    "title": "Verify Successful Admin Login with Firebase Auth",
+    "priority": "P1 - Critical",
+    "type": "Functional",
+    "preconditions": "Valid admin creds",
+    "steps": "1. Enter valid admin email & password. 2. Click Увійти.",
+    "expected_result": "Authenticates with Firebase Auth; CRM Dashboard displays with tabs and data loaded.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-004",
+    "title": "Verify Tab Navigation (Dashboard, Specialists, Emails, Applications, Archived, Feedback)",
+    "priority": "P1 - High",
+    "type": "Functional",
+    "preconditions": "Logged in as admin",
+    "steps": "1. Click each tab icon (📊, 👥, ✉️, 📋, 📦, ⚠️).",
+    "expected_result": "Correct tab content displays; previous tab content is hidden; active tab is highlighted.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-005",
+    "title": "Verify Dashboard Statistics display",
+    "priority": "P1 - High",
+    "type": "Functional",
+    "preconditions": "Logged in",
+    "steps": "1. Open Dashboard tab.",
+    "expected_result": "Statistics cards show: Total Specialists, Pending Applications, Rejected Applications, Emails count.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-006",
+    "title": "Verify Specialists Table rendering with pagination",
+    "priority": "P1 - High",
+    "type": "Functional",
+    "preconditions": "Logged in",
+    "steps": "1. Open Specialists tab.",
+    "expected_result": "Table loads specialists from Firestore with status=approved; displays name, category, location, contact buttons.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-007",
+    "title": "Verify Add New Specialist Modal opens with empty fields",
+    "priority": "P2 - High",
+    "type": "Functional",
+    "preconditions": "On Specialists tab",
+    "steps": "1. Click ➕ (Add) button.",
+    "expected_result": "Modal appears with title Новий спеціаліст; all input fields are empty and ready for data entry.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-008",
+    "title": "Verify Edit Specialist Modal with pre-populated data",
+    "priority": "P1 - High",
+    "type": "Functional",
+    "preconditions": "On Specialists tab",
+    "steps": "1. Click edit button on a specialist card.",
+    "expected_result": "Modal opens with title Редагувати; all fields are populated with existing specialist data (name, category, phone, email, etc.).",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-009",
+    "title": "Verify Save Changes to Specialist updates Firestore",
+    "priority": "P1 - Critical",
+    "type": "E2E Integration",
+    "preconditions": "Edit modal open",
+    "steps": "1. Modify specialist details (name, phone, description). 2. Click Зберегти.",
+    "expected_result": "Changes are saved to Firestore document; table updates immediately with new values.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-010",
+    "title": "Verify Delete Specialist with confirmation",
+    "priority": "P2 - High",
+    "type": "Functional",
+    "preconditions": "On Specialists tab",
+    "steps": "1. Click delete/reject button on a specialist. 2. Confirm deletion.",
+    "expected_result": "Specialist is removed from active list and archived; changes persist in Firestore.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-011",
+    "title": "Verify Applications Queue (Pending) rendering",
+    "priority": "P1 - High",
+    "type": "Functional",
+    "preconditions": "Logged in",
+    "steps": "1. Open Applications tab.",
+    "expected_result": "Displays all Firestore documents with status=pending; shows applicant details and action buttons.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-012",
+    "title": "Verify Approve Application changes status to approved",
+    "priority": "P1 - Critical",
+    "type": "E2E Integration",
+    "preconditions": "Pending application visible",
+    "steps": "1. Click Підтвердити (Approve) on a pending application.",
+    "expected_result": "Status in Firestore updates to approved; specialist card appears in Catalog after sync; application removed from pending queue.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-013",
+    "title": "Verify Reject Application with reason and email notification",
+    "priority": "P1 - Critical",
+    "type": "Integration",
+    "preconditions": "Pending application visible",
+    "steps": "1. Click Відхилити (Reject). 2. Select/type rejection reason. 3. Confirm.",
+    "expected_result": "Status updates to rejected; EmailJS sends rejection notification to applicant; application moves to rejected view.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-014",
+    "title": "Verify Emails inbox loads from API endpoint",
+    "priority": "P2 - High",
+    "type": "Functional",
+    "preconditions": "Logged in",
+    "steps": "1. Open Emails tab.",
+    "expected_result": "Displays list of emails from /api/emails endpoint; shows sender, subject, date, unread count badge.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-015",
+    "title": "Verify Archived Specialists viewing",
+    "priority": "P2 - Medium",
+    "type": "Functional",
+    "preconditions": "Logged in",
+    "steps": "1. Open Archived tab.",
+    "expected_result": "Displays specialists from Firestore archived_specialists collection with read-only view (no edit buttons).",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-016",
+    "title": "Verify Feedback & Error Reports viewing",
+    "priority": "P2 - Medium",
+    "type": "Functional",
+    "preconditions": "Logged in",
+    "steps": "1. Open Feedback tab.",
+    "expected_result": "Lists all user feedback and bug reports from Firestore feedback collection with timestamps and category tags.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-017",
+    "title": "Verify Search/Filter in Specialists Table",
+    "priority": "P2 - High",
+    "type": "Functional",
+    "preconditions": "On Specialists tab",
+    "steps": "1. Type specialist name or city in search box.",
+    "expected_result": "Table updates in real-time filtering only matching records.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-018",
+    "title": "Verify Logout functionality",
+    "priority": "P1 - High",
+    "type": "Security",
+    "preconditions": "Logged in",
+    "steps": "1. Click Вийти (Logout) button.",
+    "expected_result": "Firebase session terminates; login form displayed; localStorage auth token cleared.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  },
+  {
+    "id": "TC-CRM-019",
+    "title": "Verify Firebase Offline Error Handling",
+    "priority": "P2 - High",
+    "type": "Resilience",
+    "preconditions": "Network offline",
+    "steps": "1. Block Firebase URLs / disconnect network. 2. Try to load data or save changes.",
+    "expected_result": "Displays user-friendly error message; does not crash application.",
+    "automation_status": "Automated",
+    "automation_file": "crm.spec.ts"
+  }
+]

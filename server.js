@@ -517,6 +517,96 @@ app.post('/api/send-reply-email', async (req, res) => {
   }
 });
 
+// ===== OAuth2 Email (Gmail) =====
+const GMAIL_OAUTH_CLIENT_ID = '352202414760-mvu4oi0rh7r7gavqj4f1v9lnhd9fuj4b.apps.googleusercontent.com';
+const GMAIL_OAUTH_CLIENT_SECRET = '***';
+const GMAIL_OAUTH_REDIRECT = 'https://ukrainianskw.ca/oauth/callback';
+const GMAIL_REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN || null;
+
+// OAuth2 Callback - exchanges code for refresh token
+app.get('/oauth/callback', async (req, res) => {
+  try {
+    const { code } = req.query;
+    if (!code) return res.status(400).send('Missing authorization code');
+
+    const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: GMAIL_OAUTH_CLIENT_ID,
+        client_secret: GMAIL_OAUTH_CLIENT_SECRET,
+        redirect_uri: GMAIL_OAUTH_REDIRECT,
+        grant_type: 'authorization_code'
+      })
+    });
+
+    const data = await tokenRes.json();
+    if (data.refresh_token) {
+      res.send(`<html><body style="font-family:sans-serif;max-width:600px;margin:50px auto;padding:20px">
+        <h2>✅ Авторизація успішна!</h2>
+        <p>Збережи цей <strong>refresh token</strong> і надішли мені (Миколі):</p>
+        <textarea readonly style="width:100%;height:80px;font-size:12px;padding:10px;border:2px solid #28a745;border-radius:8px">${data.refresh_token}</textarea>
+        <p style="color:#666;font-size:13px">Токен діє безстроково (поки не відкликаєш доступ у Google Account).</p>
+      </body></html>`);
+    } else {
+      res.status(400).send('Error: ' + JSON.stringify(data));
+    }
+  } catch (err) {
+    res.status(500).send('Error: ' + err.message);
+  }
+});
+
+// Helper: get access token from refresh token
+async function getGmailAccessToken() {
+  if (!GMAIL_REFRESH_TOKEN) return null;
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: GMAIL_OAUTH_CLIENT_ID,
+      client_secret: GMAIL_OAUTH_CLIENT_SECRET,
+      refresh_token: GMAIL_REFRESH_TOKEN,
+      grant_type: 'refresh_token'
+    })
+  });
+  const data = await res.json();
+  return data.access_token || null;
+}
+
+// Helper: get IMAP & SMTP config with OAuth2
+async function getGmailTransporter() {
+  const accessToken = await getGmailAccessToken();
+  if (!accessToken) return null;
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      type: 'OAuth2',
+      user: 'ukrskw@gmail.com',
+      clientId: GMAIL_OAUTH_CLIENT_ID,
+      clientSecret: GMAIL_OAUTH_CLIENT_SECRET,
+      refreshToken: GMAIL_REFRESH_TOKEN,
+      accessToken
+    }
+  });
+}
+
+// 12b. GET EMAILS via IMAP with XOAUTH2 (if refresh token available)
+app.get('/api/emails-v2', async (req, res) => {
+  try {
+    if (!GMAIL_REFRESH_TOKEN) {
+      return res.json({ success: false, error: 'GMAIL_REFRESH_TOKEN not set', demo: true });
+    }
+    const accessToken = await getGmailAccessToken();
+    if (!accessToken) {
+      return res.json({ success: false, error: 'Failed to get access token', demo: true });
+    }
+    res.json({ success: true, message: 'OAuth2 working! IMAP implementation goes here' });
+  } catch (err) {
+    res.json({ success: false, error: err.message });
+  }
+});
+
 // ===== Scheduled Tasks =====
 
 // Daily Facebook scraping (03:00 AM)

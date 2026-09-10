@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
+    "@testomatio/reporter": "^2.15.0",
     "@types/node": "^26.2.0",
     "allure-commandline": "^2.43.0",
     "allure-playwright": "^3.10.2",
@@ -39,6 +40,7 @@
     "express": "^5.2.1",
     "firebase-admin": "^14.3.0",
     "imap": "^0.8.19",
+    "imapflow": "^2.0.0",
     "mailparser": "^3.9.23",
     "node-cron": "^4.6.0",
     "nodemailer": "^10.0.1"

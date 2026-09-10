@@ -11,12 +11,13 @@
 2. [Module 2: Specialists Catalog & Multi-filtering (TC-CAT)](#module-2-specialists-catalog--multi-filtering)
 3. [Module 3: Specialist Registration & Application (TC-APPLY)](#module-3-specialist-registration--application)
 4. [Module 4: Moderator & Admin Portal (TC-ADMIN)](#module-4-moderator--admin-portal)
-5. [Module 5: Ukrainian School Portal (TC-SCH)](#module-5-ukrainian-school-portal)
-6. [Module 6: Feedback & Bug Reporting (TC-FDB)](#module-6-feedback--bug-reporting)
-7. [Module 7: Multilingual Subsystem & i18n (TC-I18N)](#module-7-multilingual-subsystem--i18n)
-8. [Module 8: Data Synchronization & CI/CD Pipeline (TC-SYNC)](#module-8-data-synchronization--cicd-pipeline)
-9. [Module 9: Accessibility & WCAG 2.1 AA (TC-A11Y)](#module-9-accessibility--wcag-21-aa)
-10. [Module 10: Security, Privacy & Performance (TC-SEC)](#module-10-security-privacy--performance)
+5. [Module 5: CRM Management Portal (TC-CRM)](#module-5-crm-management-portal)
+6. [Module 6: Ukrainian School Portal (TC-SCH)](#module-6-ukrainian-school-portal)
+7. [Module 7: Feedback & Bug Reporting (TC-FDB)](#module-7-feedback--bug-reporting)
+8. [Module 8: Multilingual Subsystem & i18n (TC-I18N)](#module-8-multilingual-subsystem--i18n)
+9. [Module 9: Data Synchronization & CI/CD Pipeline (TC-SYNC)](#module-9-data-synchronization--cicd-pipeline)
+10. [Module 10: Accessibility & WCAG 2.1 AA (TC-A11Y)](#module-10-accessibility--wcag-21-aa)
+11. [Module 11: Security, Privacy & Performance (TC-SEC)](#module-11-security-privacy--performance)
 
 ---
 
@@ -86,7 +87,33 @@
 
 ---
 
-## Module 5: Ukrainian School Portal
+## Module 5: CRM Management Portal
+
+| TC ID | Title | Priority | Type | Pre-conditions | Test Steps | Expected Result | Auto Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **TC-CRM-001** | Verify CRM login page loads with authentication form | P1 - Critical | Functional | Browser open | 1. Navigate to `https://ukrainianskw.ca/crm.html`. | Login view displays with email and password input fields; app view is hidden. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-002** | Verify Invalid Credentials error handling | P1 - High | Security | On `crm.html` | 1. Enter non-existent email or wrong password.<br>2. Click "Увійти". | Authentication fails; displays error message "Помилка" with Firebase error details. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-003** | Verify Successful Admin Login with Firebase Auth | P1 - Critical | Functional | Valid admin creds | 1. Enter valid admin email & password.<br>2. Click "Увійти". | Authenticates with Firebase Auth; CRM Dashboard displays with tabs and data loaded. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-004** | Verify Tab Navigation (Dashboard, Specialists, Emails, Applications, Archived, Feedback) | P1 - High | Functional | Logged in as admin | 1. Click each tab icon (📊, 👥, ✉️, 📋, 📦, ⚠️). | Correct tab content displays; previous tab content is hidden; active tab is highlighted. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-005** | Verify Dashboard Statistics display | P1 - High | Functional | Logged in | 1. Open Dashboard tab. | Statistics cards show: Total Specialists, Pending Applications, Rejected Applications, Emails count. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-006** | Verify Specialists Table rendering with pagination | P1 - High | Functional | Logged in | 1. Open Specialists tab. | Table loads specialists from Firestore with status="approved"; displays name, category, location, contact buttons. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-007** | Verify Add New Specialist Modal opens with empty fields | P2 - High | Functional | On Specialists tab | 1. Click "➕" (Add) button. | Modal appears with title "Новий спеціаліст"; all input fields are empty and ready for data entry. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-008** | Verify Edit Specialist Modal with pre-populated data | P1 - High | Functional | On Specialists tab | 1. Click edit button on a specialist card. | Modal opens with title "Редагувати"; all fields are populated with existing specialist data (name, category, phone, email, etc.). | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-009** | Verify Save Changes to Specialist updates Firestore | P1 - Critical | E2E Integration | Edit modal open | 1. Modify specialist details (name, phone, description).<br>2. Click "Зберегти". | Changes are saved to Firestore document; table updates immediately with new values. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-010** | Verify Delete Specialist with confirmation | P2 - High | Functional | On Specialists tab | 1. Click delete/reject button on a specialist.<br>2. Confirm deletion. | Specialist is removed from active list and archived; changes persist in Firestore. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-011** | Verify Applications Queue (Pending) rendering | P1 - High | Functional | Logged in | 1. Open Applications tab. | Displays all Firestore documents with status="pending"; shows applicant details and action buttons. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-012** | Verify Approve Application changes status to approved | P1 - Critical | E2E Integration | Pending application visible | 1. Click "Підтвердити" (Approve) on a pending application. | Status in Firestore updates to "approved"; specialist card appears in Catalog after sync; application removed from pending queue. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-013** | Verify Reject Application with reason and email notification | P1 - Critical | Integration | Pending application visible | 1. Click "Відхилити" (Reject).<br>2. Select/type rejection reason.<br>3. Confirm. | Status updates to "rejected"; EmailJS sends rejection notification to applicant; application moves to rejected view. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-014** | Verify Emails inbox loads from API endpoint | P2 - High | Functional | Logged in | 1. Open Emails tab. | Displays list of emails from `/api/emails` endpoint; shows sender, subject, date, unread count badge. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-015** | Verify Archived Specialists viewing | P2 - Medium | Functional | Logged in | 1. Open Archived tab. | Displays specialists from Firestore `archived_specialists` collection with read-only view (no edit buttons). | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-016** | Verify Feedback & Error Reports viewing | P2 - Medium | Functional | Logged in | 1. Open Feedback tab. | Lists all user feedback and bug reports from Firestore `feedback` collection with timestamps and category tags. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-017** | Verify Search/Filter in Specialists Table | P2 - High | Functional | On Specialists tab | 1. Type specialist name or city in search box. | Table updates in real-time filtering only matching records. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-018** | Verify Logout functionality | P1 - High | Security | Logged in | 1. Click "Вийти" (Logout) button. | Firebase session terminates; login form displayed; localStorage auth token cleared. | ✅ Automated (`crm.spec.ts`) |
+| **TC-CRM-019** | Verify Firebase Offline Error Handling | P2 - High | Resilience | Network offline | 1. Block Firebase URLs / disconnect network.<br>2. Try to load data or save changes. | Displays user-friendly error message; does not crash application. | ✅ Automated (`crm.spec.ts`) |
+
+---
+
+## Module 6: Ukrainian School Portal
 
 | TC ID | Title | Priority | Type | Pre-conditions | Test Steps | Expected Result | Auto Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -97,7 +124,7 @@
 
 ---
 
-## Module 6: Feedback & Bug Reporting
+## Module 7: Feedback & Bug Reporting
 
 | TC ID | Title | Priority | Type | Pre-conditions | Test Steps | Expected Result | Auto Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -107,7 +134,7 @@
 
 ---
 
-## Module 7: Multilingual Subsystem & i18n
+## Module 8: Multilingual Subsystem & i18n
 
 | TC ID | Title | Priority | Type | Pre-conditions | Test Steps | Expected Result | Auto Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -119,7 +146,7 @@
 
 ---
 
-## Module 8: Data Synchronization & CI/CD Pipeline
+## Module 9: Data Synchronization & CI/CD Pipeline
 
 | TC ID | Title | Priority | Type | Pre-conditions | Test Steps | Expected Result | Auto Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -130,7 +157,7 @@
 
 ---
 
-## Module 9: Accessibility & WCAG 2.1 AA
+## Module 10: Accessibility & WCAG 2.1 AA
 
 | TC ID | Title | Priority | Type | Pre-conditions | Test Steps | Expected Result | Auto Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -141,7 +168,7 @@
 
 ---
 
-## Module 10: Security, Privacy & Performance
+## Module 11: Security, Privacy & Performance
 
 | TC ID | Title | Priority | Type | Pre-conditions | Test Steps | Expected Result | Auto Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |

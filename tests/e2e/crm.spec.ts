@@ -1,0 +1,314 @@
+import { test, expect } from '@playwright/test';
+
+test.describe('CRM Panel E2E', () => {
+  test('should load CRM login page', async ({ page }) => {
+    await page.goto('/crm.html');
+
+    // Check login view is visible
+    await expect(page.locator('#loginView')).toBeVisible();
+    await expect(page.locator('#loginEmail')).toBeVisible();
+    await expect(page.locator('#loginPass')).toBeVisible();
+
+    // App view should be hidden
+    await expect(page.locator('#appView')).not.toBeVisible();
+  });
+
+  test('should show error on wrong credentials', async ({ page }) => {
+    await page.goto('/crm.html');
+
+    // Fill form with wrong credentials
+    await page.locator('#loginEmail').fill('wrong@example.com');
+    await page.locator('#loginPass').fill('wrongpass');
+
+    // Mock Firebase error
+    await page.route('https://identitytoolkit.googleapis.com/**', async (route) => {
+      await route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          error: { message: 'INVALID_LOGIN_CREDENTIALS' }
+        })
+      });
+    });
+
+    await page.click('button:has-text("Увійти")');
+
+    // Wait for error message
+    const errorMsg = page.locator('#loginError');
+    await expect(errorMsg).toBeVisible({ timeout: 3000 });
+    await expect(errorMsg).toContainText('Помилка');
+  });
+
+  test('should toggle between tabs in app view', async ({ page }) => {
+    await page.goto('/crm.html');
+
+    // Mock Firebase to show app without login
+    await page.evaluate(() => {
+      localStorage.setItem('kw_token', 'test-token');
+      (window as any).currentUser = { email: 'test@example.com' };
+    });
+
+    // Reload to trigger showApp
+    await page.reload();
+
+    // App view should be visible
+    await expect(page.locator('#appView')).toBeVisible();
+
+    // Click specialists tab
+    await page.click('a:has-text("👥")');
+    await expect(page.locator('#tab-specialists')).toBeVisible();
+
+    // Click emails tab
+    await page.click('a:has-text("✉️")');
+    await expect(page.locator('#tab-emails')).toBeVisible();
+
+    // Click applications tab
+    await page.click('a:has-text("📋")');
+    await expect(page.locator('#tab-applications')).toBeVisible();
+
+    // Click archived tab
+    await page.click('a:has-text("📦")');
+    await expect(page.locator('#tab-archived')).toBeVisible();
+
+    // Click feedback tab
+    await page.click('a:has-text("⚠️")');
+    await expect(page.locator('#tab-feedback')).toBeVisible();
+  });
+
+  test('should open specialist modal and clear fields for new specialist', async ({ page }) => {
+    await page.goto('/crm.html');
+
+    // Set token to show app
+    await page.evaluate(() => {
+      localStorage.setItem('kw_token', 'test-token');
+      (window as any).currentUser = { email: 'test@example.com' };
+    });
+
+    await page.reload();
+
+    // Navigate to specialists tab
+    await page.click('a:has-text("👥")');
+
+    // Click add button
+    await page.click('button:has-text("➕")');
+
+    // Modal should be visible
+    await expect(page.locator('#specModal')).toHaveCSS('display', 'flex');
+    await expect(page.locator('#specModalTitle')).toContainText('Новий');
+
+    // All fields should be empty for new specialist
+    await expect(page.locator('#specName')).toHaveValue('');
+    await expect(page.locator('#specEmail')).toHaveValue('');
+    await expect(page.locator('#specPhone')).toHaveValue('');
+  });
+
+  test('should load dashboard with statistics', async ({ page }) => {
+    await page.goto('/crm.html');
+
+    // Set token
+    await page.evaluate(() => {
+      localStorage.setItem('kw_token', 'test-token');
+      (window as any).currentUser = { email: 'test@example.com' };
+    });
+
+    await page.reload();
+
+    // Dashboard should be visible by default
+    await expect(page.locator('#tab-dashboard')).toBeVisible();
+
+    // Stats should exist
+    await expect(page.locator('#statSpec')).toBeVisible();
+    await expect(page.locator('#statPending')).toBeVisible();
+    await expect(page.locator('#statRejected')).toBeVisible();
+    await expect(page.locator('#statEmails')).toBeVisible();
+
+    // Stats table should exist
+    await expect(page.locator('#dashApps')).toBeVisible();
+  });
+
+  test('should display specialists table with data', async ({ page }) => {
+    await page.goto('/crm.html');
+
+    // Set token
+    await page.evaluate(() => {
+      localStorage.setItem('kw_token', 'test-token');
+      (window as any).currentUser = { email: 'test@example.com' };
+      // Mock allSpecs with test data
+      (window as any).allSpecs = [
+        {
+          id: '1',
+          name: 'Тест Спеціаліст',
+          category: 'IT',
+          locationType: 'Toronto',
+          status: 'approved',
+          phone: '123-456',
+          email: 'test@test.com'
+        }
+      ];
+    });
+
+    await page.reload();
+
+    // Navigate to specialists
+    await page.click('a:has-text("👥")');
+
+    // Wait for table to be rendered
+    const table = page.locator('#specTable');
+    await expect(table).toBeVisible();
+
+    // Should have edit and delete buttons
+    await expect(page.locator('.actions button.edit')).toBeVisible();
+    await expect(page.locator('.actions button.reject')).toBeVisible();
+  });
+
+  test('should display emails from API', async ({ page }) => {
+    await page.goto('/crm.html');
+
+    // Mock emails endpoint
+    await page.route('/api/emails', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: true,
+          emails: [
+            {
+              from: 'sender@example.com',
+              subject: 'Test Subject',
+              text: 'Test message body',
+              date: new Date().toISOString(),
+              seqno: 1,
+              flags: []
+            }
+          ],
+          unreadCount: 1
+        })
+      });
+    });
+
+    // Set token
+    await page.evaluate(() => {
+      localStorage.setItem('kw_token', 'test-token');
+      (window as any).currentUser = { email: 'test@example.com' };
+    });
+
+    await page.reload();
+
+    // Navigate to emails
+    await page.click('a:has-text("✉️")');
+
+    // Email list should be visible
+    const emailList = page.locator('#emailList');
+    await expect(emailList).toBeVisible();
+  });
+
+  test('should logout user', async ({ page }) => {
+    await page.goto('/crm.html');
+
+    // Set token
+    await page.evaluate(() => {
+      localStorage.setItem('kw_token', 'test-token');
+      (window as any).currentUser = { email: 'test@example.com' };
+    });
+
+    await page.reload();
+
+    // App view should be visible
+    await expect(page.locator('#appView')).toBeVisible();
+
+    // Click logout button
+    await page.click('button.logout-btn');
+
+    // Should return to login view
+    await expect(page.locator('#loginView')).toBeVisible();
+    await expect(page.locator('#appView')).not.toBeVisible();
+  });
+
+  test('should handle Firebase initialization error gracefully', async ({ page }) => {
+    // Block Firebase CDN
+    await page.route('https://www.gstatic.com/firebasejs/**', async (route) => {
+      await route.abort();
+    });
+
+    await page.goto('/crm.html');
+
+    // Page should still load (with error handling)
+    await expect(page.locator('#loginView')).toBeVisible();
+  });
+
+  test('should open edit modal with populated data', async ({ page }) => {
+    await page.goto('/crm.html');
+
+    // Set token and mock data
+    await page.evaluate(() => {
+      localStorage.setItem('kw_token', 'test-token');
+      (window as any).currentUser = { email: 'test@example.com' };
+      (window as any).allSpecs = [
+        {
+          id: 'spec-123',
+          name: 'Олена Кравченко',
+          category: 'Краса',
+          locationType: 'Toronto',
+          status: 'approved',
+          phone: '+1 (416) 555-0001',
+          email: 'olena@beauty.ca',
+          telegram: '@olena_beauty',
+          website: 'olena-beauty.ca',
+          description: 'Салон краси',
+          address: '123 Main St, Toronto',
+          price: '$$',
+          instagram: '@olenakravchenko',
+          notes: 'Топ майстер'
+        }
+      ];
+    });
+
+    await page.reload();
+
+    // Navigate to specialists
+    await page.click('a:has-text("👥")');
+
+    // Click edit button
+    await page.click('.actions button.edit');
+
+    // Modal should open with data
+    await expect(page.locator('#specModal')).toHaveCSS('display', 'flex');
+    await expect(page.locator('#specName')).toHaveValue('Олена Кравченко');
+    await expect(page.locator('#specCategory')).toHaveValue('Краса');
+    await expect(page.locator('#specPhone')).toHaveValue('+1 (416) 555-0001');
+    await expect(page.locator('#specEmail')).toHaveValue('olena@beauty.ca');
+  });
+
+  test('should handle search filter in specialists table', async ({ page }) => {
+    await page.goto('/crm.html');
+
+    // Set token and mock data
+    await page.evaluate(() => {
+      localStorage.setItem('kw_token', 'test-token');
+      (window as any).currentUser = { email: 'test@example.com' };
+      (window as any).allSpecs = [
+        { id: '1', name: 'Олена', category: 'Краса', locationType: 'Toronto', status: 'approved' },
+        { id: '2', name: 'Іван', category: 'IT', locationType: 'Waterloo', status: 'approved' }
+      ];
+    });
+
+    await page.reload();
+
+    // Navigate to specialists
+    await page.click('a:has-text("👥")');
+
+    // Type in search
+    await page.fill('#specSearch', 'Олена');
+
+    // Trigger filter
+    await page.locator('#specSearch').evaluate((el: HTMLInputElement) => {
+      el.dispatchEvent(new Event('input'));
+    });
+
+    // Wait a bit for filter to apply
+    await page.waitForTimeout(100);
+
+    // Table should still be visible (filter works client-side)
+    await expect(page.locator('#specTable')).toBeVisible();
+  });
+});

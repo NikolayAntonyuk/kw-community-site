@@ -23,6 +23,8 @@ jobs:
     - name: Run Playwright tests
       run: npx playwright test
       continue-on-error: true
+      env:
+        TESTOMAT_TOKEN: ${{ secrets.TESTOMAT_TOKEN }}
 
     - name: Generate Allure Report
       uses: simple-elf/allure-report-action@master
