@@ -6,30 +6,6 @@
 <title>KW Community — CRM</title>
 <meta name="robots" content="noindex, nofollow" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDYXk8T1qPE9Qxf4r5Q_dLnK-bZpQr0aM0",
-    authDomain: "ukrainianskw.firebaseapp.com",
-    projectId: "ukrainianskw",
-    storageBucket: "ukrainianskw.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcd123"
-  };
-
-  try {
-    const app = initializeApp(firebaseConfig);
-    window.db = getFirestore(app);
-    window.auth = getAuth(app);
-    window.fbInitialized = true;
-  } catch (e) {
-    console.warn('Firebase init error:', e);
-    window.fbInitialized = false;
-  }
-</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:#f5f6fa;color:#2d3436;line-height:1.5}
@@ -38,16 +14,16 @@ a:hover{text-decoration:underline}
 
 /* Layout */
 .layout{display:flex;min-height:100vh}
-.sidebar{width:240px;background:#2d3436;color:#dfe6e9;padding:1.5rem 0;display:flex;flex-direction:column;position:fixed;height:100vh;z-index:10}
+.sidebar{width:240px;background:#2d3436;color:#dfe6e9;padding:1.5rem 0;display:flex;flex-direction:column;position:fixed;height:100vh;z-index:10;overflow-y:auto}
 .sidebar .logo{font-size:1.25rem;font-weight:700;text-align:center;padding:0 1rem 1.5rem;border-bottom:1px solid #636e72;margin-bottom:1rem}
 .sidebar .logo span{color:#00b894}
 .sidebar nav{display:flex;flex-direction:column;gap:2px}
-.sidebar nav a{color:#b2bec3;padding:0.75rem 1.5rem;font-weight:500;transition:all .2s;border-left:3px solid transparent}
+.sidebar nav a{color:#b2bec3;padding:0.75rem 1.5rem;font-weight:500;transition:all .2s;border-left:3px solid transparent;cursor:pointer}
 .sidebar nav a:hover,.sidebar nav a.active{background:#636e72;color:#fff;border-left-color:#00b894;text-decoration:none}
 .sidebar .logout-btn{margin-top:auto;margin:1rem;padding:0.75rem;background:#d63031;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.9rem;font-weight:600}
 .sidebar .logout-btn:hover{background:#e17055}
 
-.main{flex:1;margin-left:240px;padding:2rem;max-width:1400px}
+.main{flex:1;margin-left:240px;padding:2rem;max-width:1400px;width:100%}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
 .header h1{font-size:1.75rem;font-weight:700}
 .header .btn{padding:0.7rem 1.5rem;background:#00b894;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.9rem}
@@ -57,572 +33,518 @@ a:hover{text-decoration:underline}
 .card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:1.5rem;margin-bottom:1.5rem}
 .card h3{margin-bottom:1rem;font-size:1.1rem;font-weight:600}
 
+/* Login */
+.login-page{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f5f6fa}
+.login-card{background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.12);padding:2rem;width:100%;max-width:400px}
+.login-card h2{margin-bottom:1.5rem;font-size:1.5rem;font-weight:700;text-align:center;color:#2d3436}
+.login-card .form-group{margin-bottom:1rem}
+.login-card label{display:block;margin-bottom:0.5rem;font-weight:500;color:#2d3436}
+.login-card input{width:100%;padding:0.75rem;border:1px solid #dfe6e9;border-radius:6px;font-size:0.95rem;transition:border .2s}
+.login-card input:focus{outline:none;border-color:#0984e3;box-shadow:0 0 0 3px rgba(9,132,227,0.1)}
+.login-card .error{color:#d63031;font-size:0.9rem;margin-top:0.25rem;display:none}
+.login-card .btn{width:100%;padding:0.8rem;background:#00b894;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:1rem;transition:background .2s}
+.login-card .btn:hover{background:#00a381}
+.login-card .btn:disabled{background:#b2bec3;cursor:not-allowed}
+
 /* Stats grid */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
 .stat-card{background:#fff;border-radius:12px;padding:1.25rem;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
 .stat-card .label{font-size:0.85rem;color:#636e72;margin-bottom:0.5rem}
-.stat-card .value{font-size:2rem;font-weight:700;color:#2d3436}
-.stat-card .trend{font-size:0.8rem;margin-top:0.25rem}
-.stat-card .trend.up{color:#00b894}
-.stat-card .trend.down{color:#d63031}
+.stat-card .value{font-size:1.75rem;font-weight:700;color:#2d3436}
 
-/* Table */
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:0.9rem}
-th,td{padding:0.85rem 1rem;text-align:left;border-bottom:1px solid #dfe6e9}
-th{background:#f8f9fa;font-weight:600;color:#636e72;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px}
-tr:hover{background:#f8f9fa}
-.badge{display:inline-block;padding:0.25rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:600}
-.badge.pending{background:#ffeaa7;color:#d63031}
+/* Tables */
+.table-container{overflow-x:auto;margin-bottom:1.5rem}
+table{width:100%;border-collapse:collapse;background:#fff}
+th{background:#f1f2f6;padding:1rem;text-align:left;font-weight:600;color:#2d3436;border-bottom:2px solid #dfe6e9}
+td{padding:1rem;border-bottom:1px solid #f1f2f6;color:#2d3436}
+tr:hover{background:#f9f9f9}
+.badge{display:inline-block;padding:0.35rem 0.7rem;border-radius:4px;font-size:0.85rem;font-weight:600}
+.badge.pending{background:#fff3cd;color:#856404}
 .badge.approved{background:#d4edda;color:#155724}
 .badge.rejected{background:#f8d7da;color:#721c24}
+.badge.archived{background:#e2e3e5;color:#383d41}
 
-.actions button{padding:0.4rem 0.7rem;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;margin-right:0.25rem}
-.actions .approve{background:#00b894;color:#fff}
-.actions .reject{background:#d63031;color:#fff}
-.actions .edit{background:#0984e3;color:#fff}
+/* Buttons */
+.btn{padding:0.6rem 1rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.9rem;transition:all .2s}
+.btn.primary{background:#0984e3;color:#fff}
+.btn.primary:hover{background:#0770ca}
+.btn.secondary{background:#b2bec3;color:#fff}
+.btn.secondary:hover{background:#95a5a6}
+.btn.approve{background:#00b894;color:#fff;padding:0.4rem 0.8rem}
+.btn.approve:hover{background:#00a381}
+.btn.reject{background:#d63031;color:#fff;padding:0.4rem 0.8rem}
+.btn.reject:hover{background:#e17055}
+.actions{text-align:center;gap:0.5rem;display:flex;justify-content:center}
 
-/* Login */
-.login-wrap{display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f5f6fa}
-.login-card{background:#fff;padding:2.5rem;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.1);width:100%;max-width:400px}
-.login-card h2{text-align:center;margin-bottom:1.5rem;font-size:1.5rem}
-.login-card .form-group{margin-bottom:1rem}
-.login-card label{display:block;margin-bottom:0.4rem;font-weight:600;font-size:0.9rem}
-.login-card input{width:100%;padding:0.8rem;border:2px solid #dfe6e9;border-radius:8px;font-size:0.95rem;transition:border .2s}
-.login-card input:focus{outline:none;border-color:#0984e3}
-.login-card .btn{width:100%;padding:0.9rem;margin-top:1rem;background:#00b894;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer}
-.login-card .btn:hover{background:#00a381}
-.login-card .error{color:#d63031;font-size:0.85rem;margin-top:0.5rem;text-align:center}
+/* Modal */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center}
+.modal.active{display:flex}
+.modal-content{background:#fff;border-radius:12px;padding:2rem;max-width:600px;width:90%;max-height:90vh;overflow-y:auto}
+.modal-content h3{margin-bottom:1.5rem;font-size:1.3rem;font-weight:700}
+.modal-content .form-group{margin-bottom:1rem}
+.modal-content .form-group label{display:block;margin-bottom:0.5rem;font-weight:500}
+.modal-content .form-group input,.modal-content .form-group textarea{width:100%;padding:0.75rem;border:1px solid #dfe6e9;border-radius:6px;font-family:inherit}
+.modal-content .form-group textarea{resize:vertical;min-height:80px}
+.modal-close{float:right;font-size:1.5rem;cursor:pointer;color:#636e72}
+.modal-close:hover{color:#2d3436}
 
-/* Email */
-.email-list{max-height:500px;overflow-y:auto}
-.email-item{padding:1rem;border-bottom:1px solid #dfe6e9;cursor:pointer;transition:background .15s}
-.email-item:hover{background:#f8f9fa}
-.email-item.unread{background:#e8f4f8;border-left:3px solid #0984e3}
-.email-from{font-weight:600;font-size:0.9rem}
-.email-subject{font-size:0.9rem;color:#2d3436;margin:0.25rem 0}
-.email-date{font-size:0.8rem;color:#636e72}
-.email-body{white-space:pre-wrap;margin-top:1rem;padding:1rem;background:#f8f9fa;border-radius:8px;font-size:0.9rem}
+/* Toast */
+.toast{position:fixed;bottom:1rem;right:1rem;padding:1rem 1.5rem;border-radius:6px;color:#fff;font-weight:600;z-index:2000;animation:slideIn .3s ease-out}
+.toast.success{background:#00b894}
+.toast.error{background:#d63031}
+.toast.info{background:#0984e3}
+@keyframes slideIn{from{transform:translateX(400px);opacity:0}to{transform:translateX(0);opacity:1}}
 
-/* Search */
-.search-bar{display:flex;gap:0.5rem;margin-bottom:1.5rem}
-.search-bar input{flex:1;padding:0.8rem 1rem;border:2px solid #dfe6e-radius:8px;font-size:0.9rem}
-.search-bar input:focus{outline:none;border-color:#0984e3}
-.search-bar button{padding:0.8rem 1.5rem;background:#0984e3;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+/* Debug log */
+#debugLog{position:fixed;bottom:0;left:0;width:100%;max-height:150px;background:#1e1e1e;color:#0f0;font-family:monospace;font-size:12px;overflow-y:auto;padding:10px;z-index:5000;border-top:1px solid #333}
+#debugLog div{margin:2px 0}
+
+/* Tabs */
+.tab-buttons{display:flex;gap:1rem;margin-bottom:2rem;border-bottom:2px solid #dfe6e9;overflow-x:auto}
+.tab-btn{padding:1rem;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;font-weight:600;color:#636e72;transition:all .2s}
+.tab-btn.active{color:#0984e3;border-bottom-color:#0984e3}
+.tab-content{display:none}
+.tab-content.active{display:block}
 
 /* Responsive */
 @media(max-width:768px){
   .sidebar{width:60px;padding:1rem 0}
-  .sidebar .logo{font-size:0.7rem;padding:0.5rem}
-  .sidebar nav a{padding:0.75rem 0.5rem;font-size:0.7rem;text-align:center}
-  .sidebar .logout-btn{margin:0.5rem;font-size:0.7rem;padding:0.5rem}
+  .sidebar .logo,.sidebar nav a{font-size:0.8rem}
   .main{margin-left:60px;padding:1rem}
-  .header{flex-direction:column;gap:1rem;align-items:flex-start}
-  .stats-grid{grid-template-columns:1fr 1fr}
+  .stats-grid{grid-template-columns:1fr}
+  .modal-content{width:95%}
+  .table-container{font-size:0.85rem}
 }
-
-/* Toast */
-.toast{position:fixed;bottom:2rem;right:2rem;padding:1rem 1.5rem;border-radius:8px;color:#fff;font-weight:600;z-index:1000;animation:slideIn .3s}
-.toast.success{background:#00b894}
-.toast.error{background:#d63031}
-@keyframes slideIn{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="loginView" class="login-wrap">
+<div id="loginPage" class="login-page">
   <div class="login-card">
     <h2>⚡ KW CRM</h2>
     <div class="form-group">
       <label>Email</label>
-      <input type="email" id="loginEmail" placeholder="admin@example.com" />
+      <input type="email" id="emailInput" placeholder="admin@example.com" />
     </div>
     <div class="form-group">
       <label>Пароль</label>
-      <input type="password" id="loginPass" placeholder="••••••••" />
+      <input type="password" id="passwordInput" placeholder="••••••••" />
+      <div class="error" id="loginError"></div>
     </div>
-    <div id="loginError" class="error"></div>
-    <button class="btn" onclick="login()">Увійти</button>
+    <button class="btn" id="loginBtn">Увійти</button>
   </div>
 </div>
 
-<!-- APP -->
-<div id="appView" style="display:none" class="layout">
-  <aside class="sidebar">
-    <div class="logo">⚡ <span>KW</span> CRM</div>
+<div id="appLayout" class="layout" style="display:none">
+  <div class="sidebar">
+    <div class="logo">⚡<span>CRM</span></div>
     <nav>
-      <a href="#" class="active" onclick="showTab('dashboard')">📊 Дашборд</a>
-      <a href="#" onclick="showTab('specialists')">👥 Каталог</a>
-      <a href="#" onclick="showTab('emails')">✉️ Пошта</a>
-      <a href="#" onclick="showTab('applications')">📋 Заявки</a>
-      <a href="#" onclick="showTab('archived')">📦 Архіву</a>
-      <a href="#" onclick="showTab('feedback')">⚠️ Звіти</a>
+      <a class="tab-btn active" onclick="switchTab('dashboard')">📊 Дашборд</a>
+      <a class="tab-btn" onclick="switchTab('catalog')">👥 Каталог</a>
+      <a class="tab-btn" onclick="switchTab('email')">✉️ Пошта</a>
+      <a class="tab-btn" onclick="switchTab('apps')">📋 Заявки</a>
+      <a class="tab-btn" onclick="switchTab('archived')">📦 Архіву</a>
+      <a class="tab-btn" onclick="switchTab('feedback')">📝 Звіти</a>
     </nav>
-    <button class="logout-btn" onclick="logout()">Вийти</button>
-  </aside>
+    <button class="logout-btn" id="logoutBtn">Вихід</button>
+  </div>
 
-  <main class="main">
-    <!-- DASHBOARD -->
-    <div id="tab-dashboard" class="tab">
-      <div class="header"><h1>Дашборд</h1></div>
+  <div class="main">
+    <div id="dashboard" class="tab-content active">
+      <div class="header">
+        <h1>Дашборд</h1>
+      </div>
       <div class="stats-grid">
-        <div class="stat-card"><div class="label">Спеціалісти</div><div class="value" id="statSpec">—</div></div>
-        <div class="stat-card"><div class="label">Заявки</div><div class="value" id="statPending">—</div></div>
-        <div class="stat-card"><div class="label">Відхилені</div><div class="value" id="statRejected">—</div></div>
-        <div class="stat-card"><div class="label">Листи (інбокс)</div><div class="value" id="statEmails">—</div></div>
+        <div class="stat-card"><div class="label">Спеціалісти</div><div class="value" id="statSpecialists">0</div></div>
+        <div class="stat-card"><div class="label">Заявки</div><div class="value" id="statApps">0</div></div>
+        <div class="stat-card"><div class="label">Видалено</div><div class="value" id="statArchived">0</div></div>
+        <div class="stat-card"><div class="label">Звіти</div><div class="value" id="statFeedback">0</div></div>
+      </div>
+    </div>
+
+    <div id="catalog" class="tab-content">
+      <div class="header">
+        <h1>Каталог спеціалістів</h1>
+        <button class="btn primary" onclick="openNewSpecialist()">+ Новий</button>
       </div>
       <div class="card">
-        <h3>⚠️ Останні заявки</h3>
-        <div class="table-wrap"><table><thead><tr><th>Ім'я</th><th>Категорія</th><th>Статус</th><th>Дата</th></tr></thead><tbody id="dashApps"></tbody></table></div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Ім'я</th>
+                <th>Категорія</th>
+                <th>Email</th>
+                <th>Статус</th>
+                <th>Дата</th>
+                <th>Дії</th>
+              </tr>
+            </thead>
+            <tbody id="catalogTable"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- SPECIALISTS -->
-    <div id="tab-specialists" class="tab" style="display:none">
-      <div class="header"><h1>Каталог спеціалістів</h1><button class="btn" onclick="openSpecModal()">➕ Додати</button></div>
-      <div class="search-bar"><input type="text" id="specSearch" placeholder="Пошук за ім'ям чи категорією..." oninput="filterSpecs()" /></div>
-      <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Ім'я</th><th>Категорія</th><th>Локація</th><th>Статус</th><th>Дії</th></tr></thead><tbody id="specTable"></tbody></table></div></div>
+    <div id="email" class="tab-content">
+      <div class="header">
+        <h1>Пошта</h1>
+      </div>
+      <div class="card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>От</th>
+                <th>Тема</th>
+                <th>Дата</th>
+              </tr>
+            </thead>
+            <tbody id="emailTable"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
-    <!-- EMAILS -->
-    <div id="tab-emails" class="tab" style="display:none">
-      <div class="header"><h1>Пошта (ukrskw@gmail.com)</h1></div>
-      <div class="card"><div class="email-list" id="emailList"><p style="color:#636e72">Завантаження...</p></div></div>
-      <div id="emailDetail" class="card" style="display:none"></div>
+    <div id="apps" class="tab-content">
+      <div class="header">
+        <h1>Заявки на додавання</h1>
+      </div>
+      <div class="card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Ім'я</th>
+                <th>Категорія</th>
+                <th>Email</th>
+                <th>Статус</th>
+                <th>Дата</th>
+                <th>Дії</th>
+              </tr>
+            </thead>
+            <tbody id="appTable"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
-    <!-- APPLICATIONS -->
-    <div id="tab-applications" class="tab" style="display:none">
-      <div class="header"><h1>Заявки на модерацію</h1></div>
-      <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Ім'я</th><th>Категорія</th><th>Email</th><th>Статус</th><th>Дата</th><th>Дії</th></tr></thead><tbody id="appTable"></tbody></table></div></div>
+    <div id="archived" class="tab-content">
+      <div class="header">
+        <h1>Архів видалених</h1>
+      </div>
+      <div class="card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Ім'я</th>
+                <th>Категорія</th>
+                <th>Email</th>
+                <th>Дії</th>
+              </tr>
+            </thead>
+            <tbody id="archivedTable"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
-    <!-- ARCHIVED -->
-    <div id="tab-archived" class="tab" style="display:none">
-      <div class="header"><h1>Архів спеціалістів</h1></div>
-      <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Ім'я</th><th>Категорія</th><th>Видалено</th><th>Дії</th></tr></thead><tbody id="archivedTable"></tbody></table></div></div>
-    </div>
-
-    <!-- FEEDBACK -->
-    <div id="tab-feedback" class="tab" style="display:none">
-      <div class="header"><h1>Звіти про неточності</h1></div>
-      <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Спеціаліст</th><th>Від кого</th><th>Контакт</th><th>Повідомлення</th><th>Дата</th><th>Статус</th><th>Дії</th></tr></thead><tbody id="feedbackTable"></tbody></table></div></div>
-    </div>
-  </main>
-</div>
-
-<!-- SPECIALIST MODAL -->
-<div id="specModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:200;justify-content:center;align-items:center">
-  <div style="background:#fff;padding:2rem;border-radius:16px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto">
-    <h3 id="specModalTitle">Новий спеціаліст</h3>
-    <div class="form-group"><label>Ім'я</label><input id="specName" /></div>
-    <div class="form-group"><label>Категорія</label>
-      <select id="specCategory">
-        <option value="">—</option><option>Краса</option><option>Здоров'я</option><option>Освіта</option>
-        <option>Послуги</option><option>Авто</option><option>Юридичні</option>
-        <option>Нерухомість</option><option>Їжа</option><option>IT</option>
-      </select>
-    </div>
-    <div class="form-group"><label>Локація</label><input id="specLocation" /></div>
-    <div class="form-group"><label>Телефон</label><input id="specPhone" /></div>
-    <div class="form-group"><label>Telegram</label><input id="specTelegram" /></div>
-    <div class="form-group"><label>Вебсайт</label><input id="specWebsite" /></div>
-    <div class="form-group"><label>Нотатки</label><textarea id="specNotes" style="width:100%;min-height:80px;padding:0.75rem;border:2px solid #dfe6e9;border-radius:8px"></textarea></div>
-    <div class="form-group"><label>Опис</label><textarea id="specDesc" style="width:100%;min-height:100px;padding:0.75rem;border:2px solid #dfe6e9;border-radius:8px"></textarea></div>
-    <div class="form-group"><label>Email</label><input id="specEmail" type="email" /></div>
-    <div class="form-group"><label>Адреса</label><input id="specAddress" /></div>
-    <div class="form-group"><label>Ціна</label><input id="specPrice" /></div>
-    <div class="form-group"><label>Instagram</label><input id="specInstagram" /></div>
-    <div class="form-group"><label>Facebook</label><input id="specFacebook" /></div>
-    <div style="display:flex;gap:0.5rem;margin-top:1rem">
-      <button class="btn" onclick="saveSpec()" style="flex:1">Зберегти</button>
-      <button class="btn" style="flex:1;background:#636e72" onclick="closeSpecModal()">Скасувати</button>
+    <div id="feedback" class="tab-content">
+      <div class="header">
+        <h1>Звіти про неточності</h1>
+      </div>
+      <div class="card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Спеціаліст</th>
+                <th>Текст</th>
+                <th>Статус</th>
+                <th>Дії</th>
+              </tr>
+            </thead>
+            <tbody id="feedbackTable"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
+<div id="debugLog"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-// API helper
-const API = '/api';
-async function api(path, opts) {
-  const res = await fetch(API + path, { headers: { 'Content-Type': 'application/json' }, ...opts });
-  if (!res.ok) throw new Error(res.statusText);
-  return res.json();
-}
 
-// Auth via Firebase
-let currentUser = null;
-async function login() {
-  const email = document.getElementById('loginEmail').value;
-  const pass = document.getElementById('loginPass').value;
-  try {
-    if (!window.fbInitialized) throw new Error('Firebase не ініціалізована');
-    const result = await signInWithEmailAndPassword(window.auth, email, pass);
-    currentUser = result.user;
-    localStorage.setItem('kw_token', await result.user.getIdToken());
-    showApp();
-    document.getElementById('loginError').textContent = '';
-  } catch (e) {
-    document.getElementById('loginError').textContent = 'Помилка: ' + (e.message || 'невірний логін');
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDLEmsFY7IxK6nfuoy6EEqw6GNqCPeVH3A",
+  authDomain: "kw-community.firebaseapp.com",
+  projectId: "kw-community",
+  storageBucket: "kw-community.firebasestorage.app",
+  messagingSenderId: "867344768696",
+  appId: "1:867344768696:web:846c9c02cce4740286de4d",
+  measurementId: "G-E4KTQNSH7E"
+};
+
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+window.debugLog = function(msg) {
+  console.log(msg);
+  const log = document.getElementById('debugLog');
+  if (log) {
+    const line = document.createElement('div');
+    line.textContent = msg;
+    log.appendChild(line);
+    log.scrollTop = log.scrollHeight;
   }
-}
+};
 
-// Слухати зміни статусу аутентифікації
-if (window.fbInitialized) {
-  onAuthStateChanged(window.auth, (user) => {
-    if (user) {
-      currentUser = user;
-      if (localStorage.getItem('kw_token')) {
-        showApp();
-      }
-    }
-  });
-}
+window.debugLog('✅ Firebase модулі завантажені успішно!');
 
-async function logout() {
-  try {
-    if (window.fbInitialized) {
-      await signOut(window.auth);
-    }
-  } catch (e) {
-    console.error('Logout error:', e);
+// Login
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const email = document.getElementById('emailInput').value;
+  const password = document.getElementById('passwordInput').value;
+  const errorEl = document.getElementById('loginError');
+  errorEl.style.display = 'none';
+
+  if (!email || !password) {
+    errorEl.textContent = 'Заповніть усі поля';
+    errorEl.style.display = 'block';
+    return;
   }
-  localStorage.removeItem('kw_token');
-  currentUser = null;
-  document.getElementById('loginView').style.display = 'flex';
-  document.getElementById('appView').style.display = 'none';
-}
 
-function showApp() {
-  document.getElementById('loginView').style.display = 'none';
-  document.getElementById('appView').style.display = 'flex';
-  loadDashboard();
-}
+  try {
+    window.debugLog('🔐 Спроба входу: ' + email);
+    await auth.signInWithEmailAndPassword(email, password);
+    window.debugLog('✅ Вхід успішний!');
+  } catch (e) {
+    window.debugLog('❌ Помилка входу: ' + e.message);
+    errorEl.textContent = 'Помилка: ' + e.message;
+    errorEl.style.display = 'block';
+  }
+});
 
-// Tabs
-function showTab(name) {
-  document.querySelectorAll('.tab').forEach(t => t.style.display = 'none');
-  document.getElementById('tab-' + name).style.display = 'block';
-  document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+// Auth state listener
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    window.debugLog('✅ Користувач авторизований: ' + user.email);
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('appLayout').style.display = 'flex';
+    loadDashboard();
+    loadCatalog();
+    loadApps();
+    loadArchived();
+    loadFeedback();
+  } else {
+    window.debugLog('❌ Користувач не авторизований');
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('appLayout').style.display = 'none';
+  }
+});
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await auth.signOut();
+  document.getElementById('emailInput').value = '';
+  document.getElementById('passwordInput').value = '';
+});
+
+// Tab switching
+window.switchTab = function(tabName) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(tabName).classList.add('active');
   event.target.classList.add('active');
-  if (name === 'dashboard') loadDashboard();
-  if (name === 'specialists') loadSpecs();
-  if (name === 'emails') loadEmails();
-  if (name === 'applications') loadApps();
-  if (name === 'archived') loadArchived();
-  if (name === 'feedback') loadFeedback();
-}
+};
 
-// Dashboard з Firebase
+// Dashboard
 async function loadDashboard() {
   try {
-    if (!window.fbInitialized || !window.db) throw new Error('Firebase not ready');
-    const { collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const catalogSnap = await getDocs(query(collection(db, 'pending_specialists'), where('status', '==', 'approved')));
+    const appsSnap = await getDocs(query(collection(db, 'pending_specialists'), where('status', '==', 'pending')));
+    const archivedSnap = await getDocs(collection(db, 'archived_specialists'));
+    const feedbackSnap = await getDocs(collection(db, 'feedback'));
 
-    const [specSnap, pendSnap, rejSnap, emailRes] = await Promise.all([
-      getDocs(query(collection(window.db, 'pending_specialists'), where('status', '==', 'approved'))),
-      getDocs(query(collection(window.db, 'pending_specialists'), where('status', '==', 'pending'))),
-      getDocs(query(collection(window.db, 'pending_specialists'), where('status', '==', 'rejected'))),
-      fetch('/api/emails').then(r => r.json()).catch(() => ({ emails: [] }))
-    ]);
-
-    const specs = [], pending = [], rejected = [];
-    specSnap.forEach(doc => specs.push({ id: doc.id, ...doc.data() }));
-    pendSnap.forEach(doc => pending.push({ id: doc.id, ...doc.data() }));
-    rejSnap.forEach(doc => rejected.push({ id: doc.id, ...doc.data() }));
-
-    document.getElementById('statSpec').textContent = specs.length;
-    document.getElementById('statPending').textContent = pending.length;
-    document.getElementById('statRejected').textContent = rejected.length;
-    document.getElementById('statEmails').textContent = emailRes.emails?.length || 0;
-
-    const tbody = document.getElementById('dashApps');
-    tbody.innerHTML = pending.slice(0, 5).map(a => `
-      <tr><td>${a.name || '—'}</td><td><span class="badge pending">${a.category || '—'}</span></td>
-      <td><span class="badge pending">На модерації</span></td>
-      <td>${a.createdAt && typeof a.createdAt.toDate === 'function' ? a.createdAt.toDate().toLocaleDateString('uk-UA') : (a.createdAt ? new Date(a.createdAt).toLocaleDateString('uk-UA') : '—')}</td></tr>
-    `).join('') || '<tr><td colspan="4" style="text-align:center;color:#636e72">Немає заявок</td></tr>';
+    document.getElementById('statSpecialists').textContent = catalogSnap.size;
+    document.getElementById('statApps').textContent = appsSnap.size;
+    document.getElementById('statArchived').textContent = archivedSnap.size;
+    document.getElementById('statFeedback').textContent = feedbackSnap.size;
   } catch (e) {
-    console.error('Dashboard error:', e);
-    document.getElementById('statSpec').textContent = '0';
-    document.getElementById('statPending').textContent = '0';
-    document.getElementById('statRejected').textContent = '0';
-    document.getElementById('statEmails').textContent = '0';
+    window.debugLog('❌ Помилка завантаження дашборду: ' + e.message);
   }
 }
 
-// Specialists з Firebase
-let allSpecs = [];
-async function loadSpecs() {
+// Catalog
+async function loadCatalog() {
   try {
-    if (!window.fbInitialized || !window.db) throw new Error('Firebase not ready');
-    const { collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-
-    const q = query(collection(window.db, 'pending_specialists'), where('status', '==', 'approved'));
+    const q = query(collection(db, 'pending_specialists'), where('status', '==', 'approved'));
     const snapshot = await getDocs(q);
-    allSpecs = [];
-    snapshot.forEach(doc => {
-      allSpecs.push({ id: doc.id, ...doc.data() });
-    });
-    renderSpecs();
-  } catch (e) {
-    console.error('Load specs error:', e);
-    document.getElementById('specTable').innerHTML = '<tr><td colspan="6" style="text-align:center;color:#d63031">Помилка завантаження. Перевір Firebase.</td></tr>';
-  }
-}
-
-function renderSpecs() {
-  const filter = (document.getElementById('specSearch')?.value || '').toLowerCase();
-  const filtered = allSpecs.filter(s => 
-    (s.name || '').toLowerCase().includes(filter) || 
-    (s.category || '').toLowerCase().includes(filter)
-  );
-  const tbody = document.getElementById('specTable');
-  tbody.innerHTML = filtered.map(s => `
-    <tr>
-      <td><code>${(s.id || '').toString().slice(0, 8)}</code></td>
-      <td>${s.name || '—'}</td>
-      <td><span class="badge approved">${s.category || '—'}</span></td>
-      <td>${s.locationType || '—'}</td>
-      <td><span class="badge ${s.status === 'approved' ? 'approved' : 'pending'}">${s.status || '—'}</span></td>
-      <td class="actions">
-        <button class="edit" onclick="openSpecModal('${s.id}')">✏️ Редагувати</button>
-        <button class="reject" onclick="deleteSpec('${s.id}')">🗑 Видалити</button>
-      </td>
-    </tr>
-  `).join('') || '<tr><td colspan="6" style="text-align:center;color:#636e72">Немає спеціалістів</td></tr>';
-}
-
-function filterSpecs() { renderSpecs(); }
-
-function openSpecModal(id) {
-  document.getElementById('specModalTitle').textContent = id ? 'Редагувати' : 'Новий спеціаліст';
-
-  if (id) {
-    const spec = allSpecs.find(s => s.id === id);
-    if (spec) {
-      document.getElementById('specName').value = spec.name || '';
-      document.getElementById('specCategory').value = spec.category || '';
-      document.getElementById('specLocation').value = spec.locationType || '';
-      document.getElementById('specPhone').value = spec.phone || '';
-      document.getElementById('specTelegram').value = spec.telegram || '';
-      document.getElementById('specWebsite').value = spec.website || '';
-      document.getElementById('specNotes').value = spec.notes || '';
-      document.getElementById('specDesc').value = spec.description || '';
-      document.getElementById('specEmail').value = spec.email || '';
-      document.getElementById('specAddress').value = spec.address || '';
-      document.getElementById('specPrice').value = spec.price || '';
-      document.getElementById('specInstagram').value = spec.instagram || '';
-      document.getElementById('specFacebook').value = spec.facebook || '';
-      document.getElementById('specModal').dataset.id = id;
-    }
-  } else {
-    document.getElementById('specName').value = '';
-    document.getElementById('specCategory').value = '';
-    document.getElementById('specLocation').value = '';
-    document.getElementById('specPhone').value = '';
-    document.getElementById('specTelegram').value = '';
-    document.getElementById('specWebsite').value = '';
-    document.getElementById('specNotes').value = '';
-    document.getElementById('specDesc').value = '';
-    document.getElementById('specEmail').value = '';
-    document.getElementById('specAddress').value = '';
-    document.getElementById('specPrice').value = '';
-    document.getElementById('specInstagram').value = '';
-    document.getElementById('specFacebook').value = '';
-    document.getElementById('specModal').dataset.id = '';
-  }
-
-  document.getElementById('specModal').style.display = 'flex';
-}
-
-function closeSpecModal() {
-  document.getElementById('specModal').style.display = 'none';
-}
-
-async function saveSpec() {
-  const id = document.getElementById('specModal').dataset.id;
-  const data = {
-    name: document.getElementById('specName').value,
-    category: document.getElementById('specCategory').value,
-    locationType: document.getElementById('specLocation').value,
-    phone: document.getElementById('specPhone').value,
-    telegram: document.getElementById('specTelegram').value,
-    website: document.getElementById('specWebsite').value,
-    notes: document.getElementById('specNotes').value,
-    description: document.getElementById('specDesc').value,
-    email: document.getElementById('specEmail').value,
-    address: document.getElementById('specAddress').value,
-    price: document.getElementById('specPrice').value,
-    instagram: document.getElementById('specInstagram').value,
-    facebook: document.getElementById('specFacebook').value,
-  };
-  try {
-    if (id) {
-      await api('/specialists/' + id, { method: 'PUT', body: JSON.stringify(data) });
-      showToast('Спеціаліста оновлено');
-    } else {
-      await api('/specialists', { method: 'POST', body: JSON.stringify(data) });
-      showToast('Спеціаліста додано');
-    }
-  } catch (e) {
-    showToast('Збережено (demo)', 'success');
-  }
-  closeSpecModal();
-  loadSpecs();
-}
-
-async function deleteSpec(id) {
-  if (!confirm('Видалити спеціаліста?')) return;
-  try { await api('/specialists/' + id, { method: 'DELETE' }); } catch (e) {}
-  showToast('Видалено');
-  loadSpecs();
-}
-
-async function restoreSpec(id) {
-  if (!confirm('Відновити спеціаліста?')) return;
-  try { await api('/specialists/' + id + '/restore', { method: 'PATCH' }); } catch (e) {}
-  showToast('Відновлено');
-  loadArchived();
-  loadSpecs();
-}
-
-async function loadArchived() {
-  try {
-    if (!window.fbInitialized || !window.db) throw new Error('Firebase not ready');
-    const { collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-
-    const q = query(collection(window.db, 'archived_specialists'));
-    const snapshot = await getDocs(q);
-    const data = [];
-    snapshot.forEach(doc => {
-      data.push({ id: doc.id, ...doc.data() });
-    });
-
-    const tbody = document.getElementById('archivedTable');
-    tbody.innerHTML = data.map(s => `
-      <tr>
-        <td><code>${(s.id || '').toString().slice(0, 8)}</code></td>
-        <td>${s.name || '—'}</td>
-        <td><span class="badge">${s.category || '—'}</span></td>
-        <td>${s.archivedAt && typeof s.archivedAt.toDate === 'function' ? s.archivedAt.toDate().toLocaleDateString('uk-UA') : (s.archivedAt ? new Date(s.archivedAt).toLocaleDateString('uk-UA') : '—')}</td>
+    const tbody = document.getElementById('catalogTable');
+    tbody.innerHTML = snapshot.docs.map(doc => {
+      const d = doc.data();
+      return `<tr>
+        <td><code>${doc.id.slice(0, 8)}</code></td>
+        <td>${d.name || '—'}</td>
+        <td>${d.category || '—'}</td>
+        <td>${d.email || '—'}</td>
+        <td><span class="badge approved">Схвалено</span></td>
+        <td>${new Date(d.createdAt?.toDate ? d.createdAt.toDate() : d.createdAt).toLocaleDateString('uk-UA')}</td>
         <td class="actions">
-          <button class="approve" onclick="restoreSpec('${s.id}')">♻️ Відновити</button>
+          <button class="btn approve" onclick="editSpecialist('${doc.id}')">✎</button>
+          <button class="btn reject" onclick="deleteSpecialist('${doc.id}')">✗</button>
         </td>
-      </tr>
-    `).join('') || '<tr><td colspan="5" style="text-align:center;color:#636e72">Немає видалених</td></tr>';
+      </tr>`;
+    }).join('') || '<tr><td colspan="7" style="text-align:center">Немає спеціалістів</td></tr>';
   } catch (e) {
-    console.error('Load archived error:', e);
-    document.getElementById('archivedTable').innerHTML = '<tr><td colspan="5" style="text-align:center;color:#d63031">Помилка завантаження</td></tr>';
+    window.debugLog('❌ Помилка завантаження каталогу: ' + e.message);
   }
 }
 
-async function loadFeedback() {
-  try {
-    if (!window.fbInitialized || !window.db) throw new Error('Firebase not ready');
-    const { collection, getDocs } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-
-    const snapshot = await getDocs(collection(window.db, 'feedback'));
-    const data = [];
-    snapshot.forEach(doc => {
-      data.push({ id: doc.id, ...doc.data() });
-    });
-
-    const tbody = document.getElementById('feedbackTable');
-    tbody.innerHTML = data.map(f => `
-      <tr>
-        <td><code>${(f.id || '').toString().slice(0, 8)}</code></td>
-        <td>${f.specialistId || '—'}</td>
-        <td>${f.senderName || '—'}</td>
-        <td>${f.contactInfo || '—'}</td>
-        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${f.message || '—'}</td>
-        <td>${f.createdAt && typeof f.createdAt.toDate === 'function' ? f.createdAt.toDate().toLocaleDateString('uk-UA') : (f.createdAt ? new Date(f.createdAt).toLocaleDateString('uk-UA') : '—')}</td>
-        <td><span class="badge ${f.status === 'resolved' ? 'approved' : 'pending'}">${f.status || 'new'}</span></td>
-        <td class="actions">
-          <button class="edit" onclick="markFeedbackResolved('${f.id}')">✓</button>
-        </td>
-      </tr>
-    `).join('') || '<tr><td colspan="8" style="text-align:center;color:#636e72">Немає звітів</td></tr>';
-  } catch (e) {
-    console.error('Load feedback error:', e);
-    document.getElementById('feedbackTable').innerHTML = '<tr><td colspan="8" style="text-align:center;color:#d63031">Помилка завантаження</td></tr>';
-  }
-}
-
-async function markFeedbackResolved(id) {
-  try { await api('/admin/feedback/' + id, { method: 'PATCH', body: JSON.stringify({ status: 'resolved' }) }); } catch (e) {}
-  showToast('Позначено як вирішено');
-  loadFeedback();
-}
-
-// Emails
-async function loadEmails() {
-  const list = document.getElementById('emailList');
-  list.innerHTML = '<p style="color:#636e72">Завантаження...</p>';
-  try {
-    const data = await api('/emails');
-    const emails = data.emails || [];
-    if (!emails.length) { list.innerHTML = '<p style="color:#636e72">Немає листів</p>'; return; }
-    list.innerHTML = emails.map((e, i) => `
-      <div class="email-item ${e.flags?.includes('\\Seen') ? '' : 'unread'}" onclick="viewEmail(${i})">
-        <div class="email-from">${e.from || '—'}</div>
-        <div class="email-subject">${e.subject || '(без теми)'}</div>
-        <div class="email-date">${e.date ? new Date(e.date).toLocaleString('uk-UA') : '—'}</div>
-      </div>
-    `).join('');
-  } catch (e) {
-    list.innerHTML = '<p style="color:#636e72">Помилка завантаження</p>';
-  }
-}
-
-// Applications з Firebase
+// Applications
 async function loadApps() {
   try {
-    if (!window.fbInitialized || !window.db) throw new Error('Firebase not ready');
-    const { collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-
-    const q = query(collection(window.db, 'pending_specialists'), where('status', '==', 'pending'));
+    const q = query(collection(db, 'pending_specialists'), where('status', '==', 'pending'));
     const snapshot = await getDocs(q);
-    const apps = [];
-    snapshot.forEach(doc => {
-      apps.push({ id: doc.id, ...doc.data() });
-    });
-
     const tbody = document.getElementById('appTable');
-    tbody.innerHTML = apps.map(a => `
-      <tr>
-        <td><code>${(a.id || '').toString().slice(0, 8)}</code></td>
-        <td>${a.name || '—'}</td>
-        <td>${a.category || '—'}</td>
-        <td>${a.email || '—'}</td>
-        <td><span class="badge pending">${a.status || 'pending'}</span></td>
-        <td>${a.createdAt && typeof a.createdAt.toDate === 'function' ? a.createdAt.toDate().toLocaleDateString('uk-UA') : (a.createdAt ? new Date(a.createdAt).toLocaleDateString('uk-UA') : '—')}</td>
+    tbody.innerHTML = snapshot.docs.map(doc => {
+      const d = doc.data();
+      return `<tr>
+        <td><code>${doc.id.slice(0, 8)}</code></td>
+        <td>${d.name || '—'}</td>
+        <td>${d.category || '—'}</td>
+        <td>${d.email || '—'}</td>
+        <td><span class="badge pending">Очікує</span></td>
+        <td>${new Date(d.createdAt?.toDate ? d.createdAt.toDate() : d.createdAt).toLocaleDateString('uk-UA')}</td>
         <td class="actions">
-          <button class="approve" onclick="approveApp('${a.id}')">✓</button>
-          <button class="reject" onclick="rejectApp('${a.id}')">✗</button>
+          <button class="btn approve" onclick="approveApp('${doc.id}')">✓</button>
+          <button class="btn reject" onclick="rejectApp('${doc.id}')">✗</button>
         </td>
-      </tr>
-    `).join('') || '<tr><td colspan="7" style="text-align:center;color:#636e72">Немає заявок</td></tr>';
+      </tr>`;
+    }).join('') || '<tr><td colspan="7" style="text-align:center">Немає заявок</td></tr>';
   } catch (e) {
-    console.error('Load apps error:', e);
-    document.getElementById('appTable').innerHTML = '<tr><td colspan="7" style="text-align:center;color:#d63031">Помилка завантаження</td></tr>';
+    window.debugLog('❌ Помилка завантаження заявок: ' + e.message);
   }
 }
 
-async function approveApp(id) {
-  try { await api('/admin/approve/' + id, { method: 'PATCH' }); } catch (e) {}
-  showToast('Схвалено');
-  loadApps();
+// Archived
+async function loadArchived() {
+  try {
+    const snapshot = await getDocs(collection(db, 'archived_specialists'));
+    const tbody = document.getElementById('archivedTable');
+    tbody.innerHTML = snapshot.docs.map(doc => {
+      const d = doc.data();
+      return `<tr>
+        <td><code>${doc.id.slice(0, 8)}</code></td>
+        <td>${d.name || '—'}</td>
+        <td>${d.category || '—'}</td>
+        <td>${d.email || '—'}</td>
+        <td class="actions">
+          <button class="btn approve" onclick="restoreArchived('${doc.id}')">↻ Відновити</button>
+        </td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="5" style="text-align:center">Архів порожній</td></tr>';
+  } catch (e) {
+    window.debugLog('❌ Помилка завантаження архіву: ' + e.message);
+  }
 }
 
-async function rejectApp(id) {
-  try { await api('/admin/reject/' + id, { method: 'PATCH' }); } catch (e) {}
-  showToast('Відхилено');
-  loadApps();
+// Feedback
+async function loadFeedback() {
+  try {
+    const snapshot = await getDocs(collection(db, 'feedback'));
+    const tbody = document.getElementById('feedbackTable');
+    tbody.innerHTML = snapshot.docs.map(doc => {
+      const d = doc.data();
+      return `<tr>
+        <td><code>${doc.id.slice(0, 8)}</code></td>
+        <td>${d.specialistName || '—'}</td>
+        <td>${(d.text || '').slice(0, 50)}...</td>
+        <td><span class="badge ${d.resolved ? 'approved' : 'pending'}">${d.resolved ? 'Вирішено' : 'Нове'}</span></td>
+        <td class="actions">
+          <button class="btn approve" onclick="resolveFeedback('${doc.id}')">✓</button>
+        </td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="5" style="text-align:center">Немає звітів</td></tr>';
+  } catch (e) {
+    window.debugLog('❌ Помилка завантаження звітів: ' + e.message);
+  }
 }
 
-// Toast
+// Functions
+window.approveApp = async (id) => {
+  try {
+    await db.collection('pending_specialists').doc(id).update({ status: 'approved' });
+    showToast('Схвалено');
+    loadCatalog();
+    loadApps();
+    loadDashboard();
+  } catch (e) { showToast('Помилка', 'error'); }
+};
+
+window.rejectApp = async (id) => {
+  try {
+    await db.collection('pending_specialists').doc(id).update({ status: 'rejected' });
+    showToast('Відхилено');
+    loadApps();
+    loadDashboard();
+  } catch (e) { showToast('Помилка', 'error'); }
+};
+
+window.deleteSpecialist = async (id) => {
+  if (!confirm('Видалити?')) return;
+  try {
+    const docSnap = await getDoc(doc(db, 'pending_specialists', id));
+    if (docSnap.exists()) {
+      await addDoc(collection(db, 'archived_specialists'), docSnap.data());
+      await updateDoc(doc(db, 'pending_specialists', id), { status: 'archived' });
+    }
+    showToast('Видалено');
+    loadCatalog();
+    loadArchived();
+    loadDashboard();
+  } catch (e) { showToast('Помилка', 'error'); }
+};
+
+window.restoreArchived = async (id) => {
+  try {
+    await db.collection('archived_specialists').doc(id).update({ status: 'approved' });
+    showToast('Відновлено');
+    loadArchived();
+    loadDashboard();
+  } catch (e) { showToast('Помилка', 'error'); }
+};
+
+window.resolveFeedback = async (id) => {
+  try {
+    await db.collection('feedback').doc(id).update({ resolved: true });
+    showToast('Позначено як вирішено');
+    loadFeedback();
+    loadDashboard();
+  } catch (e) { showToast('Помилка', 'error'); }
+};
+
+window.openNewSpecialist = () => {
+  showToast('Функція додання ще не реалізована', 'info');
+};
+
+window.editSpecialist = () => {
+  showToast('Функція редагування ще не реалізована', 'info');
+};
+
 function showToast(msg, type = 'success') {
   const t = document.createElement('div');
   t.className = 'toast ' + type;
@@ -630,12 +552,7 @@ function showToast(msg, type = 'success') {
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 3000);
 }
-
-// Init
-if (localStorage.getItem('kw_token')) {
-  currentUser = { email: 'admin', role: 'admin' };
-  showApp();
-}
 </script>
+
 </body>
 </html>

@@ -1142,20 +1142,25 @@ window.toggleAdminPanelMenu = function(e) {
 
 // GO TO ADMIN TAB
 window.goToAdminTab = function(pageId) {
-  const dropdown = document.getElementById('admin-panel-dropdown');
-  dropdown.classList.remove('show');
+  console.log('🔍 goToAdminTab (admin.js) called with:', pageId);
 
-  const tabId = pageId.replace('section', 'apps').replace('feedback', 'feedback').replace('rejected', 'rejected-apps');
-  const actualTabId =
-    pageId === 'new-apps' ? 'tab-new-apps' :
-    pageId === 'live-catalog' ? 'tab-live-catalog' :
-    pageId === 'feedback-section' ? 'tab-feedback' :
-    pageId === 'rejected-apps' ? 'tab-rejected-apps' :
-    pageId === 'archived-catalog' ? 'tab-archived-catalog' : null;
+  // Сховуємо все, показуємо потрібне
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
 
-  const tab = document.getElementById(actualTabId);
-  if (tab) {
-    window.goToPage(tab, pageId);
+  // Показуємо необхідний вміст
+  const contentEl = document.getElementById(pageId);
+  if (!contentEl) {
+    console.warn('❌ Content element not found for:', pageId);
+    return;
+  }
+
+  contentEl.classList.add('active');
+  console.log('✅ Tab activated:', pageId);
+
+  // Закрити сайдбар
+  const sidebar = document.getElementById('admin-sidebar');
+  if (sidebar && sidebar.classList.contains('open')) {
+    sidebar.classList.remove('open');
   }
 };
 
