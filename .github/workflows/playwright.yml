@@ -24,7 +24,7 @@ jobs:
       run: npx playwright test
       continue-on-error: true
       env:
-        TESTOMAT_TOKEN: ${{ secrets.TESTOMAT_TOKEN }}
+        TESTOMATIO: ${{ secrets.TESTOMATIO }}
 
     - name: Generate Allure Report
       uses: simple-elf/allure-report-action@master
