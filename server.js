@@ -519,9 +519,21 @@ app.post('/api/send-reply-email', async (req, res) => {
 
 // ===== OAuth2 Email (Gmail) =====
 const GMAIL_OAUTH_CLIENT_ID = '352202414760-mvu4oi0rh7r7gavqj4f1v9lnhd9fuj4b.apps.googleusercontent.com';
-const GMAIL_OAUTH_CLIENT_SECRET = '***';
+const GMAIL_OAUTH_CLIENT_SECRET = process.env.GMAIL_OAUTH_CLIENT_SECRET;
 const GMAIL_OAUTH_REDIRECT = 'https://ukrainianskw.ca/oauth/callback';
 const GMAIL_REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN || null;
+
+// OAuth2 Start - redirect to Google for authorization
+app.get('/oauth/start', (req, res) => {
+  const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+  authUrl.searchParams.append('client_id', GMAIL_OAUTH_CLIENT_ID);
+  authUrl.searchParams.append('redirect_uri', GMAIL_OAUTH_REDIRECT);
+  authUrl.searchParams.append('response_type', 'code');
+  authUrl.searchParams.append('scope', 'https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.send');
+  authUrl.searchParams.append('access_type', 'offline');
+  authUrl.searchParams.append('prompt', 'consent');
+  res.redirect(authUrl.toString());
+});
 
 // OAuth2 Callback - exchanges code for refresh token
 app.get('/oauth/callback', async (req, res) => {
