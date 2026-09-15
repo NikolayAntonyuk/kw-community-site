@@ -396,7 +396,14 @@ app.get('/api/emails', async (req, res) => {
       });
     }
 
-    const mailRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?q=in:inbox&maxResults=20', {
+        const folder = req.query.folder || 'inbox';
+    let query = 'in:inbox';
+    if (folder === 'sent') query = 'in:sent';
+    else if (folder === 'trash') query = 'in:trash';
+    else if (folder === 'spam') query = 'in:spam';
+    else if (folder === 'unread') query = 'is:unread';
+    
+    const mailRes = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${encodeURIComponent(query)}&maxResults=20`, {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
     const mailData = await mailRes.json();
@@ -408,13 +415,14 @@ app.get('/api/emails', async (req, res) => {
     let unreadCount = 0;
 
     await Promise.all(mailData.messages.map(async (msgItem, index) => {
-      const msgRes = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgItem.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date`, {
+      const msgRes = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgItem.id}?format=metadata&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Subject&metadataHeaders=Date`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       const msgDetails = await msgRes.json();
       
       const headers = msgDetails.payload?.headers || [];
       const fromHeader = headers.find(h => h.name.toLowerCase() === 'from')?.value || 'Unknown';
+      const toHeader = headers.find(h => h.name.toLowerCase() === 'to')?.value || 'Unknown';
       const subjectHeader = headers.find(h => h.name.toLowerCase() === 'subject')?.value || '(no subject)';
       const dateHeader = headers.find(h => h.name.toLowerCase() === 'date')?.value || new Date().toISOString();
       
@@ -425,6 +433,7 @@ app.get('/api/emails', async (req, res) => {
       emails.push({
         seqno: index + 1,
         from: fromHeader,
+        to: toHeader,
         subject: subjectHeader,
         text: msgDetails.snippet || '',
         date: new Date(dateHeader).toISOString(),
@@ -464,7 +473,7 @@ app.post('/api/send-reply-email', async (req, res) => {
       'MIME-Version: 1.0',
       `To: ${to_email}`,
       `From: ${emailUser}`,
-      `Subject: Re: ${original_subject || subject || 'Reply'}`,
+      `Subject: =?UTF-8?B?${Buffer.from('Re: ' + (original_subject || subject || 'Reply')).toString('base64')}?=`,
       '',
       `<p>${reply_text.replace(/\n/g, '<br>')}</p>`
     ].join('\r\n');

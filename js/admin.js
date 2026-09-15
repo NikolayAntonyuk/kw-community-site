@@ -1207,11 +1207,20 @@ window.updateEmailBadge = async () => {
 };
 
 // LOAD EMAILS from IMAP
-window.loadEmails = async () => {
+window.currentMailFolder = 'inbox';
+
+window.switchMailFolder = (folder, tabEl) => {
+  window.currentMailFolder = folder;
+  document.querySelectorAll('[id^="mail-tab-"]').forEach(el => el.classList.remove('active'));
+  if (tabEl) tabEl.classList.add('active');
+  window.loadEmails(folder);
+};
+
+window.loadEmails = async (folder = 'inbox') => {
   const emailsList = document.getElementById("emails-list");
   emailsList.innerHTML = "Завантаження листів...";
   try {
-    const response = await fetch(`${window.apiBaseUrl}/api/emails`, {
+    const response = await fetch(`${window.apiBaseUrl}/api/emails?folder=${folder}`, {
       method: 'GET'
     });
     const result = await response.json();
@@ -1222,8 +1231,10 @@ window.loadEmails = async () => {
     }
 
     const emails = result.emails || [];
+    window.currentEmailsList = emails;
+    
     if (emails.length === 0) {
-      emailsList.innerHTML = "<p style='text-align:center;color:#666;'>Немає листів</p>";
+      emailsList.innerHTML = "<p style='text-align:center;color:#666;'>Немає листів у цій папці</p>";
       return;
     }
 
@@ -1233,19 +1244,31 @@ window.loadEmails = async () => {
     let html = "";
     emails.forEach((email, idx) => {
       const date = new Date(email.date).toLocaleString('uk-UA');
-      const fromEmail = email.from.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)?.[0] || email.from;
+      
+      let contactLine = "";
+      if (folder === 'sent') {
+        const toEmail = email.to ? (email.to.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)?.[0] || email.to) : 'Unknown';
+        contactLine = `<strong>Кому:</strong> ${toEmail}`;
+      } else {
+        const fromEmail = email.from ? (email.from.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)?.[0] || email.from) : 'Unknown';
+        contactLine = `<strong>Від:</strong> ${fromEmail}`;
+      }
+      
       const preview = email.text.substring(0, 100).replace(/\n/g, " ") + (email.text.length > 100 ? "..." : "");
+      
+      const isUnread = !email.flags || !email.flags.includes('\\Seen');
+      const bgStyle = isUnread ? "background: #fff; border-left: 4px solid #0056b3;" : "background: #fafafa; border: 1px solid #ddd;";
 
       html += `
-        <div style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 6px; background: #fafafa;">
+        <div style="${bgStyle} padding: 1rem; margin-bottom: 1rem; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
             <div style="flex: 1;">
-              <strong style="font-size: 1.05rem; display: block; margin-bottom: 0.3rem;">📧 ${email.subject}</strong>
+              <strong style="font-size: 1.05rem; display: block; margin-bottom: 0.3rem;">${isUnread ? '🔵' : '📧'} ${email.subject}</strong>
               <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
-                <div><strong>Від:</strong> ${fromEmail}</div>
+                <div>${contactLine}</div>
                 <div><strong>Дата:</strong> ${date}</div>
               </div>
-              <div style="background: white; padding: 0.75rem; border-radius: 4px; border-left: 3px solid #0056b3; margin: 0.75rem 0; font-size: 0.95rem; line-height: 1.4;">
+              <div style="background: white; padding: 0.75rem; border-radius: 4px; border-left: 3px solid #e9ecef; margin: 0.75rem 0; font-size: 0.95rem; line-height: 1.4; color: #444;">
                 ${preview}
               </div>
             </div>
@@ -1288,38 +1311,48 @@ window.showEmailDetail = (idx) => {
     modal = document.getElementById("email-detail-modal");
   }
 
-  // Load email data from emails-list
-  const emailsList = document.getElementById("emails-list");
-  const emailDivs = emailsList.querySelectorAll('[style*="border: 1px solid #ddd"]');
-  const emailDiv = emailDivs[idx];
+  // Load email data from window.currentEmailsList
+  const email = window.currentEmailsList && window.currentEmailsList[idx];
+  if (!email) return;
 
-  if (!emailDiv) return;
-
-  const subject = emailDiv.querySelector('strong').textContent;
-  const fromText = emailDiv.textContent.match(/Від:([^\n]+)/)?.[1]?.trim() || 'Unknown';
-  const dateText = emailDiv.textContent.match(/Дата:([^\n]+)/)?.[1]?.trim() || '';
-  const contentDiv = emailDiv.querySelector('[style*="border-left"]');
-  const fullText = contentDiv ? contentDiv.textContent : 'No content';
+  const subject = email.subject || '';
+  const fromText = email.from ? (email.from.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)?.[0] || email.from) : 'Unknown';
+  const toText = email.to ? (email.to.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)?.[0] || email.to) : 'Unknown';
+  const dateText = new Date(email.date).toLocaleString('uk-UA');
+  const fullText = email.text || 'No content';
 
   window.currentEmailIdx = idx;
-  window.currentEmailFrom = fromText;
-  window.currentEmailSubject = subject;
+  
+  // If we are looking at sent folder, reply to the original recipient, else reply to the sender
+  if (window.currentMailFolder === 'sent') {
+    window.currentEmailFrom = toText;
+  } else {
+    window.currentEmailFrom = fromText;
+  }
+  
+  window.currentEmailSubject = subject.replace(/^[\s🔵📧]+/, ''); // strip emoji
+
+  let contactLine = "";
+  if (window.currentMailFolder === 'sent') {
+    contactLine = `<div><strong>Кому:</strong> ${toText}</div><div><strong>Від:</strong> ${fromText}</div>`;
+  } else {
+    contactLine = `<div><strong>Від:</strong> ${fromText}</div>`;
+  }
 
   const detailHtml = `
-    <div style="background:#f5f5f5;padding:1rem;border-radius:6px;margin-bottom:1rem;">
-      <div><strong>Тема:</strong> ${subject}</div>
-      <div><strong>Від:</strong> ${fromText}</div>
+    <strong style="font-size:1.2rem;display:block;margin-bottom:0.5rem;">${subject}</strong>
+    <div style="color:#666;font-size:0.95rem;margin-bottom:1rem;">
+      ${contactLine}
       <div><strong>Дата:</strong> ${dateText}</div>
     </div>
-    <div style="background:white;padding:1rem;border:1px solid #ddd;border-radius:6px;min-height:150px;white-space:pre-wrap;word-break:break-word;line-height:1.5;">
-      ${fullText}
-    </div>
+    <div style="background:#f8f9fa;padding:1rem;border-radius:4px;white-space:pre-wrap;font-size:1rem;line-height:1.5;">${fullText}</div>
   `;
-
+  
   document.getElementById("email-detail-content").innerHTML = detailHtml;
-  document.getElementById("email-reply-form").style.display = "block";
   document.getElementById("reply-text").value = "";
-  modal.removeAttribute("hidden");
+  
+  // Show reply form only if it's not Spam/Trash (or always show it, up to you)
+  document.getElementById("email-reply-form").style.display = "block";
   modal.style.display = "flex";
 };
 
