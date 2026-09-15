@@ -72,7 +72,11 @@ const path = require('path');
   
   await browser.close();
   
-  const dataPath = path.join(__dirname, '..', 'data', 'events.json');
-  fs.writeFileSync(dataPath, JSON.stringify(events, null, 2));
-  console.log(`Saved ${events.length} events to ${dataPath}`);
+  if (events.length > 0) {
+    const dataPath = path.join(__dirname, '..', 'data', 'events.json');
+    fs.writeFileSync(dataPath, JSON.stringify(events, null, 2));
+    console.log(`Saved ${events.length} events to ${dataPath}`);
+  } else {
+    console.log('No events found, skipping file update to prevent overwriting existing data.');
+  }
 })();

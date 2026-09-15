@@ -154,6 +154,8 @@
 | **TC-SYNC-002** | Verify Batch Merge of Approved Firestore Docs into `specialists.json` | P1 - Critical | Integration / Backend | Approved docs in Firestore | 1. Run sync script `scripts/sync.js`. | Reads all docs with `status: "approved"`; formats schema; merges uniquely into `data/specialists.json`. | ✅ Automated (`api.crud.test.js`) |
 | **TC-SYNC-003** | Verify Firestore Cleanup after successful sync | P1 - High | Integration | Sync executed | 1. Inspect Firestore collection after sync run. | Approved docs are safely deleted or archived in Firestore to avoid duplicate re-processing. | ✅ Automated (`api.crud.test.js`) |
 | **TC-SYNC-004** | Verify JSON Schema Integrity and Non-Destructive Protection | P1 - Critical | Data Integrity | Sync script | 1. Simulate sync with malformed payload. | Script rejects invalid payload; aborts without corrupting or deleting existing `specialists.json`. | ✅ Automated (`data.test.js`) |
+| **TC-SYNC-005** | Verify Facebook Event Scraper Cron Schedule | P1 - High | Scheduled Task | `server.js` | 1. Inspect `server.js` for `cron.schedule`. | Cron job is correctly set to execute daily at midnight (`0 0 * * *`) via child process. | ✅ Manual / Code Review |
+| **TC-SYNC-006** | Verify Facebook Event Scraper Safety Fallback | P1 - Critical | Data Integrity | `scrape_fb_events.js` | 1. Run scraper while blocking network/Facebook. | Scraper detects 0 events; skips `fs.writeFileSync` to prevent overwriting `events.json` with an empty array. | ✅ Manual / Code Review |
 
 ---
 

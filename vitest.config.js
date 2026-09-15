@@ -15,5 +15,6 @@ export default defineConfig({
   },
   test: {
     include: ["tests/unit/**/*.test.js"],
+    reporters: ['default', ['@testomatio/reporter/vitest', { apiKey: process.env.TESTOMATIO }]],
   },
 });
