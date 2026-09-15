@@ -1,3 +1,5 @@
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const cron = require('node-cron');
@@ -363,14 +365,12 @@ app.post('/api/send-rejection-email', async (req, res) => {
   }
 });
 
-// 12. GET EMAILS from IMAP (Gmail inbox) - Simplified version
+// 12. GET EMAILS from REST API
 app.get('/api/emails', async (req, res) => {
   try {
-    const emailUser = process.env.GMAIL_USER || 'ukrskw@gmail.com';
-    const emailPass = process.env.GMAIL_PASS;
-
-    if (!emailPass) {
-      console.log('[EMAIL] GMAIL_PASS not configured - returning demo data');
+    const accessToken = await getGmailAccessToken();
+    if (!accessToken) {
+      console.log('[EMAIL] Token not available - returning demo data');
       return res.json({
         success: true,
         emails: [
@@ -391,91 +391,59 @@ app.get('/api/emails', async (req, res) => {
             flags: []
           }
         ],
-        unreadCount: 1
+        unreadCount: 1,
+        demo: true
       });
+    }
+
+    const mailRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages?q=in:inbox&maxResults=20', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const mailData = await mailRes.json();
+    if (!mailData.messages) {
+      return res.json({ success: true, emails: [], unreadCount: 0 });
     }
 
     const emails = [];
-    const imap = new Imap({
-      user: emailUser,
-      password: emailPass,
-      host: 'imap.gmail.com',
-      port: 993,
-      tls: true,
-      tlsOptions: { rejectUnauthorized: false }
-    });
+    let unreadCount = 0;
 
-    function openInbox(cb) {
-      imap.openBox('INBOX', false, cb);
-    }
-
-    imap.openBox('INBOX', false, (err, box) => {
-      if (err) {
-        console.error('[IMAP] Error opening inbox:', err.message);
-        return res.json({ success: true, emails: [], unreadCount: 0 });
-      }
-
-      imap.search(['ALL'], (err, results) => {
-        if (err || !results || results.length === 0) {
-          imap.closeBox(false, () => imap.end());
-          return res.json({ success: true, emails: [], unreadCount: 0 });
-        }
-
-        const f = imap.fetch(results.slice(-20), { bodies: '' }); // Last 20 emails
-        let parsed = 0;
-        let fetchErr = false;
-
-        f.on('message', (msg, seqno) => {
-          const emailData = { seqno };
-
-          msg.on('body', (stream) => {
-            simpleParser(stream, (parseErr, parsedEmail) => {
-              if (parseErr) {
-                parsed++;
-                return;
-              }
-              emailData.from = parsedEmail.from?.text || 'Unknown';
-              emailData.subject = parsedEmail.subject || '(no subject)';
-              emailData.text = (parsedEmail.text || parsedEmail.html || '').substring(0, 200);
-              emailData.date = parsedEmail.date || new Date();
-              emails.push(emailData);
-              parsed++;
-            });
-          });
-
-          msg.once('attributes', (attrs) => {
-            emailData.flags = attrs.flags || [];
-          });
-        });
-
-        f.once('error', (err) => {
-          fetchErr = true;
-          imap.closeBox(false, () => imap.end());
-          return res.json({ success: true, emails: [], unreadCount: 0 });
-        });
-
-        f.once('end', () => {
-          imap.closeBox(false, () => imap.end());
-          setTimeout(() => {
-            if (!fetchErr) {
-              const unreadCount = emails.filter(e => !e.flags || !e.flags.includes('\\Seen')).length;
-              res.json({
-                success: true,
-                emails: emails.sort((a, b) => new Date(b.date) - new Date(a.date)),
-                unreadCount
-              });
-            }
-          }, 500);
-        });
+    await Promise.all(mailData.messages.map(async (msgItem, index) => {
+      const msgRes = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgItem.id}?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date`, {
+        headers: { Authorization: `Bearer ${accessToken}` }
       });
+      const msgDetails = await msgRes.json();
+      
+      const headers = msgDetails.payload?.headers || [];
+      const fromHeader = headers.find(h => h.name.toLowerCase() === 'from')?.value || 'Unknown';
+      const subjectHeader = headers.find(h => h.name.toLowerCase() === 'subject')?.value || '(no subject)';
+      const dateHeader = headers.find(h => h.name.toLowerCase() === 'date')?.value || new Date().toISOString();
+      
+      const isUnread = msgDetails.labelIds && msgDetails.labelIds.includes('UNREAD');
+      const flags = isUnread ? [] : ['\\Seen'];
+      if (isUnread) unreadCount++;
+
+      emails.push({
+        seqno: index + 1,
+        from: fromHeader,
+        subject: subjectHeader,
+        text: msgDetails.snippet || '',
+        date: new Date(dateHeader).toISOString(),
+        flags: flags
+      });
+    }));
+
+    res.json({
+      success: true,
+      emails: emails.sort((a, b) => new Date(b.date) - new Date(a.date)),
+      unreadCount
     });
   } catch (err) {
-    console.error('[IMAP] Error:', err.message);
+    console.error('[EMAIL] REST API Error:', err.message);
     res.json({ success: true, emails: [], unreadCount: 0 });
   }
 });
 
-// 13. SEND REPLY EMAIL
+// 13. SEND REPLY EMAIL via REST API
 app.post('/api/send-reply-email', async (req, res) => {
   try {
     const { to_email, subject, reply_text, original_subject } = req.body;
@@ -484,54 +452,58 @@ app.post('/api/send-reply-email', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Missing required fields' });
     }
 
-    const emailUser = process.env.GMAIL_USER || 'ukrskw@gmail.com';
-    const emailPass = process.env.GMAIL_PASS;
+    const emailUser = 'ukrskw@gmail.com';
+    const accessToken = await getGmailAccessToken();
 
-    if (!emailPass) {
-      return res.status(400).json({ success: false, error: 'GMAIL_PASS not configured' });
+    if (!accessToken) {
+      return res.status(400).json({ success: false, error: 'OAuth2 access token not available' });
     }
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: emailUser,
-        pass: emailPass
-      }
+    const emailText = [
+      'Content-Type: text/html; charset="UTF-8"',
+      'MIME-Version: 1.0',
+      `To: ${to_email}`,
+      `From: ${emailUser}`,
+      `Subject: Re: ${original_subject || subject || 'Reply'}`,
+      '',
+      `<p>${reply_text.replace(/\n/g, '<br>')}</p>`
+    ].join('\r\n');
+
+    const raw = Buffer.from(emailText).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    
+    const sendRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+      method: 'POST',
+      headers: { 
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ raw })
     });
 
-    const mailOptions = {
-      from: emailUser,
-      to: to_email,
-      cc: emailUser,
-      subject: `Re: ${original_subject || subject || 'Reply'}`,
-      text: reply_text,
-      html: `<p>${reply_text.replace(/\n/g, '<br>')}</p>`
-    };
+    if (!sendRes.ok) {
+      throw new Error('Failed to send email via Gmail API');
+    }
 
-    await transporter.sendMail(mailOptions);
     console.log(`[EMAIL] ✅ Reply sent to ${to_email}`);
     res.json({ success: true, message: 'Reply sent successfully' });
   } catch (err) {
-    console.error('[EMAIL] Error:', err.message);
+    console.error('[EMAIL] Send Error:', err.message);
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
 // ===== OAuth2 Email (Gmail) =====
 const GMAIL_OAUTH_CLIENT_ID = '352202414760-mvu4oi0rh7r7gavqj4f1v9lnhd9fuj4b.apps.googleusercontent.com';
-const GMAIL_OAUTH_CLIENT_SECRET = process.env.GMAIL_OAUTH_CLIENT_SECRET;
-const GMAIL_OAUTH_REDIRECT = 'https://ukrainianskw.ca/oauth/callback';
-const GMAIL_REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN || null;
 
 // OAuth2 Start - redirect to Google for authorization
 app.get('/oauth/start', (req, res) => {
   const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
   authUrl.searchParams.append('client_id', GMAIL_OAUTH_CLIENT_ID);
-  authUrl.searchParams.append('redirect_uri', GMAIL_OAUTH_REDIRECT);
+  authUrl.searchParams.append('redirect_uri', 'https://ukrainianskw.ca/oauth/callback');
   authUrl.searchParams.append('response_type', 'code');
   authUrl.searchParams.append('scope', 'https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.send');
   authUrl.searchParams.append('access_type', 'offline');
-  authUrl.searchParams.append('prompt', 'consent');
+  authUrl.searchParams.append('prompt', 'select_account consent');
   res.redirect(authUrl.toString());
 });
 
@@ -547,8 +519,8 @@ app.get('/oauth/callback', async (req, res) => {
       body: new URLSearchParams({
         code,
         client_id: GMAIL_OAUTH_CLIENT_ID,
-        client_secret: GMAIL_OAUTH_CLIENT_SECRET,
-        redirect_uri: GMAIL_OAUTH_REDIRECT,
+        client_secret: process.env.GMAIL_OAUTH_CLIENT_SECRET,
+        redirect_uri: 'https://ukrainianskw.ca/oauth/callback',
         grant_type: 'authorization_code'
       })
     });
@@ -571,66 +543,36 @@ app.get('/oauth/callback', async (req, res) => {
 
 // Helper: get access token from refresh token
 async function getGmailAccessToken() {
-  if (!GMAIL_REFRESH_TOKEN) return null;
-  const res = await fetch('https://oauth2.googleapis.com/token', {
+  const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
       client_id: GMAIL_OAUTH_CLIENT_ID,
-      client_secret: GMAIL_OAUTH_CLIENT_SECRET,
-      refresh_token: GMAIL_REFRESH_TOKEN,
+      client_secret: process.env.GMAIL_OAUTH_CLIENT_SECRET,
+      refresh_token: process.env.GMAIL_REFRESH_TOKEN,
       grant_type: 'refresh_token'
     })
   });
-  const data = await res.json();
+  const data = await tokenRes.json();
   return data.access_token || null;
 }
 
-// Helper: get IMAP & SMTP config with OAuth2
-async function getGmailTransporter() {
-  const accessToken = await getGmailAccessToken();
-  if (!accessToken) return null;
-  return nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      type: 'OAuth2',
-      user: 'ukrskw@gmail.com',
-      clientId: GMAIL_OAUTH_CLIENT_ID,
-      clientSecret: GMAIL_OAUTH_CLIENT_SECRET,
-      refreshToken: GMAIL_REFRESH_TOKEN,
-      accessToken
-    }
-  });
-}
-
-// 12b. GET EMAILS via IMAP with XOAUTH2 (if refresh token available)
-app.get('/api/emails-v2', async (req, res) => {
-  try {
-    if (!GMAIL_REFRESH_TOKEN) {
-      return res.json({ success: false, error: 'GMAIL_REFRESH_TOKEN not set', demo: true });
-    }
-    const accessToken = await getGmailAccessToken();
-    if (!accessToken) {
-      return res.json({ success: false, error: 'Failed to get access token', demo: true });
-    }
-    res.json({ success: true, message: 'OAuth2 working! IMAP implementation goes here' });
-  } catch (err) {
-    res.json({ success: false, error: err.message });
-  }
-});
-
 // ===== Scheduled Tasks =====
 
-// Daily Facebook scraping (03:00 AM)
-cron.schedule('0 3 * * *', async () => {
+// Daily Facebook scraping (midnight)
+const { exec } = require('child_process');
+cron.schedule('0 0 * * *', () => {
   console.log('Starting daily Facebook event scraping...');
-  try {
-    // Placeholder for actual scraping logic
-    // In production, call your Playwright scraper here
-    console.log('Facebook scraping completed');
-  } catch (err) {
-    console.error('Facebook scraping error:', err);
-  }
+  exec('node scripts/scrape_fb_events.js', { cwd: __dirname }, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Facebook scraping execution error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`Facebook scraping stderr: ${stderr}`);
+    }
+    console.log(`Facebook scraping output:\n${stdout}`);
+  });
 });
 
 // ===== Static Files & Cache Headers =====
