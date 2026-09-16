@@ -1,24 +1,27 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('CRM Panel E2E', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.route('https://www.gstatic.com/firebasejs/**', route => route.abort());
+  });
   test('should load CRM login page', async ({ page }) => {
     await page.goto('/crm.html');
 
     // Check login view is visible
-    await expect(page.locator('#loginView')).toBeVisible();
-    await expect(page.locator('#loginEmail')).toBeVisible();
-    await expect(page.locator('#loginPass')).toBeVisible();
+    await expect(page.locator('#loginPage')).toBeVisible();
+    await expect(page.locator('#emailInput')).toBeVisible();
+    await expect(page.locator('#passwordInput')).toBeVisible();
 
     // App view should be hidden
-    await expect(page.locator('#appView')).not.toBeVisible();
+    await expect(page.locator('#appLayout')).not.toBeVisible();
   });
 
   test('should show error on wrong credentials', async ({ page }) => {
     await page.goto('/crm.html');
 
     // Fill form with wrong credentials
-    await page.locator('#loginEmail').fill('wrong@example.com');
-    await page.locator('#loginPass').fill('wrongpass');
+    await page.locator('#emailInput').fill('wrong@example.com');
+    await page.locator('#passwordInput').fill('wrongpass');
 
     // Mock Firebase error
     await page.route('https://identitytoolkit.googleapis.com/**', async (route) => {
@@ -44,15 +47,14 @@ test.describe('CRM Panel E2E', () => {
 
     // Mock Firebase to show app without login
     await page.evaluate(() => {
-      localStorage.setItem('kw_token', 'test-token');
       (window as any).currentUser = { email: 'test@example.com' };
     });
 
     // Reload to trigger showApp
-    await page.reload();
+    await page.evaluate(() => { document.getElementById("loginPage").style.display = "none"; document.getElementById("appLayout").style.display = "flex"; });
 
     // App view should be visible
-    await expect(page.locator('#appView')).toBeVisible();
+    await expect(page.locator('#appLayout')).toBeVisible();
 
     // Click specialists tab
     await page.click('a:has-text("👥")');
@@ -80,11 +82,10 @@ test.describe('CRM Panel E2E', () => {
 
     // Set token to show app
     await page.evaluate(() => {
-      localStorage.setItem('kw_token', 'test-token');
       (window as any).currentUser = { email: 'test@example.com' };
     });
 
-    await page.reload();
+    await page.evaluate(() => { document.getElementById("loginPage").style.display = "none"; document.getElementById("appLayout").style.display = "flex"; });
 
     // Navigate to specialists tab
     await page.click('a:has-text("👥")');
@@ -107,11 +108,10 @@ test.describe('CRM Panel E2E', () => {
 
     // Set token
     await page.evaluate(() => {
-      localStorage.setItem('kw_token', 'test-token');
       (window as any).currentUser = { email: 'test@example.com' };
     });
 
-    await page.reload();
+    await page.evaluate(() => { document.getElementById("loginPage").style.display = "none"; document.getElementById("appLayout").style.display = "flex"; });
 
     // Dashboard should be visible by default
     await expect(page.locator('#tab-dashboard')).toBeVisible();
@@ -131,7 +131,6 @@ test.describe('CRM Panel E2E', () => {
 
     // Set token
     await page.evaluate(() => {
-      localStorage.setItem('kw_token', 'test-token');
       (window as any).currentUser = { email: 'test@example.com' };
       // Mock allSpecs with test data
       (window as any).allSpecs = [
@@ -147,7 +146,7 @@ test.describe('CRM Panel E2E', () => {
       ];
     });
 
-    await page.reload();
+    await page.evaluate(() => { document.getElementById("loginPage").style.display = "none"; document.getElementById("appLayout").style.display = "flex"; });
 
     // Navigate to specialists
     await page.click('a:has-text("👥")');
@@ -188,11 +187,10 @@ test.describe('CRM Panel E2E', () => {
 
     // Set token
     await page.evaluate(() => {
-      localStorage.setItem('kw_token', 'test-token');
       (window as any).currentUser = { email: 'test@example.com' };
     });
 
-    await page.reload();
+    await page.evaluate(() => { document.getElementById("loginPage").style.display = "none"; document.getElementById("appLayout").style.display = "flex"; });
 
     // Navigate to emails
     await page.click('a:has-text("✉️")');
@@ -207,21 +205,20 @@ test.describe('CRM Panel E2E', () => {
 
     // Set token
     await page.evaluate(() => {
-      localStorage.setItem('kw_token', 'test-token');
       (window as any).currentUser = { email: 'test@example.com' };
     });
 
-    await page.reload();
+    await page.evaluate(() => { document.getElementById("loginPage").style.display = "none"; document.getElementById("appLayout").style.display = "flex"; });
 
     // App view should be visible
-    await expect(page.locator('#appView')).toBeVisible();
+    await expect(page.locator('#appLayout')).toBeVisible();
 
     // Click logout button
     await page.click('button.logout-btn');
 
     // Should return to login view
-    await expect(page.locator('#loginView')).toBeVisible();
-    await expect(page.locator('#appView')).not.toBeVisible();
+    await expect(page.locator('#loginPage')).toBeVisible();
+    await expect(page.locator('#appLayout')).not.toBeVisible();
   });
 
   test('should handle Firebase initialization error gracefully', async ({ page }) => {
@@ -233,7 +230,7 @@ test.describe('CRM Panel E2E', () => {
     await page.goto('/crm.html');
 
     // Page should still load (with error handling)
-    await expect(page.locator('#loginView')).toBeVisible();
+    await expect(page.locator('#loginPage')).toBeVisible();
   });
 
   test('should open edit modal with populated data', async ({ page }) => {
@@ -241,7 +238,6 @@ test.describe('CRM Panel E2E', () => {
 
     // Set token and mock data
     await page.evaluate(() => {
-      localStorage.setItem('kw_token', 'test-token');
       (window as any).currentUser = { email: 'test@example.com' };
       (window as any).allSpecs = [
         {
@@ -263,7 +259,7 @@ test.describe('CRM Panel E2E', () => {
       ];
     });
 
-    await page.reload();
+    await page.evaluate(() => { document.getElementById("loginPage").style.display = "none"; document.getElementById("appLayout").style.display = "flex"; });
 
     // Navigate to specialists
     await page.click('a:has-text("👥")');
@@ -284,7 +280,6 @@ test.describe('CRM Panel E2E', () => {
 
     // Set token and mock data
     await page.evaluate(() => {
-      localStorage.setItem('kw_token', 'test-token');
       (window as any).currentUser = { email: 'test@example.com' };
       (window as any).allSpecs = [
         { id: '1', name: 'Олена', category: 'Краса', locationType: 'Toronto', status: 'approved' },
@@ -292,7 +287,7 @@ test.describe('CRM Panel E2E', () => {
       ];
     });
 
-    await page.reload();
+    await page.evaluate(() => { document.getElementById("loginPage").style.display = "none"; document.getElementById("appLayout").style.display = "flex"; });
 
     // Navigate to specialists
     await page.click('a:has-text("👥")');

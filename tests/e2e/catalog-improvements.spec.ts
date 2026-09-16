@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Catalog Improvements", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("http://localhost:3000/catalog.html");
+    await page.goto("/catalog.html");
     await page.waitForLoadState("networkidle");
   });
 
@@ -44,7 +44,7 @@ test.describe("Catalog Improvements", () => {
     }
 
     // Navigate to apply form
-    await page.goto("http://localhost:3000/apply.html");
+    await page.goto("/apply.html");
 
     // Get categories from form select
     const formSelect = page.locator("#f-category");
@@ -125,7 +125,7 @@ test.describe("Catalog Improvements", () => {
   });
 
   test("4. No duplicate categories in apply form", async ({ page }) => {
-    await page.goto("http://localhost:3000/apply.html");
+    await page.goto("/apply.html");
 
     const formSelect = page.locator("#f-category");
     const formOptions = formSelect.locator("option");
@@ -154,12 +154,12 @@ test.describe("Catalog Improvements", () => {
   test("5. Category sync: Same categories in admin edit form", async ({
     page,
   }) => {
-    await page.goto("http://localhost:3000/admin.html");
+    await page.goto("/admin.html");
     await page.waitForLoadState("networkidle");
 
     // Get categories from apply form first
     const applyPage = await page.context().newPage();
-    await applyPage.goto("http://localhost:3000/apply.html");
+    await applyPage.goto("/apply.html");
 
     const applySelect = applyPage.locator("#f-category");
     const applyOptions = applySelect.locator("option");

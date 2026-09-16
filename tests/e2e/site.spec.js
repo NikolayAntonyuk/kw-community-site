@@ -36,7 +36,7 @@ const mockData = [
 ];
 
 async function mockDataFetch(page) {
-  await page.route("**/data/specialists.json", (route) =>
+  await page.route("**/data/specialists.json*", (route) =>
     route.fulfill({
       status: 200,
       contentType: "application/json",

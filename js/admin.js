@@ -185,8 +185,8 @@ onAuthStateChanged(auth, (user) => {
     if (refreshBtn) refreshBtn.style.display = "inline-block";
     showAdminPanelWhenLogged();
     // Update email badge periodically
-    window.updateEmailBadge();
-    setInterval(() => window.updateEmailBadge(), 60000); // Every minute
+    updateEmailBadge();
+    setInterval(() => updateEmailBadge(), 60000); // Every minute
     loadApplications();
   } else {
     authSection.style.display = "block";
@@ -1325,12 +1325,12 @@ window.goToAdminTab = function(pageId) {
 };
 
 // SHOW ADMIN PANEL WHEN LOGGED IN
-const showAdminPanelWhenLogged = () => {
+function showAdminPanelWhenLogged() {
   const adminMenu = document.getElementById('admin-panel-menu');
   if (adminMenu) {
     adminMenu.style.display = window.currentUser ? 'inline-block' : 'none';
   }
-};
+}
 
 // Close dropdown when clicking outside
 document.addEventListener('click', (e) => {
@@ -1342,7 +1342,8 @@ document.addEventListener('click', (e) => {
 });
 
 // UPDATE EMAIL BADGE
-window.updateEmailBadge = async () => {
+window.updateEmailBadge = updateEmailBadge;
+async function updateEmailBadge() {
   try {
     const response = await fetch(`${window.apiBaseUrl}/api/emails`, {
       method: 'GET'
@@ -1399,7 +1400,7 @@ window.loadEmails = async (folder = 'inbox') => {
     }
 
     // Update badge count
-    window.updateEmailBadge();
+    updateEmailBadge();
 
     let html = "";
     emails.forEach((email, idx) => {
