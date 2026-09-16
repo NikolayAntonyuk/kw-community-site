@@ -5,8 +5,11 @@ const firebaseStub = fileURLToPath(
   new URL("./tests/mocks/firebase-stub.js", import.meta.url)
 );
 
-// Фронтенд тягне Firebase SDK напряму з CDN (https://...), що не працює
-// в ESM-лоадері Node. Для юніт-тестів підміняємо ці імпорти на локальну заглушку.
+const reporters = ['default'];
+if (process.env.TESTOMATIO) {
+  reporters.push(['@testomatio/reporter/vitest', { apiKey: process.env.TESTOMATIO }]);
+}
+
 export default defineConfig({
   resolve: {
     alias: [
@@ -15,6 +18,6 @@ export default defineConfig({
   },
   test: {
     include: ["tests/unit/**/*.test.js"],
-    reporters: ['default', ['@testomatio/reporter/vitest', { apiKey: process.env.TESTOMATIO }]],
+    reporters: reporters,
   },
 });
