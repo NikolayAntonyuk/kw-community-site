@@ -1095,7 +1095,7 @@ async function loadFeedback() {
           <p><strong>Повідомлення:</strong> <span style="background: white; padding: 5px; display: block; border: 1px solid #ddd; margin-top: 5px;">${data.message || '—'}</span></p>
           <div class="application-actions" style="margin-top: 1rem;">
             ${editButton}
-            <button class="btn btn-approve" style="background: #28a745;" onclick="window.resolveFeedback('${docSnap.id}', decodeURIComponent('${encodedMsg}'), decodeURIComponent('${encodeURIComponent(data.contactInfo || "").replace(/\'/g, "%27")}'))">Позначити як вирішене</button>
+            <button class="btn btn-approve" style="background: #28a745;" onclick="window.resolveFeedback('${docSnap.id}', decodeURIComponent('${encodedMsg}'), decodeURIComponent('${encodeURIComponent(data.contactInfo || "").replace(/\'/g, "%27")}'), \`${data.specialistId || ""}\`)">Позначити як вирішене</button>
           </div>
           <p class="card-admin-dates" style="margin-top: 0.5rem;">Відправлено: ${createdStr}</p>
         </div>
@@ -1108,13 +1108,13 @@ async function loadFeedback() {
   }
 }
 
-window.resolveFeedback = async (id, messageText, contactInfo) => {
+window.resolveFeedback = async (id, messageText, contactInfo, specialistId) => {
   const emailMatch = contactInfo.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
   const email = emailMatch ? emailMatch[0] : '';
-  window.showResolutionChoiceModal(id, email);
+  window.showResolutionChoiceModal(id, email, specialistId);
 };
 
-window.showResolutionChoiceModal = (docId, email) => {
+window.showResolutionChoiceModal = (docId, email, specialistId) => {
   let modal = document.getElementById("resolution-choice-modal");
   if (!modal) {
     const html = `<div id="resolution-choice-modal" hidden style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:2000;overflow-y:auto;padding:1rem;">
@@ -1134,6 +1134,7 @@ window.showResolutionChoiceModal = (docId, email) => {
 
   window.currentResolutionFeedbackId = docId;
   window.currentResolutionEmail = email;
+  window.currentResolutionSpecialistId = specialistId;
   
   modal.style.display = "flex";
   modal.removeAttribute("hidden");
@@ -1151,9 +1152,10 @@ window.confirmResolutionChoice = async (choice) => {
   window.closeResolutionChoiceModal();
   const id = window.currentResolutionFeedbackId;
   const email = window.currentResolutionEmail;
+  const specId = window.currentResolutionSpecialistId;
   
   if (choice === 'yes') {
-    window.showResolutionEmailModal(id, email);
+    window.showResolutionEmailModal(id, email, specId);
   } else if (choice === 'no') {
     try {
       await updateDoc(doc(db, "feedback", id), {
@@ -1169,7 +1171,7 @@ window.confirmResolutionChoice = async (choice) => {
   }
 };
 
-window.showResolutionEmailModal = (docId, email) => {
+window.showResolutionEmailModal = (docId, email, specialistId) => {
   let modal = document.getElementById("resolution-email-modal");
   if (!modal) {
     const html = `<div id="resolution-email-modal" hidden style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:2000;overflow-y:auto;padding:1rem;">
@@ -1191,13 +1193,7 @@ window.showResolutionEmailModal = (docId, email) => {
 
         <div class="form-group" style="margin-bottom:1.5rem;">
           <label style="display:block;margin-bottom:0.5rem;font-weight:bold;">Повідомлення (Чернетка):</label>
-          <textarea id="res-email-text" style="width:100%;height:150px;padding:0.75rem;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;font-family:inherit;">Вітаємо!
-
-Дякуємо за ваш відгук. Повідомляємо, що дані були успішно перевірені та оновлені! 
-Дякуємо, що допомагаєте покращувати наш каталог та берете активну участь у житті громади.
-
-З повагою,
-Команда Разом KW</textarea>
+          <textarea id="res-email-text" style="width:100%;height:200px;padding:0.75rem;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;font-family:inherit;"></textarea>
         </div>
         
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
@@ -1212,6 +1208,15 @@ window.showResolutionEmailModal = (docId, email) => {
 
   window.currentResolutionFeedbackId = docId;
   document.getElementById("res-email-to").value = email;
+  
+  let draftText = "Вітаємо!\n\nДякуємо за ваш відгук. Повідомляємо, що дані були успішно перевірені та оновлені!\n";
+  if (specialistId && specialistId !== 'undefined' && specialistId !== '') {
+    draftText += "\nВи можете переглянути оновлену картку за цим посиланням:\nhttps://ukrainianskw.ca/specialist.html?id=" + specialistId + "\n";
+  }
+  draftText += "\nДякуємо, що допомагаєте покращувати наш каталог та берете активну участь у житті громади.\n\nЗ повагою,\nКоманда Разом KW";
+  
+  document.getElementById("res-email-text").value = draftText;
+  
   modal.style.display = "flex";
   modal.removeAttribute("hidden");
 };
