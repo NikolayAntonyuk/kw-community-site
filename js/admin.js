@@ -1261,8 +1261,8 @@ window.loadEmails = async (folder = 'inbox') => {
 
       html += `
         <div style="${bgStyle} padding: 1rem; margin-bottom: 1rem; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
-            <div style="flex: 1;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
               <strong style="font-size: 1.05rem; display: block; margin-bottom: 0.3rem;">${isUnread ? '🔵' : '📧'} ${email.subject}</strong>
               <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
                 <div>${contactLine}</div>
@@ -1272,7 +1272,7 @@ window.loadEmails = async (folder = 'inbox') => {
                 ${preview}
               </div>
             </div>
-            <button class="btn" style="background: #0056b3; padding: 0.6rem 1rem; width: auto;" onclick="window.showEmailDetail(${idx})">Переглянути</button>
+            <button class="btn" style="background: #0056b3; padding: 0.6rem 1rem; width: auto; flex-shrink: 0; white-space: nowrap; min-width: 120px;" onclick="window.showEmailDetail(${idx})">Переглянути</button>
           </div>
         </div>
       `;
@@ -1300,9 +1300,9 @@ window.showEmailDetail = (idx) => {
         <div id="email-reply-form" style="display:none;">
           <h3>Відповідь</h3>
           <textarea id="reply-text" placeholder="Напишіть відповідь..." style="width:100%;height:120px;padding:0.75rem;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;margin-bottom:1rem;"></textarea>
-          <div style="display:flex;gap:0.5rem;">
-            <button class="btn btn-approve" style="flex:1;" onclick="window.sendEmailReply()">Відправити відповідь</button>
-            <button class="btn" style="flex:1;background:#6c757d;" onclick="document.getElementById('email-reply-form').style.display='none';">Скасувати</button>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="btn btn-approve" style="flex:1;min-width:140px;" onclick="window.sendEmailReply()">Відправити відповідь</button>
+            <button class="btn" style="flex:1;background:#6c757d;min-width:140px;" onclick="document.getElementById('email-reply-form').style.display='none';">Скасувати</button>
           </div>
         </div>
       </div>
