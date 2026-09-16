@@ -78,8 +78,8 @@ window.openInaccuracyReport = function(specId, specName) {
           <input type="text" id="report-sender-name" placeholder="Ім'я" style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;">
         </div>
         <div style="margin:1.5rem 0;">
-          <label style="display:block;margin-bottom:0.5rem;">Контакт (email/telegram):</label>
-          <input type="text" id="report-contact" placeholder="ваш@email.com" style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;">
+          <label style="display:block;margin-bottom:0.5rem;">Ваша електронна пошта:</label>
+          <input type="email" id="report-contact" placeholder="ваш@email.com" style="width:100%;padding:0.75rem;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;">
         </div>
         <div style="margin:1.5rem 0;">
           <label style="display:block;margin-bottom:0.5rem;">Що саме неточно:</label>
