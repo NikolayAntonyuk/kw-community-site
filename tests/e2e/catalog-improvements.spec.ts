@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Catalog Improvements", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/catalog.html");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
   });
 
   test("1. Phone display: Shows only number without 'Телефон:' label", async ({
@@ -155,7 +155,7 @@ test.describe("Catalog Improvements", () => {
     page,
   }) => {
     await page.goto("/admin.html");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
     // Get categories from apply form first
     const applyPage = await page.context().newPage();

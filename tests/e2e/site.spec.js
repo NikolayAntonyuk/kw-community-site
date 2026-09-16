@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 const mockData = [
   {
-    "category": "Beauty",
+    "category": "Краса та догляд",
     "subcategory": "Перукар",
     "id": 1,
     "name": "Salon Kalyna",
@@ -105,14 +105,14 @@ test("перемикання категорії оновлює набір під
   await expect(page.locator(".card")).toHaveCount(3);
   await expect(page.locator(".chip")).toHaveCount(0);
 
-  await page.locator(".pill", { hasText: "Beauty" }).click();
+  await page.locator(".pill", { hasText: "Краса та догляд" }).click();
 
   await expect(page.locator(".card")).toHaveCount(1);
   await expect(page.locator(".card-name")).toHaveText("Salon Kalyna");
   await expect(page.locator(".chip")).toHaveCount(1);
   await expect(page.locator(".chip")).toHaveText("Перукар");
 
-  await page.locator(".pill.active", { hasText: "Beauty" }).click();
+  await page.locator(".pill.active", { hasText: "Краса та догляд" }).click();
   await expect(page.locator(".card")).toHaveCount(3);
   await expect(page.locator(".chip")).toHaveCount(0);
 });
