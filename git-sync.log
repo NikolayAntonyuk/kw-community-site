@@ -1,0 +1,1220 @@
+[2026-09-15 21:59:33] Starting git auto-sync...
+From https://github.com/NikolayAntonyuk/kw-community-site
+   40cc031..b4cbc75  gh-pages   -> origin/gh-pages
+[2026-09-15 21:59:36] No new commits. Skipping.
+[2026-09-15 21:59:36] Git auto-sync completed
+[2026-09-15 22:00:40] Starting git auto-sync...
+[2026-09-15 22:00:41] New commits detected. Pulling...
+From https://github.com/NikolayAntonyuk/kw-community-site
+ * branch            master     -> FETCH_HEAD
+Already up to date.
+[2026-09-15 22:00:41] Running tests...
+
+> kw-community-site@1.0.0 test
+> npm run test:unit && npm run test:e2e
+
+
+> kw-community-site@1.0.0 test:unit
+> vitest run tests/unit
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /home/mykola/kw-community-site
+
+ ✓ tests/unit/scraper.test.js (2 tests) 10ms
+ ✓ tests/unit/data.test.js (4 tests) 14ms
+ ✓ tests/unit/filters.test.js (12 tests) 12ms
+stdout | tests/unit/api.crud.test.js > API CRUD Operations via Supertest
+◇ injected env (4) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+
+stdout | tests/unit/api.crud.test.js > API CRUD Operations via Supertest > Create a new specialist
+[CRUD] CREATE specialist with ID: mock-id { name: 'Test User', category: 'IT', status: 'approved' }
+[CRUD] ✅ Successfully created ID: mock-id
+
+stdout | tests/unit/api.crud.test.js > API CRUD Operations via Supertest > Update existing specialist
+[CRUD] UPDATE specialist ID: mock-id-456 { name: 'Test User Updated', updatedAt: 'serverTimestamp' }
+[CRUD] ✅ Successfully updated ID: mock-id-456
+
+ ✓ tests/unit/api.crud.test.js (2 tests) 796ms
+
+ Test Files  4 passed (4)
+      Tests  20 passed (20)
+   Start at  22:00:42
+   Duration  1.82s (transform 222ms, setup 0ms, collect 451ms, tests 833ms, environment 1ms, prepare 864ms)
+
+
+> kw-community-site@1.0.0 test:e2e
+> playwright test
+
+
+Running 140 tests using 4 workers
+
+[1/140] [chromium] › tests/e2e/admin-email-features.spec.ts:28:7 › Email Features & Admin Panel (New Requirements) › @T1 should auto-load specialist for editing when ?id=<spec-id> URL param is present
+[2/140] [chromium] › tests/e2e/admin-email-features.spec.ts:69:7 › Email Features & Admin Panel (New Requirements) › @T3 should display correct form fields in inaccuracy report modal
+[3/140] [chromium] › tests/e2e/admin-email-features.spec.ts:48:7 › Email Features & Admin Panel (New Requirements) › @T2 should display "Report Inaccuracy" button when modal is opened
+[4/140] [chromium] › tests/e2e/admin-email-features.spec.ts:96:7 › Email Features & Admin Panel (New Requirements) › @T4 should validate and submit inaccuracy report form
+[5/140] [chromium] › tests/e2e/admin-email-features.spec.ts:129:7 › Email Features & Admin Panel (New Requirements) › @T5 should generate email with formatted links in HTML
+[6/140] [chromium] › tests/e2e/admin-email-features.spec.ts:147:7 › Email Features & Admin Panel (New Requirements) › @T6 should verify URL parameter ?id=<spec-id> is correctly parsed and stored
+[7/140] [chromium] › tests/e2e/admin-email-features.spec.ts:166:7 › Email Features & Admin Panel (New Requirements) › @T7 should close inaccuracy report modal when cancel button is clicked
+[8/140] [chromium] › tests/e2e/admin-email-features.spec.ts:190:7 › Email Features & Admin Panel (New Requirements) › @T8 should close inaccuracy report modal on Escape key and backdrop click
+[9/140] [chromium] › tests/e2e/admin.spec.ts:4:7 › Admin Panel E2E › should load the admin login page
+[10/140] [chromium] › tests/e2e/admin.spec.ts:17:7 › Admin Panel E2E › should show error on wrong password
+[11/140] [chromium] › tests/e2e/admin.spec.ts:48:7 › Admin Panel E2E › should explain when Firebase Authentication is not enabled
+[12/140] [chromium] › tests/e2e/admin.spec.ts:76:7 › Admin Panel E2E › should display live catalog edit modal and populate fields
+[13/140] [chromium] › tests/e2e/admin.spec.ts:175:7 › Admin Panel E2E › should require confirmation before approving application
+[14/140] [chromium] › tests/e2e/admin.spec.ts:124:7 › Admin Panel E2E › should show warning when rejecting application without valid email
+[15/140] [chromium] › tests/e2e/admin.spec.ts:220:7 › Admin Panel E2E › should require confirmation before deleting live application
+[16/140] [chromium] › tests/e2e/admin.spec.ts:266:7 › Admin Panel E2E › should cancel rejection when dismiss is clicked on prompt
+[17/140] [chromium] › tests/e2e/admin.spec.ts:286:7 › Admin Panel E2E › should display formatted dates on live catalog cards
+[18/140] [chromium] › tests/e2e/admin.spec.ts:307:7 › Admin Panel E2E › (@T16) should display all tabs visible on desktop (>768px)
+[19/140] [chromium] › tests/e2e/admin.spec.ts:325:7 › Admin Panel E2E › (@T17) should display hamburger menu on mobile (<768px)
+  1) [chromium] › tests/e2e/admin.spec.ts:175:7 › Admin Panel E2E › should require confirmation before approving application 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      193 |
+      194 |     await page.goto('/admin.html');
+    > 195 |     await page.waitForFunction(() => typeof window.approveApp === 'function');
+          |                ^
+      196 |
+      197 |     let dialogAppeared = false;
+      198 |     let dialogMessage = '';
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:195:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-2a1ef-efore-approving-application-chromium/error-context.md
+
+
+  2) [chromium] › tests/e2e/admin.spec.ts:124:7 › Admin Panel E2E › should show warning when rejecting application without valid email 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      144 |     
+      145 |     // Wait for the admin.js module to finish loading
+    > 146 |     await page.waitForFunction(() => typeof window.rejectApp === 'function');
+          |                ^
+      147 |
+      148 |     let dialogMessages: string[] = [];
+      149 |     page.on('dialog', async dialog => {
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:146:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-7eef9-ication-without-valid-email-chromium/error-context.md
+
+
+[20/140] [chromium] › tests/e2e/admin.spec.ts:342:7 › Admin Panel E2E › (@T18) should display email button in header on both desktop and mobile
+  3) [chromium] › tests/e2e/admin.spec.ts:220:7 › Admin Panel E2E › should require confirmation before deleting live application 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      238 |
+      239 |     await page.goto('/admin.html');
+    > 240 |     await page.waitForFunction(() => typeof window.deleteLiveApp === 'function');
+          |                ^
+      241 |
+      242 |     let dialogAppeared = false;
+      243 |     let dialogMessage = '';
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:240:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-86fe3-e-deleting-live-application-chromium/error-context.md
+
+
+[21/140] [chromium] › tests/e2e/admin.spec.ts:356:7 › Admin Panel E2E › (@T19) should display email badge with unread count
+[22/140] [chromium] › tests/e2e/admin.spec.ts:377:7 › Admin Panel E2E › (@T20) should switch to email tab when email button is clicked
+[23/140] [chromium] › tests/e2e/admin.spec.ts:398:7 › Admin Panel E2E › (@T21) should toggle hamburger menu dropdown on mobile
+  4) [chromium] › tests/e2e/admin.spec.ts:342:7 › Admin Panel E2E › (@T18) should display email button in header on both desktop and mobile 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.email-badge-btn, button:has-text("✉️")')
+    Expected: visible
+    Error: strict mode violation: locator('.email-badge-btn, button:has-text("✉️")') resolved to 2 elements:
+        1) <button id="email-badge-btn" class="email-badge-btn" onclick="window.goToEmailSection()">…</button> aka getByRole('button', { name: '✉️ 0' })
+        2) <button onclick="window.goToAdminTab('emails-section')">✉️ Пошта</button> aka getByRole('button', { name: '✉️ Пошта' })
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('.email-badge-btn, button:has-text("✉️")')
+
+
+      346 |
+      347 |     const emailBadgeBtn = page.locator('.email-badge-btn, button:has-text("✉️")');
+    > 348 |     await expect(emailBadgeBtn).toBeVisible();
+          |                                 ^
+      349 |
+      350 |     // Test on mobile
+      351 |     await page.setViewportSize({ width: 375, height: 667 });
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:348:33
+
+    Error Context: test-results/admin-Admin-Panel-E2E-T18--be83d--on-both-desktop-and-mobile-chromium/error-context.md
+
+
+  5) [chromium] › tests/e2e/admin.spec.ts:377:7 › Admin Panel E2E › (@T20) should switch to email tab when email button is clicked 
+
+    Error: locator.click: Error: strict mode violation: locator('.email-badge-btn, button:has-text("✉️")') resolved to 2 elements:
+        1) <button id="email-badge-btn" class="email-badge-btn" onclick="window.goToEmailSection()">…</button> aka getByRole('button', { name: '✉️ 0' })
+        2) <button onclick="window.goToAdminTab('emails-section')">✉️ Пошта</button> aka getByRole('button', { name: '✉️ Пошта' })
+
+    Call log:
+      - waiting for locator('.email-badge-btn, button:has-text("✉️")')
+
+
+      382 |     // Click email badge button
+      383 |     const emailBadgeBtn = page.locator('.email-badge-btn, button:has-text("✉️")');
+    > 384 |     await emailBadgeBtn.click();
+          |                         ^
+      385 |
+      386 |     // Check if email tab content is visible
+      387 |     await page.waitForTimeout(300); // Wait for any animations
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:384:25
+
+    Error Context: test-results/admin-Admin-Panel-E2E-T20--62029-hen-email-button-is-clicked-chromium/error-context.md
+
+
+[24/140] [chromium] › tests/e2e/admin.spec.ts:425:7 › Admin Panel E2E › (@T22) should close hamburger menu when tab is selected
+[25/140] [chromium] › tests/e2e/admin.spec.ts:451:7 › Admin Panel E2E › (@T23) should close hamburger menu on Escape key
+  6) [chromium] › tests/e2e/admin.spec.ts:325:7 › Admin Panel E2E › (@T17) should display hamburger menu on mobile (<768px) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      327 |     await page.goto('/admin.html');
+      328 |
+    > 329 |     await page.waitForFunction(() => typeof window.toggleAdminMenu === 'function');
+          |                ^
+      330 |
+      331 |     // Hamburger menu should be visible on mobile
+      332 |     const hamburger = page.locator('.menu-button, button:has-text("☰")');
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:329:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-T17--af0cf-urger-menu-on-mobile-768px--chromium/error-context.md
+
+
+  7) [chromium] › tests/e2e/admin.spec.ts:425:7 › Admin Panel E2E › (@T22) should close hamburger menu when tab is selected 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      436 |     await page.waitForTimeout(200);
+      437 |     let isOpen = await dropdown.isVisible().catch(() => false);
+    > 438 |     expect(isOpen).toBeTruthy();
+          |                    ^
+      439 |
+      440 |     // Click a menu item (any link in the dropdown)
+      441 |     const menuItem = dropdown.locator('a, button').first();
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:438:20
+
+    Error Context: test-results/admin-Admin-Panel-E2E-T22--53748-r-menu-when-tab-is-selected-chromium/error-context.md
+
+
+[26/140] [chromium] › tests/e2e/admin.spec.ts:477:7 › Admin Panel E2E › (@T24) should update email badge periodically
+[27/140] [chromium] › tests/e2e/admin.spec.ts:512:7 › Admin Panel E2E › (@T26) should have properly sized buttons on mobile (>=44px)
+[28/140] [chromium] › tests/e2e/admin.spec.ts:534:7 › Admin Panel E2E › should delete live application when confirmation is accepted
+  8) [chromium] › tests/e2e/admin.spec.ts:512:7 › Admin Panel E2E › (@T26) should have properly sized buttons on mobile (>=44px) 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 40
+    Received:    35.1875
+
+      525 |         if (boundingBox) {
+      526 |           // Mobile buttons should be at least 44px tall (recommended touch target size)
+    > 527 |           expect(boundingBox.height).toBeGreaterThanOrEqual(40);
+          |                                      ^
+      528 |           expect(boundingBox.width).toBeGreaterThanOrEqual(40);
+      529 |         }
+      530 |       }
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:527:38
+
+    Error Context: test-results/admin-Admin-Panel-E2E-T26--f34a4-zed-buttons-on-mobile-44px--chromium/error-context.md
+
+
+[29/140] [chromium] › tests/e2e/admin.spec.ts:576:7 › Admin Panel E2E › should approve application when confirmation is accepted
+  9) [chromium] › tests/e2e/admin.spec.ts:398:7 › Admin Panel E2E › (@T21) should toggle hamburger menu dropdown on mobile 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      400 |     await page.goto('/admin.html');
+      401 |
+    > 402 |     await page.waitForFunction(() => typeof window.toggleAdminMenu === 'function');
+          |                ^
+      403 |
+      404 |     const hamburger = page.locator('.menu-button, button:has-text("☰")');
+      405 |     const dropdown = page.locator('.menu-dropdown-content, .admin-menu');
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:402:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-T21--5aaee-ger-menu-dropdown-on-mobile-chromium/error-context.md
+
+
+[30/140] [chromium] › tests/e2e/admin.spec.ts:615:7 › Admin Panel E2E › should require confirmation before saving edit and proceed on accept
+  10) [chromium] › tests/e2e/admin.spec.ts:451:7 › Admin Panel E2E › (@T23) should close hamburger menu on Escape key 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      453 |     await page.goto('/admin.html');
+      454 |
+    > 455 |     await page.waitForFunction(() => typeof window.toggleAdminMenu === 'function');
+          |                ^
+      456 |
+      457 |     const hamburger = page.locator('.menu-button, button:has-text("☰")');
+      458 |     const dropdown = page.locator('.menu-dropdown-content, .admin-menu');
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:455:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-T23--cf13f-amburger-menu-on-Escape-key-chromium/error-context.md
+
+
+[31/140] [chromium] › tests/e2e/admin.spec.ts:687:7 › Admin Panel E2E › should paginate live catalog 50 per page with working prev/next buttons
+[32/140] [chromium] › tests/e2e/admin.spec.ts:738:7 › Admin Panel E2E › should show card IDs and keep search input usable while filtering
+  11) [chromium] › tests/e2e/admin.spec.ts:534:7 › Admin Panel E2E › should delete live application when confirmation is accepted 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      551 |
+      552 |     await page.goto('/admin.html');
+    > 553 |     await page.waitForFunction(() => typeof window.deleteLiveApp === 'function');
+          |                ^
+      554 |
+      555 |     let dialogAppeared = false;
+      556 |     page.on('dialog', async dialog => {
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:553:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-c507d-en-confirmation-is-accepted-chromium/error-context.md
+
+
+[33/140] [chromium] › tests/e2e/admin.spec.ts:786:8 › Admin Panel E2E › should center edit modal and apply correct width on mobile screens
+[34/140] [chromium] › tests/e2e/admin.spec.ts:833:7 › Admin Panel E2E › should switch between tabs (new apps, live catalog, rejected apps)
+[35/140] [chromium] › tests/e2e/admin.spec.ts:890:7 › Admin Panel E2E › should display separate content areas for new applications, archive, feedback, and live catalog
+  12) [chromium] › tests/e2e/admin.spec.ts:576:7 › Admin Panel E2E › should approve application when confirmation is accepted 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      593 |
+      594 |     await page.goto('/admin.html');
+    > 595 |     await page.waitForFunction(() => typeof window.approveApp === 'function');
+          |                ^
+      596 |
+      597 |     let dialogAppeared = false;
+      598 |     page.on('dialog', async dialog => {
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:595:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-7a02d-en-confirmation-is-accepted-chromium/error-context.md
+
+
+[36/140] [chromium] › tests/e2e/admin.spec.ts:921:8 › Admin Panel E2E › should keep modal responsive on mobile viewport
+[37/140] [chromium] › tests/e2e/catalog-improvements.spec.ts:9:7 › Catalog Improvements › 1. Phone display: Shows only number without 'Телефон:' label
+  13) [chromium] › tests/e2e/admin.spec.ts:615:7 › Admin Panel E2E › should require confirmation before saving edit and proceed on accept 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      634 |     await page.route('**/api/sync', route => route.fulfill({ status: 200, body: '{}' }));
+      635 |     await page.goto('/admin.html');
+    > 636 |     await page.waitForFunction(() => typeof window.saveEdit === 'function');
+          |                ^
+      637 |
+      638 |     let dialogAppeared = false;
+      639 |     page.on('dialog', async dialog => {
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:636:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-ed4b7--edit-and-proceed-on-accept-chromium/error-context.md
+
+
+[38/140] [chromium] › tests/e2e/catalog-improvements.spec.ts:29:7 › Catalog Improvements › 2. Categories sync: All catalog categories exist in apply form
+[39/140] [chromium] › tests/e2e/catalog-improvements.spec.ts:76:7 › Catalog Improvements › 3. Ukrainian translations: All categories show Ukrainian names in catalog
+  14) [chromium] › tests/e2e/admin.spec.ts:833:7 › Admin Panel E2E › should switch between tabs (new apps, live catalog, rejected apps) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.admin-tab') to be visible
+        61 × locator resolved to 9 elements. Proceeding with the first one: <div id="tab-new-apps" class="admin-tab active" onclick="window.goToPage(this, 'new-apps')">Нові заявки</div>
+
+
+      843 |
+      844 |     // Wait a moment for tabs to render
+    > 845 |     await page.waitForSelector('.admin-tab');
+          |                ^
+      846 |
+      847 |     // Tab 1: Нові заявки should be active by default
+      848 |     const newAppsTab = page.locator('.admin-tab').nth(0);
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:845:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-33cc8-live-catalog-rejected-apps--chromium/error-context.md
+
+
+  15) [chromium] › tests/e2e/admin.spec.ts:890:7 › Admin Panel E2E › should display separate content areas for new applications, archive, feedback, and live catalog 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForSelector: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.admin-tab') to be visible
+        62 × locator resolved to 9 elements. Proceeding with the first one: <div id="tab-new-apps" class="admin-tab active" onclick="window.goToPage(this, 'new-apps')">Нові заявки</div>
+
+
+      899 |     });
+      900 |
+    > 901 |     await page.waitForSelector('.admin-tab');
+          |                ^
+      902 |
+      903 |     // Verify tabs exist
+      904 |     const tabs = page.locator('.admin-tab');
+        at /home/mykola/kw-community-site/tests/e2e/admin.spec.ts:901:16
+
+    Error Context: test-results/admin-Admin-Panel-E2E-shou-3f393-e-feedback-and-live-catalog-chromium/error-context.md
+
+
+[40/140] [chromium] › tests/e2e/catalog-improvements.spec.ts:127:7 › Catalog Improvements › 4. No duplicate categories in apply form
+[41/140] [chromium] › tests/e2e/catalog-improvements.spec.ts:154:7 › Catalog Improvements › 5. Category sync: Same categories in admin edit form
+[42/140] [chromium] › tests/e2e/crm.spec.ts:4:7 › CRM Panel E2E › should load CRM login page
+  16) [chromium] › tests/e2e/catalog-improvements.spec.ts:9:7 › Catalog Improvements › 1. Phone display: Shows only number without 'Телефон:' label 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.cards-grid button').first()
+
+
+      12 |     // Click first specialist card to open modal
+      13 |     const firstCard = page.locator(".cards-grid button").first();
+    > 14 |     await firstCard.click();
+         |                     ^
+      15 |
+      16 |     // Get modal contacts
+      17 |     const contactsDiv = page.locator("#modal-contacts");
+        at /home/mykola/kw-community-site/tests/e2e/catalog-improvements.spec.ts:14:21
+
+    Error Context: test-results/catalog-improvements-Catal-68c59-umber-without-Телефон-label-chromium/error-context.md
+
+
+[43/140] [chromium] › tests/e2e/crm.spec.ts:16:7 › CRM Panel E2E › should show error on wrong credentials
+[44/140] [chromium] › tests/e2e/crm.spec.ts:42:7 › CRM Panel E2E › should toggle between tabs in app view
+  17) [chromium] › tests/e2e/crm.spec.ts:4:7 › CRM Panel E2E › should load CRM login page ──────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('#loginView')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('#loginView')
+
+
+       6 |
+       7 |     // Check login view is visible
+    >  8 |     await expect(page.locator('#loginView')).toBeVisible();
+         |                                              ^
+       9 |     await expect(page.locator('#loginEmail')).toBeVisible();
+      10 |     await expect(page.locator('#loginPass')).toBeVisible();
+      11 |
+        at /home/mykola/kw-community-site/tests/e2e/crm.spec.ts:8:46
+
+    Error Context: test-results/crm-CRM-Panel-E2E-should-load-CRM-login-page-chromium/error-context.md
+
+
+[45/140] [chromium] › tests/e2e/crm.spec.ts:78:7 › CRM Panel E2E › should open specialist modal and clear fields for new specialist
+  18) [chromium] › tests/e2e/crm.spec.ts:42:7 › CRM Panel E2E › should toggle between tabs in app view 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('#appView')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('#appView')
+
+
+      53 |
+      54 |     // App view should be visible
+    > 55 |     await expect(page.locator('#appView')).toBeVisible();
+         |                                            ^
+      56 |
+      57 |     // Click specialists tab
+      58 |     await page.click('a:has-text("👥")');
+        at /home/mykola/kw-community-site/tests/e2e/crm.spec.ts:55:44
+
+    Error Context: test-results/crm-CRM-Panel-E2E-should-toggle-between-tabs-in-app-view-chromium/error-context.md
+
+
+[46/140] [chromium] › tests/e2e/crm.spec.ts:105:7 › CRM Panel E2E › should load dashboard with statistics
+  19) [chromium] › tests/e2e/crm.spec.ts:105:7 › CRM Panel E2E › should load dashboard with statistics 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('#tab-dashboard')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('#tab-dashboard')
+
+
+      115 |
+      116 |     // Dashboard should be visible by default
+    > 117 |     await expect(page.locator('#tab-dashboard')).toBeVisible();
+          |                                                  ^
+      118 |
+      119 |     // Stats should exist
+      120 |     await expect(page.locator('#statSpec')).toBeVisible();
+        at /home/mykola/kw-community-site/tests/e2e/crm.spec.ts:117:50
+
+    Error Context: test-results/crm-CRM-Panel-E2E-should-load-dashboard-with-statistics-chromium/error-context.md
+
+
+[47/140] [chromium] › tests/e2e/crm.spec.ts:129:7 › CRM Panel E2E › should display specialists table with data
+  20) [chromium] › tests/e2e/catalog-improvements.spec.ts:76:7 › Catalog Improvements › 3. Ukrainian translations: All categories show Ukrainian names in catalog 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.textContent: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('#category-pills')
+
+
+      107 |
+      108 |     // Verify no English category names are shown
+    > 109 |     const allPillsText = await page.locator("#category-pills").textContent();
+          |                                                                ^
+      110 |     expect(allPillsText).not.toContain("Beauty");
+      111 |     expect(allPillsText).not.toContain("Health");
+      112 |     expect(allPillsText).not.toContain("Education");
+        at /home/mykola/kw-community-site/tests/e2e/catalog-improvements.spec.ts:109:64
+
+    Error Context: test-results/catalog-improvements-Catal-67b92--Ukrainian-names-in-catalog-chromium/error-context.md
+
+
+[48/140] [chromium] › tests/e2e/crm.spec.ts:164:7 › CRM Panel E2E › should display emails from API
+  21) [chromium] › tests/e2e/crm.spec.ts:16:7 › CRM Panel E2E › should show error on wrong credentials 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.fill: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('#loginEmail')
+
+
+      18 |
+      19 |     // Fill form with wrong credentials
+    > 20 |     await page.locator('#loginEmail').fill('wrong@example.com');
+         |                                       ^
+      21 |     await page.locator('#loginPass').fill('wrongpass');
+      22 |
+      23 |     // Mock Firebase error
+        at /home/mykola/kw-community-site/tests/e2e/crm.spec.ts:20:39
+
+    Error Context: test-results/crm-CRM-Panel-E2E-should-show-error-on-wrong-credentials-chromium/error-context.md
+
+
+[49/140] [chromium] › tests/e2e/crm.spec.ts:205:7 › CRM Panel E2E › should logout user
+  22) [chromium] › tests/e2e/crm.spec.ts:78:7 › CRM Panel E2E › should open specialist modal and clear fields for new specialist 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('a:has-text("👥")')
+        - locator resolved to <a class="tab-btn" onclick="switchTab('catalog')">👥 Каталог</a>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+          - waiting 100ms
+        57 × waiting for element to be visible, enabled and stable
+           - element is not visible
+         - retrying click action
+           - waiting 500ms
+
+
+      88 |
+      89 |     // Navigate to specialists tab
+    > 90 |     await page.click('a:has-text("👥")');
+         |                ^
+      91 |
+      92 |     // Click add button
+      93 |     await page.click('button:has-text("➕")');
+        at /home/mykola/kw-community-site/tests/e2e/crm.spec.ts:90:16
+
+    Error Context: test-results/crm-CRM-Panel-E2E-should-o-d23da-r-fields-for-new-specialist-chromium/error-context.md
+
+
+[50/140] [chromium] › tests/e2e/crm.spec.ts:227:7 › CRM Panel E2E › should handle Firebase initialization error gracefully
+  23) [chromium] › tests/e2e/crm.spec.ts:205:7 › CRM Panel E2E › should logout user ────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('#appView')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('#appView')
+
+
+      215 |
+      216 |     // App view should be visible
+    > 217 |     await expect(page.locator('#appView')).toBeVisible();
+          |                                            ^
+      218 |
+      219 |     // Click logout button
+      220 |     await page.click('button.logout-btn');
+        at /home/mykola/kw-community-site/tests/e2e/crm.spec.ts:217:44
+
+    Error Context: test-results/crm-CRM-Panel-E2E-should-logout-user-chromium/error-context.md
+
+
+[51/140] [chromium] › tests/e2e/crm.spec.ts:239:7 › CRM Panel E2E › should open edit modal with populated data
+  24) [chromium] › tests/e2e/crm.spec.ts:227:7 › CRM Panel E2E › should handle Firebase initialization error gracefully 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('#loginView')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('#loginView')
+
+
+      234 |
+      235 |     // Page should still load (with error handling)
+    > 236 |     await expect(page.locator('#loginView')).toBeVisible();
+          |                                              ^
+      237 |   });
+      238 |
+      239 |   test('should open edit modal with populated data', async ({ page }) => {
+        at /home/mykola/kw-community-site/tests/e2e/crm.spec.ts:236:46
+
+    Error Context: test-results/crm-CRM-Panel-E2E-should-h-dcfef-ialization-error-gracefully-chromium/error-context.md
+
+
+[52/140] [chromium] › tests/e2e/crm.spec.ts:282:7 › CRM Panel E2E › should handle search filter in specialists table
+  25) [chromium] › tests/e2e/crm.spec.ts:129:7 › CRM Panel E2E › should display specialists table with data 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('a:has-text("👥")')
+        - locator resolved to <a class="tab-btn" onclick="switchTab('catalog')">👥 Каталог</a>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+          - waiting 100ms
+        57 × waiting for element to be visible, enabled and stable
+           - element is not visible
+         - retrying click action
+           - waiting 500ms
+
+
+      151 |
+      152 |     // Navigate to specialists
+    > 153 |     await page.click('a:has-text("👥")');
+          |                ^
+      154 |
+      155 |     // Wait for table to be rendered
+      156 |     const table = page.locator('#specTable');
+        at /home/mykola/kw-community-site/tests/e2e/crm.spec.ts:153:16
+
+    Error Context: test-results/crm-CRM-Panel-E2E-should-display-specialists-table-with-data-chromium/error-context.md
+
+
+[53/140] [chromium] › tests/e2e/error-reports.spec.ts:42:7 › Error Reports Requirements (Звіти про помилки) › @T9 Admin should be able to open edit form from an error report card with pre-populated data
+  26) [chromium] › tests/e2e/crm.spec.ts:164:7 › CRM Panel E2E › should display emails from API ────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('a:has-text("✉️")')
+        - locator resolved to <a class="tab-btn" onclick="switchTab('email')">✉️ Пошта</a>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+          - waiting 100ms
+        57 × waiting for element to be visible, enabled and stable
+           - element is not visible
+         - retrying click action
+           - waiting 500ms
+
+
+      196 |
+      197 |     // Navigate to emails
+    > 198 |     await page.click('a:has-text("✉️")');
+          |                ^
+      199 |
+      200 |     // Email list should be visible
+      201 |     const emailList = page.locator('#emailList');
+        at /home/mykola/kw-community-site/tests/e2e/crm.spec.ts:198:16
+
+    Error Context: test-results/crm-CRM-Panel-E2E-should-display-emails-from-API-chromium/error-context.md
+
+
+[54/140] [chromium] › tests/e2e/error-reports.spec.ts:71:7 › Error Reports Requirements (Звіти про помилки) › @T10 Admin should see an auxiliary field with suggested changes and copy button when editing a report
+  27) [chromium] › tests/e2e/crm.spec.ts:239:7 › CRM Panel E2E › should open edit modal with populated data 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('a:has-text("👥")')
+        - locator resolved to <a class="tab-btn" onclick="switchTab('catalog')">👥 Каталог</a>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+          - waiting 100ms
+        57 × waiting for element to be visible, enabled and stable
+           - element is not visible
+         - retrying click action
+           - waiting 500ms
+
+
+      267 |
+      268 |     // Navigate to specialists
+    > 269 |     await page.click('a:has-text("👥")');
+          |                ^
+      270 |
+      271 |     // Click edit button
+      272 |     await page.click('.actions button.edit');
+        at /home/mykola/kw-community-site/tests/e2e/crm.spec.ts:269:16
+
+    Error Context: test-results/crm-CRM-Panel-E2E-should-open-edit-modal-with-populated-data-chromium/error-context.md
+
+
+[55/140] [chromium] › tests/e2e/error-reports.spec.ts:99:7 › Error Reports Requirements (Звіти про помилки) › @T11 Auxiliary suggestion field must be hidden during regular edits or creating new cards
+  28) [chromium] › tests/e2e/crm.spec.ts:282:7 › CRM Panel E2E › should handle search filter in specialists table 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('a:has-text("👥")')
+        - locator resolved to <a class="tab-btn" onclick="switchTab('catalog')">👥 Каталог</a>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+          - waiting 100ms
+        57 × waiting for element to be visible, enabled and stable
+           - element is not visible
+         - retrying click action
+           - waiting 500ms
+
+
+      296 |
+      297 |     // Navigate to specialists
+    > 298 |     await page.click('a:has-text("👥")');
+          |                ^
+      299 |
+      300 |     // Type in search
+      301 |     await page.fill('#specSearch', 'Олена');
+        at /home/mykola/kw-community-site/tests/e2e/crm.spec.ts:298:16
+
+    Error Context: test-results/crm-CRM-Panel-E2E-should-h-6cd69-filter-in-specialists-table-chromium/error-context.md
+
+
+[56/140] [chromium] › tests/e2e/error-reports.spec.ts:123:7 › Error Reports Requirements (Звіти про помилки) › @T12 Report card should be saved with standard fields only after editing (auxiliary field not saved to DB)
+  29) [chromium] › tests/e2e/error-reports.spec.ts:42:7 › Error Reports Requirements (Звіти про помилки) › @T9 Admin should be able to open edit form from an error report card with pre-populated data 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      42 |   test('@T9 Admin should be able to open edit form from an error report card with pre-populated data', async ({ page }) => {
+      43 |     await page.goto('/admin.html');
+    > 44 |     await page.waitForFunction(() => typeof window.editApp === 'function');
+         |                ^
+      45 |
+      46 |     // Call editApp for specialist ID "1" as if triggered from error report card
+      47 |     await page.evaluate(async () => {
+        at /home/mykola/kw-community-site/tests/e2e/error-reports.spec.ts:44:16
+
+    Error Context: test-results/error-reports-Error-Report-ffa4d-ard-with-pre-populated-data-chromium/error-context.md
+
+
+[57/140] [chromium] › tests/e2e/error-reports.spec.ts:148:7 › Error Reports Requirements (Звіти про помилки) › @T13 Canceling form should return admin to "Звіти про помилки" tab when opened from feedback
+  30) [chromium] › tests/e2e/error-reports.spec.ts:71:7 › Error Reports Requirements (Звіти про помилки) › @T10 Admin should see an auxiliary field with suggested changes and copy button when editing a report 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      71 |   test('@T10 Admin should see an auxiliary field with suggested changes and copy button when editing a report', async ({ page }) => {
+      72 |     await page.goto('/admin.html');
+    > 73 |     await page.waitForFunction(() => typeof window.editApp === 'function' && typeof window.copyFeedbackText === 'function');
+         |                ^
+      74 |
+      75 |     const suggestion = 'Рекомендовано змінити номер телефону на +1 519 555 0199 та оновити соцмережі';
+      76 |     await page.evaluate(async (msg) => {
+        at /home/mykola/kw-community-site/tests/e2e/error-reports.spec.ts:73:16
+
+    Error Context: test-results/error-reports-Error-Report-8c4ac-utton-when-editing-a-report-chromium/error-context.md
+
+
+[58/140] [chromium] › tests/e2e/error-reports.spec.ts:172:7 › Error Reports Requirements (Звіти про помилки) › @T14 Opening admin via email link with feedback parameter auto-opens edit form with helper box
+  31) [chromium] › tests/e2e/error-reports.spec.ts:99:7 › Error Reports Requirements (Звіти про помилки) › @T11 Auxiliary suggestion field must be hidden during regular edits or creating new cards 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+       99 |   test('@T11 Auxiliary suggestion field must be hidden during regular edits or creating new cards', async ({ page }) => {
+      100 |     await page.goto('/admin.html');
+    > 101 |     await page.waitForFunction(() => typeof window.editApp === 'function' && typeof window.showAddForm === 'function');
+          |                ^
+      102 |
+      103 |     // First open with feedback message
+      104 |     await page.evaluate(() => {
+        at /home/mykola/kw-community-site/tests/e2e/error-reports.spec.ts:101:16
+
+    Error Context: test-results/error-reports-Error-Report-393db-edits-or-creating-new-cards-chromium/error-context.md
+
+
+[59/140] [chromium] › tests/e2e/error-reports.spec.ts:196:7 › Error Reports Requirements (Звіти про помилки) › @T15 Saving card executes direct database update without GitHub token prompt
+  32) [chromium] › tests/e2e/error-reports.spec.ts:123:7 › Error Reports Requirements (Звіти про помилки) › @T12 Report card should be saved with standard fields only after editing (auxiliary field not saved to DB) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      123 |   test('@T12 Report card should be saved with standard fields only after editing (auxiliary field not saved to DB)', async ({ page }) => {
+      124 |     await page.goto('/admin.html');
+    > 125 |     await page.waitForFunction(() => typeof window.editApp === 'function');
+          |                ^
+      126 |
+      127 |     await page.evaluate(() => {
+      128 |       window.editApp('39', true, 'Виправте веб-сайт на https://example.com');
+        at /home/mykola/kw-community-site/tests/e2e/error-reports.spec.ts:125:16
+
+    Error Context: test-results/error-reports-Error-Report-f0305-iary-field-not-saved-to-DB--chromium/error-context.md
+
+
+[60/140] [chromium] › tests/e2e/form-validation.spec.ts:12:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should prevent submission with empty form
+  33) [chromium] › tests/e2e/error-reports.spec.ts:148:7 › Error Reports Requirements (Звіти про помилки) › @T13 Canceling form should return admin to "Звіти про помилки" tab when opened from feedback 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      148 |   test('@T13 Canceling form should return admin to "Звіти про помилки" tab when opened from feedback', async ({ page }) => {
+      149 |     await page.goto('/admin.html');
+    > 150 |     await page.waitForFunction(() => typeof window.goToPage === 'function' && typeof window.editApp === 'function');
+          |                ^
+      151 |
+      152 |     // Admin selects "Звіти про помилки" tab
+      153 |     await page.evaluate(() => {
+        at /home/mykola/kw-community-site/tests/e2e/error-reports.spec.ts:150:16
+
+    Error Context: test-results/error-reports-Error-Report-e41fc-b-when-opened-from-feedback-chromium/error-context.md
+
+
+[61/140] [chromium] › tests/e2e/form-validation.spec.ts:34:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject invalid email format
+[62/140] [chromium] › tests/e2e/form-validation.spec.ts:19:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should prevent submission with only email filled
+[63/140] [chromium] › tests/e2e/form-validation.spec.ts:44:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept valid email formats
+[64/140] [chromium] › tests/e2e/form-validation.spec.ts:59:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject email with maxlength exceeded
+[65/140] [chromium] › tests/e2e/form-validation.spec.ts:69:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject name with less than 2 characters
+[66/140] [chromium] › tests/e2e/form-validation.spec.ts:77:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept name with exactly 2 characters
+[67/140] [chromium] › tests/e2e/form-validation.spec.ts:85:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept name with 100 characters (max)
+[68/140] [chromium] › tests/e2e/form-validation.spec.ts:94:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject name exceeding 100 characters
+[69/140] [chromium] › tests/e2e/form-validation.spec.ts:104:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should require subcategory (min 2 chars)
+[70/140] [chromium] › tests/e2e/form-validation.spec.ts:112:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept valid subcategory
+[71/140] [chromium] › tests/e2e/form-validation.spec.ts:121:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject description less than 5 chars
+[72/140] [chromium] › tests/e2e/form-validation.spec.ts:129:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept description with exactly 5 chars
+[73/140] [chromium] › tests/e2e/form-validation.spec.ts:137:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept description with 200 chars (max)
+[74/140] [chromium] › tests/e2e/form-validation.spec.ts:147:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should require category selection
+[75/140] [chromium] › tests/e2e/form-validation.spec.ts:155:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should require location selection
+[76/140] [chromium] › tests/e2e/form-validation.spec.ts:163:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept valid category selection
+[77/140] [chromium] › tests/e2e/form-validation.spec.ts:172:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept valid phone formats
+[78/140] [chromium] › tests/e2e/form-validation.spec.ts:188:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject phone with invalid characters (letters)
+[79/140] [chromium] › tests/e2e/form-validation.spec.ts:197:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject phone with SQL injection attempt
+[80/140] [chromium] › tests/e2e/form-validation.spec.ts:207:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept valid telegram formats
+[81/140] [chromium] › tests/e2e/form-validation.spec.ts:223:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject telegram with less than 5 chars
+  34) [chromium] › tests/e2e/error-reports.spec.ts:172:7 › Error Reports Requirements (Звіти про помилки) › @T14 Opening admin via email link with feedback parameter auto-opens edit form with helper box 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      173 |     const feedbackParam = 'Прошу оновити номер телефону та категорію';
+      174 |     await page.goto(`/admin.html?id=1&feedback=${encodeURIComponent(feedbackParam)}`);
+    > 175 |     await page.waitForFunction(() => typeof window.editApp === 'function');
+          |                ^
+      176 |
+      177 |     // Form section should be active
+      178 |     const formSection = page.locator('#form-section');
+        at /home/mykola/kw-community-site/tests/e2e/error-reports.spec.ts:175:16
+
+    Error Context: test-results/error-reports-Error-Report-f8dee-s-edit-form-with-helper-box-chromium/error-context.md
+
+
+[82/140] [chromium] › tests/e2e/form-validation.spec.ts:242:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept valid URLs
+[83/140] [chromium] › tests/e2e/form-validation.spec.ts:251:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject invalid URL format
+[84/140] [chromium] › tests/e2e/form-validation.spec.ts:260:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should restrict URL fields to HTTP(S) only via type=url
+[85/140] [chromium] › tests/e2e/form-validation.spec.ts:232:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject telegram with special SQL characters
+[86/140] [chromium] › tests/e2e/form-validation.spec.ts:269:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should have price pattern validation (no letters)
+[87/140] [chromium] › tests/e2e/form-validation.spec.ts:277:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject price with letters
+[88/140] [chromium] › tests/e2e/form-validation.spec.ts:286:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject price with SQL injection
+[89/140] [chromium] › tests/e2e/form-validation.spec.ts:296:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject form with no contacts provided
+[90/140] [chromium] › tests/e2e/form-validation.spec.ts:334:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept form with at least one contact (phone)
+[91/140] [chromium] › tests/e2e/form-validation.spec.ts:354:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept notes up to 1000 characters
+[92/140] [chromium] › tests/e2e/form-validation.spec.ts:363:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should prevent notes exceeding 1000 characters
+[93/140] [chromium] › tests/e2e/form-validation.spec.ts:372:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject notes with HTML injection
+[94/140] [chromium] › tests/e2e/form-validation.spec.ts:382:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should accept address with special characters
+[95/140] [chromium] › tests/e2e/form-validation.spec.ts:390:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should reject address exceeding 150 characters
+[96/140] [chromium] › tests/e2e/form-validation.spec.ts:400:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should trim whitespace from all text inputs
+[97/140] [chromium] › tests/e2e/form-validation.spec.ts:410:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should have proper labels for all form fields
+[98/140] [chromium] › tests/e2e/form-validation.spec.ts:419:7 › Form Validation and Security (Test Design / Boundary / Edge Cases) › should have required attribute on mandatory fields
+[99/140] [chromium] › tests/e2e/form.spec.ts:13:7 › Form E2E - Boundary Values, Pairwise & Validation › Повинні бути присутні всі необхідні поля (UI перевірка)
+[100/140] [chromium] › tests/e2e/form.spec.ts:23:7 › Form E2E - Boundary Values, Pairwise & Validation › BVA: Неможливо відправити форму з пустими обов'язковими полями
+[101/140] [chromium] › tests/e2e/form.spec.ts:28:7 › Form E2E - Boundary Values, Pairwise & Validation › BVA & Boundary: Мінімальні та максимальні значення для імені та опису
+[102/140] [chromium] › tests/e2e/form.spec.ts:51:7 › Form E2E - Boundary Values, Pairwise & Validation › Pairwise & Equivalence Partitioning: Перевірка валідації контактів (хоча б один контакт)
+[103/140] [chromium] › tests/e2e/form.spec.ts:71:7 › Form E2E - Boundary Values, Pairwise & Validation › Pairwise & Equivalence Partitioning: Інші комбінації одного контакту
+[104/140] [chromium] › tests/e2e/form.spec.ts:95:7 › Form E2E - Boundary Values, Pairwise & Validation › Equivalence Partitioning: Невалідні формати контактів (Phone, Telegram, Price)
+[105/140] [chromium] › tests/e2e/form.spec.ts:123:7 › Form E2E - Boundary Values, Pairwise & Validation › Security & Boundary: Обмеження довжини (Maxlength HTML5 enforced)
+[106/140] [chromium] › tests/e2e/home.spec.ts:4:7 › Homepage & Navigation E2E › should load the homepage with correct title and content
+[107/140] [chromium] › tests/e2e/home.spec.ts:22:7 › Homepage & Navigation E2E › should navigate to the catalog page
+  35) [chromium] › tests/e2e/error-reports.spec.ts:196:7 › Error Reports Requirements (Звіти про помилки) › @T15 Saving card executes direct database update without GitHub token prompt 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForFunction: Test timeout of 30000ms exceeded.
+
+      196 |   test('@T15 Saving card executes direct database update without GitHub token prompt', async ({ page }) => {
+      197 |     await page.goto('/admin.html');
+    > 198 |     await page.waitForFunction(() => typeof window.editApp === 'function' && typeof window.saveEdit === 'function');
+          |                ^
+      199 |
+      200 |     let promptCalled = false;
+      201 |     page.on('dialog', async (dialog) => {
+        at /home/mykola/kw-community-site/tests/e2e/error-reports.spec.ts:198:16
+
+    Error Context: test-results/error-reports-Error-Report-d2b30-without-GitHub-token-prompt-chromium/error-context.md
+
+
+[108/140] [chromium] › tests/e2e/home.spec.ts:33:7 › Homepage & Navigation E2E › should display the video hero section correctly
+[109/140] [chromium] › tests/e2e/home.spec.ts:53:7 › Homepage & Navigation E2E › hero video should be the actual high-quality drone video (file size check)
+[110/140] [chromium] › tests/e2e/home.spec.ts:65:7 › Homepage & Navigation E2E › hero video should load without network errors
+[111/140] [chromium] › tests/e2e/home.spec.ts:93:9 › Homepage & Navigation E2E › School CTA layout and spacing requirements › school CTA button should be left-aligned on desktop
+[112/140] [chromium] › tests/e2e/home.spec.ts:112:9 › Homepage & Navigation E2E › School CTA layout and spacing requirements › school CTA button should be centered on mobile devices
+[113/140] [chromium] › tests/e2e/home.spec.ts:130:9 › Homepage & Navigation E2E › School CTA layout and spacing requirements › should have generous vertical spacing between school CTA and activity events
+  36) [chromium] › tests/e2e/home.spec.ts:22:7 › Homepage & Navigation E2E › should navigate to the catalog page 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /.*catalog\.html/
+    Received string:  ""
+
+
+      28 |     
+      29 |     // Verify URL change
+    > 30 |     await expect(page).toHaveURL(/.*catalog\.html/);
+         |                        ^
+      31 |   });
+      32 |
+      33 |   test('should display the video hero section correctly', async ({ page }) => {
+        at /home/mykola/kw-community-site/tests/e2e/home.spec.ts:30:24
+
+    Error Context: test-results/home-Homepage-Navigation-E-9538b-avigate-to-the-catalog-page-chromium/error-context.md
+
+
+[114/140] [chromium] › tests/e2e/i18n.spec.ts:7:7 › Language toggle (UA / EN) › показує SVG-прапор, а не емоджі (емоджі не рендеряться на Windows)
+[115/140] [chromium] › tests/e2e/i18n.spec.ts:27:7 › Language toggle (UA / EN) › перемикає мову на EN і назад на UA
+[116/140] [chromium] › tests/e2e/i18n.spec.ts:46:7 › Language toggle (UA / EN) › запам'ятовує вибрану мову між сторінками
+[117/140] [chromium] › tests/e2e/home.spec.ts:144:9 › Homepage & Navigation E2E › School CTA layout and spacing requirements › should not duplicate text in school section
+[118/140] [chromium] › tests/e2e/i18n.spec.ts:56:7 › Language toggle (UA / EN) › заголовок школи має SVG-прапор України
+[119/140] [chromium] › tests/e2e/i18n.spec.ts:65:7 › Language toggle (UA / EN) › каталог динамічно перекладає елементи без перезавантаження
+[120/140] [chromium] › tests/e2e/i18n.spec.ts:82:7 › Language toggle (UA / EN) › перекладає сторінку школи (school.html) на EN і назад на UA
+[121/140] [chromium] › tests/e2e/school.spec.ts:5:7 › Ukrainian School Page › should display school navigation link in the header
+[122/140] [chromium] › tests/e2e/school.spec.ts:12:7 › Ukrainian School Page › should display "Details" link in info section on home page
+[123/140] [chromium] › tests/e2e/school.spec.ts:18:7 › Ukrainian School Page › should navigate to the school page and display correct title
+[124/140] [chromium] › tests/e2e/school.spec.ts:25:7 › Ukrainian School Page › should display sections for junior children, teens, and parents
+[125/140] [chromium] › tests/e2e/school.spec.ts:32:7 › Ukrainian School Page › should contain correct registration and contact links
+[126/140] [chromium] › tests/e2e/school.spec.ts:44:7 › Ukrainian School Page › should translate school page to English correctly
+[127/140] [chromium] › tests/e2e/school.spec.ts:66:7 › Ukrainian School Page › should toggle language back to Ukrainian correctly
+[128/140] [chromium] › tests/e2e/school.spec.ts:82:7 › Ukrainian School Page › should preserve language selection after page reload
+[129/140] [chromium] › tests/e2e/seo.spec.ts:5:7 › SEO & Search Indexing Optimization › robots.txt should be served with correct directives and sitemap reference
+[130/140] [chromium] › tests/e2e/seo.spec.ts:15:7 › SEO & Search Indexing Optimization › sitemap.xml should be served and contain all public pages
+[131/140] [chromium] › tests/e2e/seo.spec.ts:27:7 › SEO & Search Indexing Optimization › homepage should contain canonical link, Open Graph, Twitter, Geo, and JSON-LD structured data
+[132/140] [chromium] › tests/e2e/seo.spec.ts:60:7 › SEO & Search Indexing Optimization › catalog page should contain canonical link, Open Graph and Schema.org CollectionPage
+[133/140] [chromium] › tests/e2e/seo.spec.ts:73:7 › SEO & Search Indexing Optimization › school page should contain canonical link, Open Graph and Schema.org EducationalOrganization
+[134/140] [chromium] › tests/e2e/seo.spec.ts:86:7 › SEO & Search Indexing Optimization › admin.html should have noindex, nofollow robots tag to avoid search engine indexation
+[135/140] [chromium] › tests/e2e/site.spec.js:59:5 › завантажує дані та показує картки спеціалістів
+[136/140] [chromium] › tests/e2e/site.spec.js:82:5 › пошук фільтрує картки за іменем/описом/підкатегорією
+[137/140] [chromium] › tests/e2e/site.spec.js:92:5 › перемикання категорії оновлює набір підкатегорій і карток
+[138/140] [chromium] › tests/e2e/site.spec.js:120:5 › локація фільтрує за містом з адреси або типу локації
+  37) [chromium] › tests/e2e/site.spec.js:59:5 › завантажує дані та показує картки спеціалістів ────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('.card')
+    Expected: 3
+    Received: 86
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 5000ms
+      - waiting for locator('.card')
+        - locator resolved to 0 elements
+        - unexpected value "0"
+        12 × locator resolved to 86 elements
+           - unexpected value "86"
+
+
+      54 |   await mockDataFetch(page);
+      55 |   await page.goto("/catalog.html");
+    > 56 |   await expect(page.locator(".card")).toHaveCount(3);
+         |                                       ^
+      57 | });
+      58 |
+      59 | test("завантажує дані та показує картки спеціалістів", async ({ page }) => {
+        at /home/mykola/kw-community-site/tests/e2e/site.spec.js:56:39
+
+    Error Context: test-results/site-завантажує-дані-та-показує-картки-спеціалістів-chromium/error-context.md
+
+
+  38) [chromium] › tests/e2e/site.spec.js:82:5 › пошук фільтрує картки за іменем/описом/підкатегорією 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('.card')
+    Expected: 3
+    Received: 86
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 5000ms
+      - waiting for locator('.card')
+        13 × locator resolved to 86 elements
+           - unexpected value "86"
+
+
+      54 |   await mockDataFetch(page);
+      55 |   await page.goto("/catalog.html");
+    > 56 |   await expect(page.locator(".card")).toHaveCount(3);
+         |                                       ^
+      57 | });
+      58 |
+      59 | test("завантажує дані та показує картки спеціалістів", async ({ page }) => {
+        at /home/mykola/kw-community-site/tests/e2e/site.spec.js:56:39
+
+    Error Context: test-results/site-пошук-фільтрує-картки-за-іменем-описом-підкатегорією-chromium/error-context.md
+
+
+[139/140] [chromium] › tests/e2e/site.spec.js:137:5 › каталог має загальну шапку з кнопкою 'Додати спеціаліста'
+  39) [chromium] › tests/e2e/site.spec.js:92:5 › перемикання категорії оновлює набір підкатегорій і карток 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('.card')
+    Expected: 3
+    Received: 86
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 5000ms
+      - waiting for locator('.card')
+        - locator resolved to 0 elements
+        - unexpected value "0"
+        13 × locator resolved to 86 elements
+           - unexpected value "86"
+
+
+      54 |   await mockDataFetch(page);
+      55 |   await page.goto("/catalog.html");
+    > 56 |   await expect(page.locator(".card")).toHaveCount(3);
+         |                                       ^
+      57 | });
+      58 |
+      59 | test("завантажує дані та показує картки спеціалістів", async ({ page }) => {
+        at /home/mykola/kw-community-site/tests/e2e/site.spec.js:56:39
+
+    Error Context: test-results/site-перемикання-категорії-49918-набір-підкатегорій-і-карток-chromium/error-context.md
+
+
+[140/140] [chromium] › tests/e2e/site.spec.js:147:5 › показує іконку категорії та посилання на форму зворотного зв'язку в модалці
+  40) [chromium] › tests/e2e/site.spec.js:120:5 › локація фільтрує за містом з адреси або типу локації 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('.card')
+    Expected: 3
+    Received: 86
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 5000ms
+      - waiting for locator('.card')
+        14 × locator resolved to 86 elements
+           - unexpected value "86"
+
+
+      54 |   await mockDataFetch(page);
+      55 |   await page.goto("/catalog.html");
+    > 56 |   await expect(page.locator(".card")).toHaveCount(3);
+         |                                       ^
+      57 | });
+      58 |
+      59 | test("завантажує дані та показує картки спеціалістів", async ({ page }) => {
+        at /home/mykola/kw-community-site/tests/e2e/site.spec.js:56:39
+
+    Error Context: test-results/site-локація-фільтрує-за-містом-з-адреси-або-типу-локації-chromium/error-context.md
+
+
+  41) [chromium] › tests/e2e/site.spec.js:137:5 › каталог має загальну шапку з кнопкою 'Додати спеціаліста' 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('.card')
+    Expected: 3
+    Received: 86
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 5000ms
+      - waiting for locator('.card')
+        14 × locator resolved to 86 elements
+           - unexpected value "86"
+
+
+      54 |   await mockDataFetch(page);
+      55 |   await page.goto("/catalog.html");
+    > 56 |   await expect(page.locator(".card")).toHaveCount(3);
+         |                                       ^
+      57 | });
+      58 |
+      59 | test("завантажує дані та показує картки спеціалістів", async ({ page }) => {
+        at /home/mykola/kw-community-site/tests/e2e/site.spec.js:56:39
+
+    Error Context: test-results/site-каталог-має-загальну--05385-кнопкою-Додати-спеціаліста--chromium/error-context.md
+
+
+  42) [chromium] › tests/e2e/site.spec.js:147:5 › показує іконку категорії та посилання на форму зворотного зв'язку в модалці 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('.card')
+    Expected: 3
+    Received: 86
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 5000ms
+      - waiting for locator('.card')
+        14 × locator resolved to 86 elements
+           - unexpected value "86"
+
+
+      54 |   await mockDataFetch(page);
+      55 |   await page.goto("/catalog.html");
+    > 56 |   await expect(page.locator(".card")).toHaveCount(3);
+         |                                       ^
+      57 | });
+      58 |
+      59 | test("завантажує дані та показує картки спеціалістів", async ({ page }) => {
+        at /home/mykola/kw-community-site/tests/e2e/site.spec.js:56:39
+
+    Error Context: test-results/site-показує-іконку-катего-45838-воротного-зв-язку-в-модалці-chromium/error-context.md
+
+
+  42 failed
+    [chromium] › tests/e2e/admin.spec.ts:124:7 › Admin Panel E2E › should show warning when rejecting application without valid email 
+    [chromium] › tests/e2e/admin.spec.ts:175:7 › Admin Panel E2E › should require confirmation before approving application 
+    [chromium] › tests/e2e/admin.spec.ts:220:7 › Admin Panel E2E › should require confirmation before deleting live application 
+    [chromium] › tests/e2e/admin.spec.ts:325:7 › Admin Panel E2E › (@T17) should display hamburger menu on mobile (<768px) 
+    [chromium] › tests/e2e/admin.spec.ts:342:7 › Admin Panel E2E › (@T18) should display email button in header on both desktop and mobile 
+    [chromium] › tests/e2e/admin.spec.ts:377:7 › Admin Panel E2E › (@T20) should switch to email tab when email button is clicked 
+    [chromium] › tests/e2e/admin.spec.ts:398:7 › Admin Panel E2E › (@T21) should toggle hamburger menu dropdown on mobile 
+    [chromium] › tests/e2e/admin.spec.ts:425:7 › Admin Panel E2E › (@T22) should close hamburger menu when tab is selected 
+    [chromium] › tests/e2e/admin.spec.ts:451:7 › Admin Panel E2E › (@T23) should close hamburger menu on Escape key 
+    [chromium] › tests/e2e/admin.spec.ts:512:7 › Admin Panel E2E › (@T26) should have properly sized buttons on mobile (>=44px) 
+    [chromium] › tests/e2e/admin.spec.ts:534:7 › Admin Panel E2E › should delete live application when confirmation is accepted 
+    [chromium] › tests/e2e/admin.spec.ts:576:7 › Admin Panel E2E › should approve application when confirmation is accepted 
+    [chromium] › tests/e2e/admin.spec.ts:615:7 › Admin Panel E2E › should require confirmation before saving edit and proceed on accept 
+    [chromium] › tests/e2e/admin.spec.ts:833:7 › Admin Panel E2E › should switch between tabs (new apps, live catalog, rejected apps) 
+    [chromium] › tests/e2e/admin.spec.ts:890:7 › Admin Panel E2E › should display separate content areas for new applications, archive, feedback, and live catalog 
+    [chromium] › tests/e2e/catalog-improvements.spec.ts:9:7 › Catalog Improvements › 1. Phone display: Shows only number without 'Телефон:' label 
+    [chromium] › tests/e2e/catalog-improvements.spec.ts:76:7 › Catalog Improvements › 3. Ukrainian translations: All categories show Ukrainian names in catalog 
+    [chromium] › tests/e2e/crm.spec.ts:4:7 › CRM Panel E2E › should load CRM login page ────────────
+    [chromium] › tests/e2e/crm.spec.ts:16:7 › CRM Panel E2E › should show error on wrong credentials 
+    [chromium] › tests/e2e/crm.spec.ts:42:7 › CRM Panel E2E › should toggle between tabs in app view 
+    [chromium] › tests/e2e/crm.spec.ts:78:7 › CRM Panel E2E › should open specialist modal and clear fields for new specialist 
+    [chromium] › tests/e2e/crm.spec.ts:105:7 › CRM Panel E2E › should load dashboard with statistics 
+    [chromium] › tests/e2e/crm.spec.ts:129:7 › CRM Panel E2E › should display specialists table with data 
+    [chromium] › tests/e2e/crm.spec.ts:164:7 › CRM Panel E2E › should display emails from API ──────
+    [chromium] › tests/e2e/crm.spec.ts:205:7 › CRM Panel E2E › should logout user ──────────────────
+    [chromium] › tests/e2e/crm.spec.ts:227:7 › CRM Panel E2E › should handle Firebase initialization error gracefully 
+    [chromium] › tests/e2e/crm.spec.ts:239:7 › CRM Panel E2E › should open edit modal with populated data 
+    [chromium] › tests/e2e/crm.spec.ts:282:7 › CRM Panel E2E › should handle search filter in specialists table 
+    [chromium] › tests/e2e/error-reports.spec.ts:42:7 › Error Reports Requirements (Звіти про помилки) › @T9 Admin should be able to open edit form from an error report card with pre-populated data 
+    [chromium] › tests/e2e/error-reports.spec.ts:71:7 › Error Reports Requirements (Звіти про помилки) › @T10 Admin should see an auxiliary field with suggested changes and copy button when editing a report 
+    [chromium] › tests/e2e/error-reports.spec.ts:99:7 › Error Reports Requirements (Звіти про помилки) › @T11 Auxiliary suggestion field must be hidden during regular edits or creating new cards 
+    [chromium] › tests/e2e/error-reports.spec.ts:123:7 › Error Reports Requirements (Звіти про помилки) › @T12 Report card should be saved with standard fields only after editing (auxiliary field not saved to DB) 
+    [chromium] › tests/e2e/error-reports.spec.ts:148:7 › Error Reports Requirements (Звіти про помилки) › @T13 Canceling form should return admin to "Звіти про помилки" tab when opened from feedback 
+    [chromium] › tests/e2e/error-reports.spec.ts:172:7 › Error Reports Requirements (Звіти про помилки) › @T14 Opening admin via email link with feedback parameter auto-opens edit form with helper box 
+    [chromium] › tests/e2e/error-reports.spec.ts:196:7 › Error Reports Requirements (Звіти про помилки) › @T15 Saving card executes direct database update without GitHub token prompt 
+    [chromium] › tests/e2e/home.spec.ts:22:7 › Homepage & Navigation E2E › should navigate to the catalog page 
+    [chromium] › tests/e2e/site.spec.js:59:5 › завантажує дані та показує картки спеціалістів ──────
+    [chromium] › tests/e2e/site.spec.js:82:5 › пошук фільтрує картки за іменем/описом/підкатегорією 
+    [chromium] › tests/e2e/site.spec.js:92:5 › перемикання категорії оновлює набір підкатегорій і карток 
+    [chromium] › tests/e2e/site.spec.js:120:5 › локація фільтрує за містом з адреси або типу локації 
+    [chromium] › tests/e2e/site.spec.js:137:5 › каталог має загальну шапку з кнопкою 'Додати спеціаліста' 
+    [chromium] › tests/e2e/site.spec.js:147:5 › показує іконку категорії та посилання на форму зворотного зв'язку в модалці 
+  2 skipped
+  96 passed (5.2m)
+[2026-09-15 22:06:00] ❌ Tests failed! Reverting...
+HEAD is now at 3aa389a ci: prevent tests from hanging by conditionally loading testomatio reporter
+[2026-09-15 22:06:01] ❌ Reverted to previous commit
+[2026-09-15 22:06:01] Git auto-sync completed

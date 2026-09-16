@@ -1,0 +1,99 @@
+[2026-09-14 12:23:57] Starting git auto-sync...
+From https://github.com/NikolayAntonyuk/kw-community-site
+   1d3555b..ad75038  master     -> origin/master
+   fac74a6..40cc031  gh-pages   -> origin/gh-pages
+[2026-09-14 12:24:06] New commits detected. Pulling...
+From https://github.com/NikolayAntonyuk/kw-community-site
+ * branch            master     -> FETCH_HEAD
+Merge made by the 'ort' strategy.
+ data/events.json | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
+[2026-09-14 12:24:07] Running tests...
+
+> kw-community-site@1.0.0 test
+> npm run test:unit && npm run test:e2e
+
+
+> kw-community-site@1.0.0 test:unit
+> vitest run tests/unit
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /home/mykola/kw-community-site
+
+ ✓ tests/unit/filters.test.js (12 tests) 6ms
+ ✓ tests/unit/data.test.js (4 tests) 7ms
+stdout | tests/unit/api.crud.test.js > API CRUD Operations via Supertest > Create a new specialist
+[CRUD] CREATE specialist with ID: mock-id { name: 'Test User', category: 'IT', status: 'approved' }
+[CRUD] ✅ Successfully created ID: mock-id
+
+stdout | tests/unit/api.crud.test.js > API CRUD Operations via Supertest > Update existing specialist
+[CRUD] UPDATE specialist ID: mock-id-456 { name: 'Test User Updated', updatedAt: 'serverTimestamp' }
+[CRUD] ✅ Successfully updated ID: mock-id-456
+
+ ✓ tests/unit/api.crud.test.js (2 tests) 7137ms
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  12:24:11
+   Duration  9.04s (transform 94ms, setup 0ms, collect 1.13s, tests 7.15s, environment 1ms, prepare 1.31s)
+
+
+> kw-community-site@1.0.0 test:e2e
+> playwright test
+
+[TESTOMATIO] Testomatio Reporter v2.16.0
+[TESTOMATIO] Pipes: No pipes enabled
+[TESTOMATIO] If you want to use Testomatio reporter, pass your token as TESTOMATIO env variable
+[2026-09-14 12:28:37] ❌ Tests failed! Reverting...
+HEAD is now at 273747b fix: Remove duplicate CSS links and extract inline styles to admin.css, bump version to v2.2.2
+[2026-09-14 12:28:37] ❌ Reverted to previous commit
+[2026-09-14 12:28:37] Git auto-sync completed
+[2026-09-14 13:38:42] Starting git auto-sync...
+[2026-09-14 13:38:43] New commits detected. Pulling...
+From https://github.com/NikolayAntonyuk/kw-community-site
+ * branch            master     -> FETCH_HEAD
+Merge made by the 'ort' strategy.
+ data/events.json | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
+[2026-09-14 13:38:43] Running tests...
+
+> kw-community-site@1.0.0 test
+> npm run test:unit && npm run test:e2e
+
+
+> kw-community-site@1.0.0 test:unit
+> vitest run tests/unit
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /home/mykola/kw-community-site
+
+ ✓ tests/unit/filters.test.js (12 tests) 9ms
+ ✓ tests/unit/data.test.js (4 tests) 7ms
+stdout | tests/unit/api.crud.test.js > API CRUD Operations via Supertest > Create a new specialist
+[CRUD] CREATE specialist with ID: mock-id { name: 'Test User', category: 'IT', status: 'approved' }
+[CRUD] ✅ Successfully created ID: mock-id
+
+stdout | tests/unit/api.crud.test.js > API CRUD Operations via Supertest > Update existing specialist
+[CRUD] UPDATE specialist ID: mock-id-456 { name: 'Test User Updated', updatedAt: 'serverTimestamp' }
+[CRUD] ✅ Successfully updated ID: mock-id-456
+
+ ✓ tests/unit/api.crud.test.js (2 tests) 6937ms
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  13:38:45
+   Duration  8.85s (transform 202ms, setup 0ms, collect 1.33s, tests 6.95s, environment 1ms, prepare 1.59s)
+
+
+> kw-community-site@1.0.0 test:e2e
+> playwright test
+
+[TESTOMATIO] Testomatio Reporter v2.16.0
+[TESTOMATIO] Pipes: No pipes enabled
+[TESTOMATIO] If you want to use Testomatio reporter, pass your token as TESTOMATIO env variable
+[2026-09-14 13:43:04] ❌ Tests failed! Reverting...
+HEAD is now at 273747b fix: Remove duplicate CSS links and extract inline styles to admin.css, bump version to v2.2.2
+[2026-09-14 13:43:04] ❌ Reverted to previous commit
+[2026-09-14 13:43:04] Git auto-sync completed

@@ -1,0 +1,13 @@
+
+Running 8 tests using 4 workers
+
+  ✓  2 [chromium] › tests/e2e/admin-email-features.spec.ts:28:7 › Email Features & Admin Panel (New Requirements) › @T1 should auto-load specialist for editing when ?id=<spec-id> URL param is present (5.4s)
+  ✓  1 [chromium] › tests/e2e/admin-email-features.spec.ts:69:7 › Email Features & Admin Panel (New Requirements) › @T3 should display correct form fields in inaccuracy report modal (5.8s)
+  ✓  5 [chromium] › tests/e2e/admin-email-features.spec.ts:129:7 › Email Features & Admin Panel (New Requirements) › @T5 should generate email with formatted links in HTML (707ms)
+  ✓  3 [chromium] › tests/e2e/admin-email-features.spec.ts:48:7 › Email Features & Admin Panel (New Requirements) › @T2 should display "Report Inaccuracy" button when modal is opened (3.1s)
+  ✓  6 [chromium] › tests/e2e/admin-email-features.spec.ts:147:7 › Email Features & Admin Panel (New Requirements) › @T6 should verify URL parameter ?id=<spec-id> is correctly parsed and stored (526ms)
+  ✓  4 [chromium] › tests/e2e/admin-email-features.spec.ts:96:7 › Email Features & Admin Panel (New Requirements) › @T4 should validate and submit inaccuracy report form (6.0s)
+  ✓  7 [chromium] › tests/e2e/admin-email-features.spec.ts:166:7 › Email Features & Admin Panel (New Requirements) › @T7 should close inaccuracy report modal when cancel button is clicked (496ms)
+  ✓  8 [chromium] › tests/e2e/admin-email-features.spec.ts:190:7 › Email Features & Admin Panel (New Requirements) › @T8 should close inaccuracy report modal on Escape key and backdrop click (486ms)
+
+  8 passed (8.5s)

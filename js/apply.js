@@ -26,6 +26,7 @@ form.addEventListener("submit", async (e) => {
     telegram: document.getElementById("f-telegram").value.trim(),
     instagram: document.getElementById("f-instagram").value.trim(),
     facebook: document.getElementById("f-facebook").value.trim(),
+    youtube: document.getElementById("f-youtube").value.trim(),
     website: document.getElementById("f-website").value.trim(),
     price: document.getElementById("f-price").value.trim(),
     notes: document.getElementById("f-notes").value.trim(),
@@ -39,11 +40,12 @@ form.addEventListener("submit", async (e) => {
     specialistData.telegram,
     specialistData.instagram,
     specialistData.facebook,
+    specialistData.youtube,
     specialistData.website
   ].some(contact => contact && contact.trim() !== "");
 
   if (!hasContact) {
-    formMessage.textContent = window.t ? window.t("apply_no_contacts_error") || "Будь ласка, вкажіть хоча б один контакт (Телефон, Telegram, Instagram, Facebook або Вебсайт)." : "Будь ласка, вкажіть хоча б один контакт (Телефон, Telegram, Instagram, Facebook або Вебсайт).";
+    formMessage.textContent = window.t ? window.t("apply_no_contacts_error") || "Будь ласка, вкажіть хоча б один контакт (Телефон, Telegram, Instagram, Facebook, YouTube або Вебсайт)." : "Будь ласка, вкажіть хоча б один контакт (Телефон, Telegram, Instagram, Facebook, YouTube або Вебсайт).";
     formMessage.classList.add("error");
     submitBtn.disabled = false;
     submitBtn.textContent = window.t ? window.t("apply_submit") : "Відправити заявку";
@@ -72,6 +74,7 @@ form.addEventListener("submit", async (e) => {
           specialistData.telegram ? `Telegram: ${specialistData.telegram}` : null,
           specialistData.instagram ? `Instagram: ${specialistData.instagram}` : null,
           specialistData.facebook ? `Facebook: ${specialistData.facebook}` : null,
+          specialistData.youtube ? `YouTube: ${specialistData.youtube}` : null,
           specialistData.website ? `Сайт: ${specialistData.website}` : null,
           specialistData.price ? `Ціна: ${specialistData.price}` : null,
           `Опис: ${specialistData.description || "Без додаткового опису"}`,

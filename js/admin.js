@@ -269,6 +269,7 @@ async function loadApplications() {
           <p><strong>Telegram:</strong> <span id="display-tg-${docSnap.id}">${data.telegram || '—'}</span></p>
           <p><strong>Instagram:</strong> <span id="display-inst-${docSnap.id}">${data.instagram || '—'}</span></p>
           <p><strong>Facebook:</strong> <span id="display-fb-${docSnap.id}">${data.facebook || '—'}</span></p>
+          <p><strong>YouTube:</strong> <span id="display-youtube-${docSnap.id}">${data.youtube || '—'}</span></p>
           <p><strong>Вебсайт:</strong> <span id="display-web-${docSnap.id}">${data.website || '—'}</span></p>
           <div class="application-actions">
             <button class="btn btn-approve" onclick="window.approveApp('${docSnap.id}')">Підтвердити</button>
@@ -496,6 +497,8 @@ window.editApp = async (id, isLive = false, feedbackMsg = "") => {
       tg = item.telegram || '';
       inst = item.instagram || '';
       fb = item.facebook || '';
+      yt = item.youtube || '';
+      document.getElementById("edit-youtube").value = yt;
       web = item.website || '';
       price = item.price || '';
       notes = item.notes || '';
@@ -627,6 +630,7 @@ window.saveEdit = async () => {
       telegram: newTg,
       instagram: newInst,
       facebook: newFb,
+      youtube: newYt,
       website: newWeb,
       price: newPrice,
       notes: newNotes,
@@ -646,6 +650,7 @@ window.saveEdit = async () => {
         telegram: newTg,
         instagram: newInst,
         facebook: newFb,
+      youtube: newYt,
         website: newWeb,
         price: newPrice,
         notes: newNotes,
@@ -668,6 +673,7 @@ window.saveEdit = async () => {
         telegram: newTg,
         instagram: newInst,
         facebook: newFb,
+      youtube: newYt,
         website: newWeb,
         price: newPrice,
         notes: newNotes,
@@ -688,6 +694,7 @@ window.saveEdit = async () => {
         telegram: newTg,
         instagram: newInst,
         facebook: newFb,
+      youtube: newYt,
         website: newWeb,
         price: newPrice,
         notes: newNotes,
@@ -740,6 +747,7 @@ window.saveEdit = async () => {
           item.telegram = newTg;
           item.instagram = newInst;
           item.facebook = newFb;
+          item.youtube = newYt;
           item.website = newWeb;
           item.price = newPrice;
           item.notes = newNotes;
@@ -757,6 +765,7 @@ window.saveEdit = async () => {
           telegram: newTg,
           instagram: newInst,
           facebook: newFb,
+      youtube: newYt,
           website: newWeb,
           price: newPrice,
           notes: newNotes,
@@ -950,6 +959,7 @@ function renderLiveCatalog() {
         <p><strong>Telegram:</strong> <span id="live-display-tg-${itemId}">${item.telegram || '—'}</span></p>
         <p><strong>Instagram:</strong> <span id="live-display-inst-${itemId}">${item.instagram || '—'}</span></p>
         <p><strong>Facebook:</strong> <span id="live-display-fb-${itemId}">${item.facebook || '—'}</span></p>
+        <p><strong>YouTube:</strong> <span id="live-display-youtube-${itemId}">${item.youtube || '—'}</span></p>
         <p><strong>Вебсайт:</strong> <span id="live-display-web-${itemId}">${item.website || '—'}</span></p>
         <div class="application-actions">
           <button class="btn btn-edit" style="background:#ffc107;color:black;" onclick="window.editApp('${itemId}', true)">Редагувати</button>

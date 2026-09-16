@@ -23,11 +23,17 @@ function facebookUrl(value) {
   return `https://facebook.com/${value}`;
 }
 
+function youtubeUrl(value) {
+  if (/^https?:\/\//i.test(value)) return value;
+  return `https://youtube.com/${value.startsWith('@') ? value : '@' + value}`;
+}
+
 const CONTACTS = [
   { field: "phone", label: "Телефон", href: (v) => `tel:${v.replace(/[^+\d]/g, "")}` },
   { field: "telegram", label: "Telegram", href: telegramUrl },
   { field: "instagram", label: "Instagram", href: instagramUrl },
   { field: "facebook", label: "Facebook", href: facebookUrl },
+  { field: "youtube", label: "YouTube", href: youtubeUrl },
   { field: "website", label: "Вебсайт", href: normalizeUrl },
 ];
 
