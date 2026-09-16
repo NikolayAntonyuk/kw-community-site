@@ -22,14 +22,19 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.textContent = "Надсилання...";
 
     try {
-      await addDoc(collection(db, "feedback"), {
-        specialistId: form.specialistId.value,
-        senderName: form.senderName.value,
-        contactInfo: form.contactInfo.value,
-        message: form.message.value,
-        createdAt: serverTimestamp(),
-        status: "new" // status for admin panel tracking
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          specialistId: form.specialistId.value,
+          senderName: form.senderName.value,
+          contactInfo: form.contactInfo.value,
+          message: form.message.value
+        })
       });
+      if (!response.ok) {
+        throw new Error('Failed to submit feedback to backend');
+      }
 
       try {
         const EMAILJS_SERVICE_ID = "service_e521b5c";
@@ -42,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
           
           const baseURL = window.location.origin + window.location.pathname.replace(/\/feedback\.html$/, '');
           const encodedFeedback = encodeURIComponent(form.message.value || '');
+          const catalogLink = form.specialistId.value ? `${baseURL}/catalog.html?id=${form.specialistId.value}` : `${baseURL}/catalog.html`;
           const adminLink = form.specialistId.value ? `${baseURL}/admin.html?id=${form.specialistId.value}&feedback=${encodedFeedback}#edit-live-${form.specialistId.value}` : `${baseURL}/admin.html`;
           
           const fullMessage = [

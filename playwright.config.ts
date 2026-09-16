@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const reporters = [
+const reporters: any = [["list"],
   ['html', { open: 'never' }],
   ['allure-playwright', { detail: true, outputFolder: 'allure-results' }]
 ];
