@@ -183,7 +183,7 @@
   {
     "category": "Beauty",
     "subcategory": "Косметологія/Епіляція",
-    "name": "@cosmetolognataliy",
+    "name": "Наталья",
     "description": "Косметолог, майстер епіляції( ваксінг)",
     "locationType": "По всьому Waterloo регіону",
     "address": "Тільки виїзд додому клієнтів",
@@ -194,9 +194,9 @@
     "website": "",
     "price": "Від $20",
     "notes": "",
-    "id": 12,
+    "id": "12",
     "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-08-13T12:00:00.000Z"
+    "updatedAt": "2026-09-16T20:59:14.497Z"
   },
   {
     "category": "Beauty",
@@ -453,7 +453,7 @@
   {
     "category": "Beauty",
     "subcategory": "Брови та вії",
-    "name": "@volosova_nails",
+    "name": "Nataliia Volosova",
     "description": "Манікюр,педикюр.Фарбування та ламінування вій та брів.",
     "locationType": "По всьому Waterloo регіону",
     "address": "",
@@ -464,9 +464,9 @@
     "website": "",
     "price": "40₴",
     "notes": "Стерильність та чистоту гарантую.",
-    "id": 29,
+    "id": "29",
     "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-08-13T12:00:00.000Z"
+    "updatedAt": "2026-09-16T21:03:38.166Z"
   },
   {
     "category": "Beauty",
@@ -1426,9 +1426,9 @@
   },
   {
     "category": "Перекладач",
-    "subcategory": "Усний переклад",
+    "subcategory": "Перекладач",
     "name": "Dmitry Lytov",
-    "description": "Перекладач англійська, французька, німецька, іспанська. Завірені переклади поки що висилаю поштою, але скоро зможу робити в Кітченері. Пишіть мені на don.lytov@gmail.com\nЗавірені переклади документів, усний та письмовий переклад. Викладання мов через Зум (англійська, французька, німецька, іспанська), підготування до тесті, граматика, лексика",
+    "description": "Переклад письмовий. Перекладач англійська, французька, німецька, іспанська. Завірені переклади поки що висилаю поштою, але скоро зможу робити в Кітченері. Пишіть мені на don.lytov@gmail.com Завірені переклади документів, усний та письмовий переклад. Викладання мов через Зум (англійська, французька, німецька, іспанська), підготування до тесті, граматика, лексика",
     "locationType": "По всьому Waterloo регіону",
     "address": "",
     "phone": "",
@@ -1438,9 +1438,9 @@
     "website": "",
     "price": "",
     "notes": "",
-    "id": 91,
+    "id": "91",
     "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-08-13T12:00:00.000Z"
+    "updatedAt": "2026-09-16T20:43:45.998Z"
   },
   {
     "category": "Legal",
@@ -1570,5 +1570,39 @@
     "createdAt": "2026-09-16T20:34:18.114Z",
     "status": "approved",
     "id": 99
+  },
+  {
+    "id": "TnLus8k9R2UeE8xFI8vm",
+    "name": "Ryan",
+    "description": "Нанесення художнього татуювання, Розробка індивідуального ескізу, Перекриття та реставрація",
+    "category": "Beauty",
+    "subcategory": "Тату/Перманентний макіяж",
+    "locationType": "Waterloo",
+    "address": "310 Westpark Cres",
+    "phone": "",
+    "telegram": "",
+    "instagram": "https://www.instagram.com/ryanhtattoo/",
+    "facebook": "",
+    "website": "https://www.instagram.com/ryanhtattoo/",
+    "price": "",
+    "notes": "Райн не українець. але \"heading to Ukraine to do a charity tattoo for the military on October 13\"",
+    "updatedAt": "2026-09-16T21:21:04.190Z"
+  },
+  {
+    "id": "zf3bsO5MVVuRN61qOqwS",
+    "name": "Victoria Usik",
+    "description": "Фуд-фотографія для ресторанів та меню. Затишні сімейні лайвстайл-зйомки та індивідуальні портрети",
+    "category": "Photo/Video",
+    "subcategory": "Фотограф",
+    "locationType": "По всьому Waterloo регіону",
+    "address": "",
+    "phone": "",
+    "telegram": "@victoria_usik",
+    "instagram": "https://www.instagram.com/victoria.usik",
+    "facebook": "https://www.facebook.com/share/1Dmzc9nXpd/",
+    "website": "",
+    "price": "$150",
+    "notes": "",
+    "updatedAt": "2026-09-16T21:00:05.878Z"
   }
 ]
