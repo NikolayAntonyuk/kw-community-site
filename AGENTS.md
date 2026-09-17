@@ -9,10 +9,10 @@ The user strictly prefers plain-text links for the core project resources.
 Always append this exact block to the end of your replies whenever the user asks for links or at the end of task completions:
 
 🔗 Ресурси проекту:
-• Прод: https://ukrainianskw.ca
-• Адмінка: https://ukrainianskw.ca/admin.html
-• Гіт: https://github.com/nikolayantonyuk/kw-community-site
-• Тестомат: https://app.testomat.io/projects/kw-community/
+🌐 Прод: https://ukrainianskw.ca
+⚙️ Адмінка: https://ukrainianskw.ca/admin.html
+💻 Гіт: https://github.com/nikolayantonyuk/kw-community-site
+🧪 Тестомат: https://app.testomat.io/projects/kw-community/
 
 ## 2. Testing & Testomat Integration
 - All tests (both **Playwright** E2E and **Vitest** unit tests) must be synced to **Testomat**.
