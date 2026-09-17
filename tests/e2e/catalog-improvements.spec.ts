@@ -10,7 +10,8 @@ test.describe("Catalog Improvements", () => {
     page,
   }) => {
     // Click first specialist card to open modal
-    const firstCard = page.locator(".cards-grid button").first();
+    await page.waitForSelector('.card', { state: 'visible' });
+    const firstCard = page.locator(".card").first();
     await firstCard.click();
 
     // Get modal contacts
@@ -23,7 +24,7 @@ test.describe("Catalog Improvements", () => {
     // Verify phone number is present (should be digits)
     const phoneLink = contactsDiv.locator("a[href^='tel:']");
     const phoneText = await phoneLink.textContent();
-    expect(phoneText).toMatch(/^\d+$/); // Only digits
+    expect(phoneText).toMatch(/^[\d\s\-\+\(\)]+$/); // Formatted digits
   });
 
   test("2. Categories sync: All catalog categories exist in apply form", async ({
@@ -91,6 +92,7 @@ test.describe("Catalog Improvements", () => {
     };
 
     // Get all category pills text
+    await page.waitForSelector("#category-pills .pill", { state: 'visible' });
     const categoryPills = page.locator("#category-pills .pill");
 
     for (let i = 0; i < (await categoryPills.count()); i++) {

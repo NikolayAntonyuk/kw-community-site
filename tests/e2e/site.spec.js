@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 const mockData = [
   {
-    "category": "Краса та догляд",
+    "category": "Beauty",
     "subcategory": "Перукар",
     "id": 1,
     "name": "Salon Kalyna",

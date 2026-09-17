@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Admin Panel E2E', () => {
   test('should load the admin login page', async ({ page }) => {
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     
     // Check main title
@@ -15,6 +16,7 @@ test.describe('Admin Panel E2E', () => {
   });
 
   test('should show error on wrong password', async ({ page }) => {
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     
     // Fill form
@@ -46,6 +48,7 @@ test.describe('Admin Panel E2E', () => {
   });
 
   test('should explain when Firebase Authentication is not enabled', async ({ page }) => {
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     await page.locator('#admin-email').fill('admin@example.com');
@@ -74,6 +77,7 @@ test.describe('Admin Panel E2E', () => {
   });
 
   test('should display live catalog edit modal and populate fields', async ({ page }) => {
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     
     // Wait for the admin.js module to finish loading
@@ -141,6 +145,7 @@ test.describe('Admin Panel E2E', () => {
       });
     });
 
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     
     // Wait for the admin.js module to finish loading
@@ -193,6 +198,7 @@ test.describe('Admin Panel E2E', () => {
       });
     });
 
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     await page.waitForFunction(() => typeof window.approveApp === 'function');
 
@@ -239,6 +245,7 @@ test.describe('Admin Panel E2E', () => {
       });
     });
 
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     await page.waitForFunction(() => typeof window.deleteLiveApp === 'function');
 
@@ -267,6 +274,7 @@ test.describe('Admin Panel E2E', () => {
   });
 
   test('should cancel rejection when dismiss is clicked on prompt', async ({ page }) => {
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     await page.waitForFunction(() => typeof window.rejectApp === 'function');
 
@@ -287,6 +295,7 @@ test.describe('Admin Panel E2E', () => {
   });
 
   test('should display formatted dates on live catalog cards', async ({ page }) => {
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     await page.waitForFunction(() => typeof window.loadLiveCatalog === 'function');
 
@@ -309,6 +318,7 @@ test.describe('Admin Panel E2E', () => {
   // @T16: Desktop layout - all tabs visible
   test('(@T16) should display all tabs visible on desktop (>768px)', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 768 });
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     // Wait for page to load
@@ -327,6 +337,7 @@ test.describe('Admin Panel E2E', () => {
   // @T17: Mobile layout - hamburger menu appears
   test('(@T17) should display hamburger menu on mobile (<768px)', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     await page.waitForFunction(() => typeof window.toggleAdminSidebar === 'function');
@@ -345,6 +356,7 @@ test.describe('Admin Panel E2E', () => {
   test('(@T18) should display email button in header on both desktop and mobile', async ({ page }) => {
     // Test on desktop
     await page.setViewportSize({ width: 1024, height: 768 });
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     const emailBadgeBtn = page.locator('#email-badge-btn');
@@ -357,6 +369,7 @@ test.describe('Admin Panel E2E', () => {
 
   // @T19: Email badge shows unread count
   test('(@T19) should display email badge with unread count', async ({ page }) => {
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     await page.waitForFunction(() => typeof window.updateEmailBadge === 'function');
@@ -378,6 +391,7 @@ test.describe('Admin Panel E2E', () => {
 
   // @T20: Clicking email button switches to email tab
   test('(@T20) should switch to email tab when email button is clicked', async ({ page }) => {
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     await page.waitForFunction(() => typeof window.goToEmailSection === 'function');
@@ -400,6 +414,7 @@ test.describe('Admin Panel E2E', () => {
   // @T21: Hamburger menu toggles dropdown
   test('(@T21) should toggle hamburger menu dropdown on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     await page.waitForFunction(() => typeof window.toggleAdminSidebar === 'function');
@@ -424,6 +439,7 @@ test.describe('Admin Panel E2E', () => {
   // @T22: Menu closes when tab is selected
   test('(@T22) should close hamburger menu when tab is selected', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     await page.waitForFunction(() => typeof window.switchTab === 'function');
@@ -448,6 +464,7 @@ test.describe('Admin Panel E2E', () => {
   // @T23: Menu closes on Escape or backdrop click
   test('(@T23) should close hamburger menu on Escape key', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     await page.waitForFunction(() => typeof window.toggleAdminSidebar === 'function');
@@ -472,6 +489,7 @@ test.describe('Admin Panel E2E', () => {
 
   // @T24: Email badge updates every 60 seconds
   test('(@T24) should update email badge periodically', async ({ page }) => {
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     await page.waitForFunction(() => typeof window.updateEmailBadge === 'function');
@@ -508,6 +526,7 @@ test.describe('Admin Panel E2E', () => {
   // @T26: Form buttons have sufficient touch size on mobile
   test('(@T26) should have properly sized buttons on mobile (>=44px)', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     // Get all form buttons
@@ -547,6 +566,7 @@ test.describe('Admin Panel E2E', () => {
       });
     });
 
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     await page.waitForFunction(() => typeof window.deleteLiveApp === 'function');
 
@@ -590,6 +610,7 @@ test.describe('Admin Panel E2E', () => {
       });
     });
 
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     await page.waitForFunction(() => typeof window.approveApp === 'function');
 
@@ -632,6 +653,7 @@ test.describe('Admin Panel E2E', () => {
 
     await page.route('**/api/specialists', route => route.fulfill({ status: 200, body: '{}' }));
     await page.route('**/api/sync', route => route.fulfill({ status: 200, body: '{}' }));
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     await page.waitForFunction(() => typeof window.saveEdit === 'function');
 
@@ -706,6 +728,7 @@ test.describe('Admin Panel E2E', () => {
       });
     });
 
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     await page.waitForFunction(() => typeof window.loadLiveCatalog === 'function');
 
@@ -756,6 +779,7 @@ test.describe('Admin Panel E2E', () => {
       });
     });
 
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     await page.waitForFunction(() => typeof window.loadLiveCatalog === 'function');
 
@@ -786,6 +810,7 @@ test.describe('Admin Panel E2E', () => {
   test.skip('should center edit modal and apply correct width on mobile screens', async ({ page }) => {
     // Set viewport to mobile size
     await page.setViewportSize({ width: 375, height: 667 });
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
     
     // Wait for the admin.js module to finish loading
@@ -831,6 +856,7 @@ test.describe('Admin Panel E2E', () => {
   });
 
   test('should switch between tabs (new apps, live catalog, rejected apps)', async ({ page }) => {
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     await page.waitForFunction(() => typeof window.goToAdminTab === 'function');
@@ -860,6 +886,7 @@ test.describe('Admin Panel E2E', () => {
   // Verify UI Layout
   // -------------------------------------------------------------
   test('should display separate content areas for new applications, archive, feedback, and live catalog', async ({ page }) => {
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     await page.waitForFunction(() => typeof window.goToAdminTab === 'function');
@@ -884,6 +911,7 @@ test.describe('Admin Panel E2E', () => {
   test.skip('should keep modal responsive on mobile viewport', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 }); // iPhone SE
 
+    page.on("console", msg => console.log("BROWSER: " + msg.text()));
     await page.goto('/admin.html');
 
     // Wait for admin.js to load

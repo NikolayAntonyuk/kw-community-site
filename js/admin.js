@@ -610,6 +610,7 @@ window.saveEdit = async () => {
   const newTg = document.getElementById('edit-tg').value;
   const newInst = document.getElementById('edit-inst').value;
   const newFb = document.getElementById('edit-fb').value;
+  const newYt = document.getElementById('edit-youtube').value;
   const newWeb = document.getElementById('edit-web').value;
   const newPrice = document.getElementById('edit-price').value;
   const newNotes = document.getElementById('edit-notes').value;
