@@ -1221,7 +1221,7 @@ window.showResolutionEmailModal = (docId, email, specialistId) => {
   
   let draftText = "Вітаємо!\n\nДякуємо за ваш відгук. Повідомляємо, що дані були успішно перевірені та оновлені!\n";
   if (specialistId && specialistId !== 'undefined' && specialistId !== '') {
-    draftText += "\nВи можете переглянути оновлену картку за цим посиланням:\nhttps://ukrainianskw.ca/specialist.html?id=" + specialistId + "\n";
+    draftText += "\nВи можете переглянути оновлену картку за цим посиланням:\nhttps://ukrainianskw.ca/catalog.html?id=" + specialistId + "\n";
   }
   draftText += "\nДякуємо, що допомагаєте покращувати наш каталог та берете активну участь у житті громади.\n\nЗ повагою,\nКоманда Разом KW";
   
