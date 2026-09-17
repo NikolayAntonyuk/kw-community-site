@@ -1525,6 +1525,7 @@ window.showEmailDetail = (idx) => {
   
   // Show reply form only if it's not Spam/Trash (or always show it, up to you)
   document.getElementById("email-reply-form").style.display = "block";
+  modal.removeAttribute("hidden");
   modal.style.display = "flex";
 };
 
