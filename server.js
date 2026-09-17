@@ -480,12 +480,20 @@ app.post('/api/send-reply-email', async (req, res) => {
       return res.status(400).json({ success: false, error: 'OAuth2 access token not available' });
     }
 
+    const msgId = `<${Date.now()}.${Math.random().toString(36).substring(2)}@gmail.com>`;
+    const dateStr = new Date().toUTCString();
+    
+    // subject is passed from frontend, so we don't need to force "Re: " here
+    const finalSubject = subject || 'Reply';
+    
     const emailText = [
       'Content-Type: text/html; charset="UTF-8"',
       'MIME-Version: 1.0',
-      `To: ${to_email}`,
-      `From: ${emailUser}`,
-      `Subject: =?UTF-8?B?${Buffer.from('Re: ' + (original_subject || subject || 'Reply')).toString('base64')}?=`,
+      `Date: ${dateStr}`,
+      `Message-ID: ${msgId}`,
+      `To: <${to_email}>`,
+      `From: Разом KW <${emailUser}>`,
+      `Subject: =?UTF-8?B?${Buffer.from(finalSubject).toString('base64')}?=`,
       '',
       `<p>${reply_text.replace(/\n/g, '<br>')}</p>`
     ].join('\r\n');
