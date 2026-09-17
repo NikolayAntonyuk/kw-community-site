@@ -1570,39 +1570,5 @@
     "createdAt": "2026-09-16T20:34:18.114Z",
     "status": "approved",
     "id": 99
-  },
-  {
-    "id": "TnLus8k9R2UeE8xFI8vm",
-    "name": "Ryan",
-    "description": "Нанесення художнього татуювання, Розробка індивідуального ескізу, Перекриття та реставрація",
-    "category": "Beauty",
-    "subcategory": "Тату/Перманентний макіяж",
-    "locationType": "Waterloo",
-    "address": "310 Westpark Cres",
-    "phone": "",
-    "telegram": "",
-    "instagram": "https://www.instagram.com/ryanhtattoo/",
-    "facebook": "",
-    "website": "https://www.instagram.com/ryanhtattoo/",
-    "price": "",
-    "notes": "Райн не українець. але \"heading to Ukraine to do a charity tattoo for the military on October 13\"",
-    "updatedAt": "2026-09-16T21:21:04.190Z"
-  },
-  {
-    "id": "zf3bsO5MVVuRN61qOqwS",
-    "name": "Victoria Usik",
-    "description": "Фуд-фотографія для ресторанів та меню. Затишні сімейні лайвстайл-зйомки та індивідуальні портрети",
-    "category": "Photo/Video",
-    "subcategory": "Фотограф",
-    "locationType": "По всьому Waterloo регіону",
-    "address": "",
-    "phone": "",
-    "telegram": "@victoria_usik",
-    "instagram": "https://www.instagram.com/victoria.usik",
-    "facebook": "https://www.facebook.com/share/1Dmzc9nXpd/",
-    "website": "",
-    "price": "$150",
-    "notes": "",
-    "updatedAt": "2026-09-16T21:00:05.878Z"
   }
 ]

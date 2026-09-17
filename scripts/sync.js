@@ -48,8 +48,8 @@ async function sync() {
       delete data.status;
       delete data.rejectReason;
       
-      // If it doesn't have an ID, add one
-      if (!data.id) {
+      // If it doesn't have a numeric ID, add one
+      if (!data.id || isNaN(Number(data.id))) {
         const maxId = currentData.reduce((max, s) => {
           const idNum = parseInt(s.id, 10);
           return !isNaN(idNum) && idNum > max ? idNum : max;
@@ -85,6 +85,18 @@ async function sync() {
       batch.delete(doc.ref);
       count++;
     });
+
+    // Унікальність ID (видаляємо дублікати, залишаючи останній оновлений варіант)
+    const seen = new Set();
+    const finalData = [];
+    for (let i = currentData.length - 1; i >= 0; i--) {
+      const sId = String(currentData[i].id);
+      if (!seen.has(sId)) {
+        seen.add(sId);
+        finalData.unshift(currentData[i]);
+      }
+    }
+    currentData = finalData;
 
     // Write to file
     fs.writeFileSync(DATA_FILE, JSON.stringify(currentData, null, 2));
