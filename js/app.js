@@ -200,7 +200,7 @@ async function init() {
   const urlParams = new URLSearchParams(window.location.search);
   const deepLinkId = urlParams.get('id');
   if (deepLinkId) {
-    const spec = allSpecialists.find(s => s.id === deepLinkId);
+    const spec = allSpecialists.find(s => String(s.id) === String(deepLinkId));
     if (spec) {
       openModal(spec);
     }
