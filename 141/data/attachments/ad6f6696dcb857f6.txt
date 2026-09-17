@@ -1,0 +1,4 @@
+BROWSER: 🔍 goToAdminTab (admin.js) called with: live-catalog
+BROWSER: ✅ Tab activated: live-catalog
+BROWSER: 🔍 goToAdminTab (admin.js) called with: archive-section
+BROWSER: ✅ Tab activated: archive-section

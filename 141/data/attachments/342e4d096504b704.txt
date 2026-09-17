@@ -1,0 +1,4 @@
+BROWSER: [ADMIN] saveEdit called {id: edit-accept, isLive: false, name: New Name}
+BROWSER: [ADMIN] Updating pending specialist {id: edit-accept}
+BROWSER: [ADMIN] cancelForm: activeTab before tabs show tab-new-apps
+BROWSER: [ADMIN] Restoring tab: new-apps

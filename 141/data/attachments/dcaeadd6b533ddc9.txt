@@ -1,0 +1,3 @@
+BROWSER: Could not check feedback reports for specialist: FirebaseError: Missing or insufficient permissions.
+BROWSER: [ADMIN] cancelForm: activeTab before tabs show none
+BROWSER: [ADMIN] No activeTab found, defaulting to live-catalog
