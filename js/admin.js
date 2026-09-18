@@ -433,7 +433,7 @@ window.editApp = async (id, isLive = false, feedbackMsg = "") => {
     helperContainer.style.display = 'none';
   }
   
-  let name="", desc="", cat="", subcat="", loc="", address="", phone="", tg="", inst="", fb="", web="", price="", notes="";
+  let name="", desc="", cat="", subcat="", loc="", address="", phone="", tg="", inst="", fb="", yt="", web="", price="", notes="";
 
   let prefix = isLive ? 'live-' : '';
   const nameEl = document.getElementById(`${prefix}display-name-${id}`);
@@ -451,6 +451,7 @@ window.editApp = async (id, isLive = false, feedbackMsg = "") => {
     tg = (document.getElementById(`${prefix}display-tg-${id}`) || {}).innerText || "";
     inst = (document.getElementById(`${prefix}display-inst-${id}`) || {}).innerText || "";
     fb = (document.getElementById(`${prefix}display-fb-${id}`) || {}).innerText || "";
+    yt = (document.getElementById(`${prefix}display-youtube-${id}`) || {}).innerText || "";
     web = (document.getElementById(`${prefix}display-web-${id}`) || {}).innerText || "";
     price = (document.getElementById(`${prefix}display-price-${id}`) || {}).innerText || "";
     notes = (document.getElementById(`${prefix}display-notes-${id}`) || {}).innerText || "";
@@ -498,7 +499,6 @@ window.editApp = async (id, isLive = false, feedbackMsg = "") => {
       inst = item.instagram || '';
       fb = item.facebook || '';
       yt = item.youtube || '';
-      document.getElementById("edit-youtube").value = yt;
       web = item.website || '';
       price = item.price || '';
       notes = item.notes || '';
@@ -516,6 +516,7 @@ window.editApp = async (id, isLive = false, feedbackMsg = "") => {
   document.getElementById('edit-tg').value = tg === '—' ? '' : tg;
   document.getElementById('edit-inst').value = inst === '—' ? '' : inst;
   document.getElementById('edit-fb').value = fb === '—' ? '' : fb;
+  document.getElementById('edit-youtube').value = yt === '—' ? '' : yt;
   document.getElementById('edit-web').value = web === '—' ? '' : web;
   document.getElementById('edit-price').value = price === '—' ? '' : price;
   document.getElementById('edit-notes').value = notes === '—' ? '' : notes;
@@ -547,6 +548,7 @@ window.showAddForm = () => {
   document.getElementById('edit-tg').value = "";
   document.getElementById('edit-inst').value = "";
   document.getElementById('edit-fb').value = "";
+  document.getElementById('edit-youtube').value = "";
   document.getElementById('edit-web').value = "";
   document.getElementById('edit-price').value = "";
   document.getElementById('edit-notes').value = "";
