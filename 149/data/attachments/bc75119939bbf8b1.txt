@@ -1,2 +1,0 @@
-BROWSER: Could not fetch live specialists from Firebase: FirebaseError: Missing or insufficient permissions.
-BROWSER: Failed to load resource: the server responded with a status of 404 ()
