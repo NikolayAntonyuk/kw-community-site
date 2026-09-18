@@ -413,6 +413,7 @@ app.get('/api/emails', async (req, res) => {
     if (folder === 'sent') query = 'in:sent';
     else if (folder === 'trash') query = 'in:trash';
     else if (folder === 'spam') query = 'in:spam';
+    else if (folder === 'archive') query = '-in:inbox -in:trash -in:spam -in:sent';
     else if (folder === 'unread') query = 'is:unread';
     
     const mailRes = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${encodeURIComponent(query)}&maxResults=20`, {
@@ -443,6 +444,7 @@ app.get('/api/emails', async (req, res) => {
       if (isUnread) unreadCount++;
 
       emails.push({
+        id: msg.id,
         seqno: index + 1,
         from: fromHeader,
         to: toHeader,
@@ -637,3 +639,49 @@ if (process.env.NODE_ENV !== 'test') {
 // Export for both CommonJS and ESM
 module.exports = app;
 module.exports.default = app;
+
+// Modify email labels (e.g. mark read, archive)
+app.post('/api/emails/:id/modify', async (req, res) => {
+  try {
+    const { addLabels, removeLabels } = req.body;
+    const accessToken = await getGmailAccessToken();
+    if (!accessToken) return res.status(401).json({ success: false, error: 'No token' });
+
+    const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${req.params.id}/modify`, {
+      method: 'POST',
+      headers: { 
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        addLabelIds: addLabels || [],
+        removeLabelIds: removeLabels || []
+      })
+    });
+
+    if (!response.ok) throw new Error('Failed to modify email');
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Modify email error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Trash an email
+app.post('/api/emails/:id/trash', async (req, res) => {
+  try {
+    const accessToken = await getGmailAccessToken();
+    if (!accessToken) return res.status(401).json({ success: false, error: 'No token' });
+
+    const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${req.params.id}/trash`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+
+    if (!response.ok) throw new Error('Failed to trash email');
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Trash email error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});

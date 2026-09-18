@@ -1467,14 +1467,15 @@ window.showEmailDetail = (idx) => {
           <h2>Деталі листа</h2>
           <button type="button" class="btn" style="background:#6c757d;width:auto;" onclick="window.closeEmailModal()">✕ Закрити</button>
         </div>
+        <div id="email-actions" style="margin-bottom:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;"></div>
         <div id="email-detail-content" style="margin-bottom:1.5rem;"></div>
         <hr style="margin:1.5rem 0;">
         <div id="email-reply-form" style="display:none;">
           <h3>Відповідь</h3>
           <textarea id="reply-text" placeholder="Напишіть відповідь..." style="width:100%;height:120px;padding:0.75rem;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;margin-bottom:1rem;"></textarea>
           <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-            <button class="btn btn-approve" style="flex:1;min-width:140px;" onclick="window.sendEmailReply()">Відправити відповідь</button>
-            <button class="btn" style="flex:1;background:#6c757d;min-width:140px;" onclick="document.getElementById('email-reply-form').style.display='none';">Скасувати</button>
+            <button class="btn btn-approve" style="flex:1;min-width:140px;flex-shrink:0;" onclick="window.sendEmailReply()">Відправити відповідь</button>
+            <button class="btn" style="flex:1;background:#6c757d;min-width:140px;flex-shrink:0;" onclick="document.getElementById('email-reply-form').style.display='none';">Скасувати</button>
           </div>
         </div>
       </div>
@@ -1522,11 +1523,24 @@ window.showEmailDetail = (idx) => {
   
   document.getElementById("email-detail-content").innerHTML = detailHtml;
   document.getElementById("reply-text").value = "";
+
+  const isUnread = !email.flags || !email.flags.includes('\\Seen');
+  const actionHtml = `
+    <button class="btn" style="background:#17a2b8;width:auto;flex:1;min-width:120px;padding:0.4rem 0.8rem;" onclick="window.modifyEmail('${email.id}', ${isUnread ? "[]" : "['UNREAD']"}, ${isUnread ? "['UNREAD']" : "[]"})">${isUnread ? 'Відмітити прочитаним' : 'Відмітити як непрочитане'}</button>
+    <button class="btn" style="background:#ffc107;color:#000;width:auto;flex:1;min-width:120px;padding:0.4rem 0.8rem;" onclick="window.modifyEmail('${email.id}', [], ['INBOX'])">🗃️ В архів</button>
+    <button class="btn" style="background:#dc3545;width:auto;flex:1;min-width:120px;padding:0.4rem 0.8rem;" onclick="window.trashEmail('${email.id}')">🗑️ Видалити</button>
+  `;
+  document.getElementById("email-actions").innerHTML = actionHtml;
   
   // Show reply form only if it's not Spam/Trash (or always show it, up to you)
   document.getElementById("email-reply-form").style.display = "block";
   modal.removeAttribute("hidden");
   modal.style.display = "flex";
+
+  // Automatically mark as read if it is currently unread
+  if (isUnread) {
+    window.modifyEmail(email.id, [], ['UNREAD'], true);
+  }
 };
 
 // CLOSE EMAIL MODAL
@@ -1601,3 +1615,42 @@ loadApplications = async () => {
   }
 };
 
+
+window.modifyEmail = async (id, addLabels, removeLabels, silent = false) => {
+  try {
+    const res = await fetch(`${window.apiBaseUrl}/api/emails/${id}/modify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ addLabels, removeLabels })
+    });
+    if (!silent) {
+      window.closeEmailModal();
+      window.loadEmails(window.currentMailFolder);
+    } else {
+      // update local state for the unread badge
+      const email = window.currentEmailsList.find(e => e.id === id);
+      if (email && removeLabels.includes('UNREAD')) {
+        if (!email.flags) email.flags = [];
+        if (!email.flags.includes('\\Seen')) email.flags.push('\\Seen');
+        window.updateEmailBadge();
+      }
+    }
+  } catch (err) {
+    console.error('Modify email error:', err);
+    if (!silent) alert('Помилка оновлення листа');
+  }
+};
+
+window.trashEmail = async (id) => {
+  if (!confirm("Ви впевнені, що хочете видалити цей лист?")) return;
+  try {
+    const res = await fetch(`${window.apiBaseUrl}/api/emails/${id}/trash`, {
+      method: 'POST'
+    });
+    window.closeEmailModal();
+    window.loadEmails(window.currentMailFolder);
+  } catch (err) {
+    console.error('Trash email error:', err);
+    alert('Помилка видалення листа');
+  }
+};
