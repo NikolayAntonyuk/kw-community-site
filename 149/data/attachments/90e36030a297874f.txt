@@ -1,0 +1,9 @@
+BROWSER: Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER: Помилка завантаження листів: SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input
+    at window.loadEmails (http://127.0.0.1:8080/js/admin.js?v=3.1.0:1415:35)
+    at async window.goToEmailSection (http://127.0.0.1:8080/js/admin.js?v=3.1.0:1321:3)
+BROWSER: Failed to load resource: the server responded with a status of 404 (Not Found)
+BROWSER: Помилка завантаження листів: SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input
+    at window.loadEmails (http://127.0.0.1:8080/js/admin.js?v=3.1.0:1415:35)
+    at async window.goToEmailSection (http://127.0.0.1:8080/js/admin.js?v=3.1.0:1321:3)
+    at async HTMLButtonElement.<anonymous> (http://127.0.0.1:8080/js/admin.js?v=3.1.0:174:5)

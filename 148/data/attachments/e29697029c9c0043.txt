@@ -1,1 +1,0 @@
-BROWSER: Could not fetch live specialists from Firebase: FirebaseError: Missing or insufficient permissions.
