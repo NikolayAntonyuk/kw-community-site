@@ -378,6 +378,32 @@ app.post('/api/send-rejection-email', async (req, res) => {
 });
 
 // 12. GET EMAILS from REST API
+// Recursively walk Gmail MIME parts to collect attachment metadata
+function extractAttachments(payload) {
+  const attachments = [];
+  if (!payload) return attachments;
+
+  function walk(part) {
+    if (!part) return;
+    const filename = part.filename;
+    const attachmentId = part.body && part.body.attachmentId;
+    if (filename && attachmentId) {
+      attachments.push({
+        attachmentId,
+        filename,
+        mimeType: part.mimeType || 'application/octet-stream',
+        size: (part.body && part.body.size) || 0
+      });
+    }
+    if (part.parts) {
+      part.parts.forEach(walk);
+    }
+  }
+
+  walk(payload);
+  return attachments;
+}
+
 app.get('/api/emails', async (req, res) => {
   try {
     const accessToken = await getGmailAccessToken();
@@ -428,30 +454,31 @@ app.get('/api/emails', async (req, res) => {
     let unreadCount = 0;
 
     await Promise.all(mailData.messages.map(async (msgItem, index) => {
-      const msgRes = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgItem.id}?format=metadata&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Subject&metadataHeaders=Date`, {
+      const msgRes = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgItem.id}?format=full`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       const msgDetails = await msgRes.json();
-      
+
       const headers = msgDetails.payload?.headers || [];
       const fromHeader = headers.find(h => h.name.toLowerCase() === 'from')?.value || 'Unknown';
       const toHeader = headers.find(h => h.name.toLowerCase() === 'to')?.value || 'Unknown';
       const subjectHeader = headers.find(h => h.name.toLowerCase() === 'subject')?.value || '(no subject)';
       const dateHeader = headers.find(h => h.name.toLowerCase() === 'date')?.value || new Date().toISOString();
-      
+
       const isUnread = msgDetails.labelIds && msgDetails.labelIds.includes('UNREAD');
       const flags = isUnread ? [] : ['\\Seen'];
       if (isUnread) unreadCount++;
 
       emails.push({
-        id: msg.id,
+        id: msgItem.id,
         seqno: index + 1,
         from: fromHeader,
         to: toHeader,
         subject: subjectHeader,
         text: msgDetails.snippet || '',
         date: new Date(dateHeader).toISOString(),
-        flags: flags
+        flags: flags,
+        attachments: extractAttachments(msgDetails.payload)
       });
     }));
 
@@ -682,6 +709,33 @@ app.post('/api/emails/:id/trash', async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     console.error('Trash email error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Download an email attachment
+app.get('/api/emails/:id/attachments/:attachmentId', async (req, res) => {
+  try {
+    const accessToken = await getGmailAccessToken();
+    if (!accessToken) return res.status(401).json({ success: false, error: 'No token' });
+
+    const response = await fetch(
+      `https://gmail.googleapis.com/gmail/v1/users/me/messages/${req.params.id}/attachments/${req.params.attachmentId}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+
+    if (!response.ok) throw new Error('Failed to fetch attachment');
+    const data = await response.json();
+
+    const buffer = Buffer.from(data.data.replace(/-/g, '+').replace(/_/g, '/'), 'base64');
+    const filename = req.query.filename || 'attachment';
+    const mimeType = req.query.mimeType || 'application/octet-stream';
+
+    res.setHeader('Content-Type', mimeType);
+    res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(filename)}"`);
+    res.send(buffer);
+  } catch (err) {
+    console.error('Attachment download error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 });

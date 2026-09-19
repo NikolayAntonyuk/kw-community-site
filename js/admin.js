@@ -1449,12 +1449,14 @@ window.loadEmails = async (folder = 'inbox') => {
       
       const isUnread = !email.flags || !email.flags.includes('\\Seen');
       const bgStyle = isUnread ? "background: #fff; border-left: 4px solid #0056b3;" : "background: #fafafa; border: 1px solid #ddd;";
+      const attachmentCount = (email.attachments || []).length;
+      const attachmentBadge = attachmentCount > 0 ? ` <span title="Вкладення: ${attachmentCount}">📎 ${attachmentCount}</span>` : '';
 
       html += `
         <div style="${bgStyle} padding: 1rem; margin-bottom: 1rem; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
             <div style="flex: 1; min-width: 200px;">
-              <strong style="font-size: 1.05rem; display: block; margin-bottom: 0.3rem;">${isUnread ? '🔵' : '📧'} ${email.subject}</strong>
+              <strong style="font-size: 1.05rem; display: block; margin-bottom: 0.3rem;">${isUnread ? '🔵' : '📧'} ${email.subject}${attachmentBadge}</strong>
               <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
                 <div>${contactLine}</div>
                 <div><strong>Дата:</strong> ${date}</div>
@@ -1531,6 +1533,37 @@ window.showEmailDetail = (idx) => {
     contactLine = `<div><strong>Від:</strong> ${fromText}</div>`;
   }
 
+  const attachments = email.attachments || [];
+  let attachmentsHtml = "";
+  if (attachments.length > 0) {
+    const isImage = (mimeType) => mimeType && mimeType.startsWith('image/');
+    const formatSize = (bytes) => {
+      if (!bytes) return '';
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    };
+    const items = attachments.map(att => {
+      const url = `${window.apiBaseUrl}/api/emails/${email.id}/attachments/${att.attachmentId}?filename=${encodeURIComponent(att.filename)}&mimeType=${encodeURIComponent(att.mimeType)}`;
+      const preview = isImage(att.mimeType)
+        ? `<a href="${url}" target="_blank" rel="noopener"><img src="${url}" alt="${att.filename}" style="max-width:120px;max-height:120px;border-radius:4px;border:1px solid #ddd;display:block;margin-bottom:0.4rem;"></a>`
+        : '';
+      return `
+        <div style="display:inline-flex;flex-direction:column;align-items:flex-start;background:#fff;border:1px solid #e9ecef;border-radius:6px;padding:0.6rem;margin:0 0.5rem 0.5rem 0;max-width:150px;">
+          ${preview}
+          <a href="${url}" target="_blank" rel="noopener" download="${att.filename}" style="font-size:0.85rem;word-break:break-all;color:#0056b3;text-decoration:none;">📎 ${att.filename}</a>
+          <span style="font-size:0.75rem;color:#888;">${formatSize(att.size)}</span>
+        </div>
+      `;
+    }).join('');
+    attachmentsHtml = `
+      <div style="margin-top:1rem;">
+        <strong style="display:block;margin-bottom:0.5rem;">Вкладення (${attachments.length}):</strong>
+        <div style="display:flex;flex-wrap:wrap;">${items}</div>
+      </div>
+    `;
+  }
+
   const detailHtml = `
     <strong style="font-size:1.2rem;display:block;margin-bottom:0.5rem;">${subject}</strong>
     <div style="color:#666;font-size:0.95rem;margin-bottom:1rem;">
@@ -1538,16 +1571,17 @@ window.showEmailDetail = (idx) => {
       <div><strong>Дата:</strong> ${dateText}</div>
     </div>
     <div style="background:#f8f9fa;padding:1rem;border-radius:4px;white-space:pre-wrap;font-size:1rem;line-height:1.5;">${fullText}</div>
+    ${attachmentsHtml}
   `;
-  
+
   document.getElementById("email-detail-content").innerHTML = detailHtml;
   document.getElementById("reply-text").value = "";
 
   const isUnread = !email.flags || !email.flags.includes('\\Seen');
   const actionHtml = `
     <button class="btn" style="background:#17a2b8;width:auto;flex:1;min-width:120px;padding:0.4rem 0.8rem;" onclick="window.modifyEmail('${email.id}', ${isUnread ? "[]" : "['UNREAD']"}, ${isUnread ? "['UNREAD']" : "[]"})">${isUnread ? 'Відмітити прочитаним' : 'Відмітити як непрочитане'}</button>
-    <button class="btn" style="background:#ffc107;color:#000;width:auto;flex:1;min-width:120px;padding:0.4rem 0.8rem;" onclick="window.modifyEmail('${email.id}', [], ['INBOX'])">🗃️ В архів</button>
-    <button class="btn" style="background:#dc3545;width:auto;flex:1;min-width:120px;padding:0.4rem 0.8rem;" onclick="window.trashEmail('${email.id}')">🗑️ Видалити</button>
+    <button class="btn" style="background:#ffc107;color:#000;width:auto;flex:1;min-width:120px;padding:0.4rem 0.8rem;" onclick="window.modifyEmail('${email.id}', [], ['INBOX', 'UNREAD'])">🗃️ В архів</button>
+    <button class="btn" style="background:#dc3545;width:auto;flex:1;min-width:120px;padding:0.4rem 0.8rem;" onclick="window.showTrashEmailModal('${email.id}')">🗑️ Видалити</button>
   `;
   document.getElementById("email-actions").innerHTML = actionHtml;
   
@@ -1568,6 +1602,9 @@ window.closeEmailModal = () => {
   if (modal) {
     modal.setAttribute("hidden", "");
     modal.style.display = "none";
+    if (window.currentMailFolder === 'unread') {
+      window.loadEmails('unread');
+    }
   }
 };
 
@@ -1660,8 +1697,39 @@ window.modifyEmail = async (id, addLabels, removeLabels, silent = false) => {
   }
 };
 
-window.trashEmail = async (id) => {
-  if (!confirm("Ви впевнені, що хочете видалити цей лист?")) return;
+window.showTrashEmailModal = (id) => {
+  let modal = document.getElementById("trash-email-modal");
+  if (!modal) {
+    const html = `<div id="trash-email-modal" hidden style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:3000;overflow-y:auto;padding:1rem;">
+      <div style="background:white;padding:2rem;border-radius:8px;max-width:400px;width:90%;box-shadow:0 4px 16px rgba(0,0,0,0.2);text-align:center;">
+        <h2 style="margin-bottom:1rem;">Видалити лист?</h2>
+        <p style="margin-bottom:2rem;color:#666;">Ви впевнені, що хочете видалити цей лист?</p>
+        <div style="display:flex;gap:1rem;justify-content:center;">
+          <button class="btn btn-approve" style="background:#dc3545;width:auto;min-width:100px;" onclick="window.confirmTrashEmail()">ТАК</button>
+          <button class="btn" style="background:#6c757d;width:auto;min-width:100px;" onclick="window.closeTrashEmailModal()">Відмінити</button>
+        </div>
+      </div>
+    </div>`;
+    document.body.insertAdjacentHTML("beforeend", html);
+    modal = document.getElementById("trash-email-modal");
+  }
+  window.currentTrashEmailId = id;
+  modal.style.display = "flex";
+  modal.removeAttribute("hidden");
+};
+
+window.closeTrashEmailModal = () => {
+  const modal = document.getElementById("trash-email-modal");
+  if (modal) {
+    modal.setAttribute("hidden", "");
+    modal.style.display = "none";
+  }
+};
+
+window.confirmTrashEmail = async () => {
+  window.closeTrashEmailModal();
+  const id = window.currentTrashEmailId;
+  if (!id) return;
   try {
     const res = await fetch(`${window.apiBaseUrl}/api/emails/${id}/trash`, {
       method: 'POST'
