@@ -182,21 +182,21 @@
   },
   {
     "category": "Beauty",
-    "subcategory": "Косметологія/Епіляція",
+    "subcategory": "Епіляція",
     "name": "Борисенко Наталія",
     "description": "Майстер воскової єпіляції",
-    "locationType": "По всьому Waterloo регіону",
-    "address": "Тільки виїзд додому клієнтів",
+    "locationType": "Waterloo",
+    "address": "",
     "phone": "2265075507",
     "telegram": "",
-    "instagram": "https://instagram.com/cosmetolognataliy",
+    "instagram": "",
     "facebook": "",
     "website": "",
     "price": "Від $20",
-    "notes": "Працюю в цьому напрямі з 2008 року, тому знань про епіляцію дедалі більше. Використовую спеціалізовані гарячі та теплі воски. \nЦіни визначаються залежно від локаціі.",
+    "notes": "Профісійна епіляція. Працюю з 2008 року. Знаю все про епіляцію і навіть більше. Професійний гарячий і теплий віск. Ціни залежать від зони яку робитимете",
     "id": "12",
     "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-09-18T19:39:15.456Z",
+    "updatedAt": "2026-09-19T02:53:25.557Z",
     "youtube": ""
   },
   {
@@ -1558,7 +1558,7 @@
   {
     "email": "tanya.chuchkevych@yahoo.com",
     "name": "Ryan",
-    "category": "Health",
+    "category": "",
     "subcategory": "тату майстер",
     "description": "Нанесення художнього татуювання, Розробка індивідуального ескізу, Перекриття та реставрація",
     "locationType": "Waterloo",
@@ -1567,11 +1567,13 @@
     "telegram": "",
     "instagram": "https://www.instagram.com/ryanhtattoo/",
     "facebook": "",
-    "website": "https://www.instagram.com/ryanhtattoo/",
+    "website": "",
     "price": "",
     "notes": "Райн не українець. але \"heading to Ukraine to do a charity tattoo for the military on October 13\"",
     "createdAt": "2026-09-16T20:34:18.114Z",
     "status": "approved",
-    "id": 99
+    "id": "99",
+    "youtube": "",
+    "updatedAt": "2026-09-19T14:34:22.636Z"
   }
 ]
