@@ -1537,23 +1537,25 @@
     "updatedAt": "2026-09-08T17:59:21.061Z"
   },
   {
-    "locationType": "Waterloo",
+    "locationType": "По всьому Waterloo регіону",
     "notes": "",
     "price": "$250",
     "telegram": "",
-    "address": "Знаходжусь в Вотерлу,але беру зйомки не тільки в цьому місті ;)",
+    "address": "Знаходжусь в Вотерлу, але беру зйомки не тільки в цьому місті ;)",
     "email": "lytvynenkojulia@gmail.com",
     "website": "",
     "phone": "",
     "category": "Photo/Video",
-    "description": "Проводжу сімейні ,індивідуальні зйомки ,вагітність ,Nee born фотосесію ,ідентифікації .",
+    "description": "Проводжу сімейні, індивідуальні зйомки, вагітність, Nee born фотосесію, ідентифікації .",
     "facebook": "https://www.facebook.com/share/1BruX3WSPe/?mibextid=wwXIfr",
     "name": "Yuliia Lytvynenko",
     "subcategory": "Фотограф",
-    "instagram": "https://www.instagram.com/lytvyn_photo?stkn=MWNjMjFlcTV3dXc0bg%3D%3D&utm_source=qr",
+    "instagram": "https://www.instagram.com/lytvyn_photo",
     "createdAt": "2026-09-09T04:11:11.716Z",
     "status": "approved",
-    "id": 98
+    "id": "98",
+    "youtube": "",
+    "updatedAt": "2026-09-20T02:40:31.219Z"
   },
   {
     "email": "tanya.chuchkevych@yahoo.com",
