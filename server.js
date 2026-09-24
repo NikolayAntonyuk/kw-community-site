@@ -110,19 +110,64 @@ app.get('/api/admin/rejected', async (req, res) => {
   }
 });
 
+// Helper: Calculate next available numeric specialist ID
+async function getNextSpecialistId(dbInstance) {
+  let maxId = 0;
+  // 1. Read static data/specialists.json
+  const specialistsPath = path.join(__dirname, 'data', 'specialists.json');
+  if (fs.existsSync(specialistsPath)) {
+    try {
+      const staticData = JSON.parse(fs.readFileSync(specialistsPath, 'utf8'));
+      if (Array.isArray(staticData)) {
+        staticData.forEach(s => {
+          const num = parseInt(s.id, 10);
+          if (!isNaN(num) && num > maxId) maxId = num;
+        });
+      }
+    } catch (e) {
+      console.warn('Could not read specialists.json for maxId:', e.message);
+    }
+  }
+
+  // 2. Read pending_specialists from Firestore
+  try {
+    if (dbInstance && typeof dbInstance.collection === 'function') {
+      const snapshot = await dbInstance.collection('pending_specialists').get();
+      if (snapshot && typeof snapshot.forEach === 'function') {
+        snapshot.forEach(doc => {
+          const docNum = parseInt(doc.id, 10);
+          if (!isNaN(docNum) && docNum > maxId) maxId = docNum;
+          const data = typeof doc.data === 'function' ? doc.data() : doc;
+          if (data && data.id) {
+            const dataNum = parseInt(data.id, 10);
+            if (!isNaN(dataNum) && dataNum > maxId) maxId = dataNum;
+          }
+        });
+      }
+    }
+  } catch (e) {
+    console.warn('Could not scan pending_specialists for maxId:', e.message);
+  }
+
+  return String(maxId + 1);
+}
+
 // 3.1. PUBLIC APPLY (New specialist application)
 app.post('/api/apply', async (req, res) => {
   try {
     const data = req.body;
     const timestamp = FieldValue.serverTimestamp();
-    const docRef = await db.collection('pending_specialists').add({
+    const nextId = await getNextSpecialistId(db);
+
+    await db.collection('pending_specialists').doc(nextId).set({
+      id: nextId,
       ...data,
       createdAt: timestamp,
       updatedAt: timestamp,
       status: 'pending'
     });
-    console.log(`[APPLY] ✅ New application submitted with ID: ${docRef.id}`, { name: data.name, email: data.email });
-    res.json({ success: true, id: docRef.id, message: 'Заявку успішно відправлено' });
+    console.log(`[APPLY] ✅ New application submitted with ID: ${nextId}`, { name: data.name, email: data.email });
+    res.json({ success: true, id: nextId, message: 'Заявку успішно відправлено' });
   } catch (err) {
     console.error(`[APPLY] ❌ Error:`, err.message);
     res.status(500).json({ error: err.message });
@@ -138,26 +183,27 @@ app.post('/api/specialists', async (req, res) => {
     if (id) {
       // Update existing
       console.log(`[CRUD] UPDATE specialist ID: ${id}`, { ...data, updatedAt: 'serverTimestamp' });
-      await db.collection('pending_specialists').doc(id).set({
+      await db.collection('pending_specialists').doc(String(id)).set({
         ...data,
+        id: String(id),
         updatedAt: timestamp,
         status: data.status || 'approved'
       }, { merge: true });
       console.log(`[CRUD] ✅ Successfully updated ID: ${id}`);
-      res.json({ success: true, id, message: 'Спеціаліста оновлено' });
+      res.json({ success: true, id: String(id), message: 'Спеціаліста оновлено' });
     } else {
       // Create new
-      const newRef = db.collection('pending_specialists').doc(data.id || db.collection('pending_specialists').doc().id);
-      await newRef.set({
-        id: newRef.id,
+      const nextId = await getNextSpecialistId(db);
+      await db.collection('pending_specialists').doc(nextId).set({
+        id: nextId,
         ...data,
         createdAt: timestamp,
         updatedAt: timestamp,
         status: data.status || 'approved'
       });
-      console.log(`[CRUD] CREATE specialist with ID: ${newRef.id}`, data);
-      console.log(`[CRUD] ✅ Successfully created ID: ${newRef.id}`);
-      res.json({ success: true, id: newRef.id, message: 'Спеціаліста додано' });
+      console.log(`[CRUD] CREATE specialist with ID: ${nextId}`, data);
+      console.log(`[CRUD] ✅ Successfully created ID: ${nextId}`);
+      res.json({ success: true, id: nextId, message: 'Спеціаліста додано' });
     }
   } catch (err) {
     console.error(`[CRUD] ❌ Error:`, err.message);

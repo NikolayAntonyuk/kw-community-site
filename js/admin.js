@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase.js";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { collection, query, where, getDocs, getDoc, updateDoc, doc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, query, where, getDocs, getDoc, updateDoc, doc, addDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const categoryTranslations = {
   "Beauty": "Краса та догляд",
@@ -642,7 +642,16 @@ window.saveEdit = async () => {
 
     if (!id) {
       console.log('[ADMIN] Creating new specialist');
-      await addDoc(collection(db, "pending_specialists"), {
+      let maxId = 0;
+      if (Array.isArray(liveCatalogData)) {
+        liveCatalogData.forEach(s => {
+          const num = parseInt(s.id, 10);
+          if (!isNaN(num) && num > maxId) maxId = num;
+        });
+      }
+      const nextId = String(maxId + 1);
+      await setDoc(doc(db, "pending_specialists", nextId), {
+        id: nextId,
         name: newName,
         description: newDesc,
         category: newCategory,
@@ -653,7 +662,7 @@ window.saveEdit = async () => {
         telegram: newTg,
         instagram: newInst,
         facebook: newFb,
-      youtube: newYt,
+        youtube: newYt,
         website: newWeb,
         price: newPrice,
         notes: newNotes,
@@ -663,9 +672,9 @@ window.saveEdit = async () => {
       });
       msg = "Спеціаліста успішно додано!";
     } else if (isLive) {
-      console.log('[ADMIN] Updating live specialist via new document approach', { id });
-      await addDoc(collection(db, "pending_specialists"), {
-        id: id,
+      console.log('[ADMIN] Updating live specialist via setDoc merge', { id });
+      await setDoc(doc(db, "pending_specialists", String(id)), {
+        id: String(id),
         name: newName,
         description: newDesc,
         category: newCategory,
@@ -676,17 +685,17 @@ window.saveEdit = async () => {
         telegram: newTg,
         instagram: newInst,
         facebook: newFb,
-      youtube: newYt,
+        youtube: newYt,
         website: newWeb,
         price: newPrice,
         notes: newNotes,
         updatedAt: serverTimestamp(),
         status: "approved"
-      });
+      }, { merge: true });
       msg = "✅ Зміни успішно збережено в базі!";
     } else {
       console.log('[ADMIN] Updating pending specialist', { id });
-      await updateDoc(doc(db, "pending_specialists", id), {
+      await updateDoc(doc(db, "pending_specialists", String(id)), {
         name: newName,
         description: newDesc,
         category: newCategory,
@@ -697,7 +706,7 @@ window.saveEdit = async () => {
         telegram: newTg,
         instagram: newInst,
         facebook: newFb,
-      youtube: newYt,
+        youtube: newYt,
         website: newWeb,
         price: newPrice,
         notes: newNotes,
@@ -789,11 +798,11 @@ window.saveEdit = async () => {
 window.deleteLiveApp = async (id) => {
   if (!confirm("Ви впевнені, що хочете видалити цього спеціаліста?")) return;
   try {
-    await addDoc(collection(db, "pending_specialists"), {
+    await setDoc(doc(db, "pending_specialists", String(id)), {
       id: String(id),
       status: "deleted",
       updatedAt: serverTimestamp()
-    });
+    }, { merge: true });
     showAdminAlert("✅ Спеціаліста видалено з каталогу!");
     const el = document.getElementById(`live-card-${id}`);
     if (el) el.style.display = 'none';

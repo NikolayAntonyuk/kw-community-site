@@ -15,6 +15,7 @@ test.describe('Email Features & Admin Panel (New Requirements)', () => {
           export const updateDoc = async () => {};
           export const doc = () => {};
           export const addDoc = async () => {};
+          export const setDoc = async () => {};
           export const serverTimestamp = () => {};
           export const getDoc = async () => ({});
           export const getFirestore = () => ({});

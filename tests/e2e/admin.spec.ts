@@ -139,6 +139,7 @@ test.describe('Admin Panel E2E', () => {
           export const updateDoc = async () => {};
           export const doc = () => {};
           export const addDoc = async () => {};
+          export const setDoc = async () => {};
           export const getFirestore = () => ({});
           export const serverTimestamp = () => ({});
         `
@@ -192,6 +193,7 @@ test.describe('Admin Panel E2E', () => {
           export const updateDoc = async () => {};
           export const doc = () => {};
           export const addDoc = async () => {};
+          export const setDoc = async () => {};
           export const getFirestore = () => ({});
           export const serverTimestamp = () => ({});
         `
@@ -239,6 +241,7 @@ test.describe('Admin Panel E2E', () => {
           export const updateDoc = async () => {};
           export const doc = () => {};
           export const addDoc = async () => {};
+          export const setDoc = async () => {};
           export const getFirestore = () => ({});
           export const serverTimestamp = () => ({});
         `
@@ -560,6 +563,7 @@ test.describe('Admin Panel E2E', () => {
           export const updateDoc = async () => {};
           export const doc = () => {};
           export const addDoc = async () => {};
+          export const setDoc = async () => {};
           export const getFirestore = () => ({});
           export const serverTimestamp = () => ({});
         `
@@ -604,6 +608,7 @@ test.describe('Admin Panel E2E', () => {
           export const updateDoc = async () => {};
           export const doc = () => {};
           export const addDoc = async () => {};
+          export const setDoc = async () => {};
           export const getFirestore = () => ({});
           export const serverTimestamp = () => ({});
         `
@@ -645,6 +650,7 @@ test.describe('Admin Panel E2E', () => {
           export const updateDoc = async () => {};
           export const doc = () => {};
           export const addDoc = async () => {};
+          export const setDoc = async () => {};
           export const getFirestore = () => ({});
           export const serverTimestamp = () => ({});
         `

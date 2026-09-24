@@ -56,8 +56,8 @@ describe("API CRUD Operations via Supertest", () => {
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
-    expect(res.body.id).toBe("mock-apply-id");
-    expect(mockDocAdd).toHaveBeenCalled();
+    expect(Number(res.body.id)).toBeGreaterThanOrEqual(100);
+    expect(mockDocSet).toHaveBeenCalled();
   });
 
   it("Create a new specialist", async () => {
