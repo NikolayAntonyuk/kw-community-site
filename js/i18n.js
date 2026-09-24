@@ -81,6 +81,9 @@ window.dictionary = {
     "apply_success": "Ваша заявка успішно відправлена та очікує на модерацію!",
     "apply_error": "Сталася помилка при відправленні. Спробуйте пізніше.",
     "apply_no_contacts_error": "Будь ласка, вкажіть хоча б один контакт для зв'язку (Телефон, Telegram, Instagram, Facebook, YouTube або Вебсайт).",
+    "apply_select_city": "Оберіть місто...",
+    "apply_all_waterloo": "По всьому регіону Waterloo",
+    "apply_other_city": "Інше (вкажіть в адресі)",
     "nav_catalog_back": "← Назад до каталогу",
     "school_more": "Дізнатися більше",
     "lang_toggle": "<img src=\"assets/flags/ca.svg\" alt=\"English\" width=\"24\" height=\"16\">"
@@ -167,6 +170,9 @@ window.dictionary = {
     "apply_success": "Your application has been successfully submitted and is awaiting moderation!",
     "apply_error": "An error occurred while submitting. Please try again later.",
     "apply_no_contacts_error": "Please provide at least one contact method (Phone, Telegram, Instagram, Facebook, YouTube or Website).",
+    "apply_select_city": "Select a city...",
+    "apply_all_waterloo": "Throughout Waterloo region",
+    "apply_other_city": "Other (specify in address)",
     "nav_catalog_back": "← Back to directory",
     "school_more": "Learn more",
     "lang_toggle": "<img src=\"assets/flags/ua.svg\" alt=\"Українська\" width=\"24\" height=\"16\">"

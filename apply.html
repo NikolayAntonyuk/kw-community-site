@@ -158,13 +158,13 @@
         <div class="form-group">
           <label for="f-locationType" data-i18n="apply_loc">Місто (Kitchener, Waterloo, Cambridge, Guelph тощо) *</label>
           <select id="f-locationType" required>
-            <option value="">Оберіть місто...</option>
+            <option value="" data-i18n="apply_select_city">Оберіть місто...</option>
             <option value="Kitchener">Kitchener</option>
             <option value="Waterloo">Waterloo</option>
             <option value="Cambridge">Cambridge</option>
             <option value="Guelph">Guelph</option>
-            <option value="Online">Online / Віддалено</option>
-            <option value="Інше">Інше (вкажіть в адресі)</option>
+            <option value="По всьому регіону Waterloo" data-i18n="apply_all_waterloo">По всьому регіону Waterloo</option>
+            <option value="Інше" data-i18n="apply_other_city">Інше (вкажіть в адресі)</option>
           </select>
         </div>
         <div class="form-group">
@@ -220,6 +220,6 @@
 
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script type="module" src="js/apply.js"></script>
-<script src="js/i18n.js?v=3"></script>
+<script src="js/i18n.js?v=4"></script>
 </body>
 </html>
