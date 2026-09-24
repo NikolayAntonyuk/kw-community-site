@@ -110,6 +110,25 @@ app.get('/api/admin/rejected', async (req, res) => {
   }
 });
 
+// 3.1. PUBLIC APPLY (New specialist application)
+app.post('/api/apply', async (req, res) => {
+  try {
+    const data = req.body;
+    const timestamp = FieldValue.serverTimestamp();
+    const docRef = await db.collection('pending_specialists').add({
+      ...data,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      status: 'pending'
+    });
+    console.log(`[APPLY] ✅ New application submitted with ID: ${docRef.id}`, { name: data.name, email: data.email });
+    res.json({ success: true, id: docRef.id, message: 'Заявку успішно відправлено' });
+  } catch (err) {
+    console.error(`[APPLY] ❌ Error:`, err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // 4. CREATE or UPDATE specialist (CRUD)
 app.post('/api/specialists', async (req, res) => {
   try {

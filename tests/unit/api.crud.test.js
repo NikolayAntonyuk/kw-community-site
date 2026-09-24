@@ -4,6 +4,8 @@ import request from "supertest";
 const mockDocSet = vi.fn().mockResolvedValue(true);
 const mockDocDelete = vi.fn().mockResolvedValue(true);
 
+const mockDocAdd = vi.fn().mockResolvedValue({ id: "mock-apply-id" });
+
 const mockCollectionRef = {
   where: vi.fn().mockReturnThis(),
   get: vi.fn().mockResolvedValue({ docs: [] }),
@@ -12,7 +14,7 @@ const mockCollectionRef = {
     set: mockDocSet,
     delete: mockDocDelete
   })),
-  add: vi.fn(),
+  add: mockDocAdd,
   set: vi.fn(),
 };
 
@@ -38,6 +40,24 @@ describe("API CRUD Operations via Supertest", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockDocSet.mockClear();
+    mockDocAdd.mockClear();
+  });
+
+  it("Submit a new application via /api/apply", async () => {
+    const res = await request(app)
+      .post("/api/apply")
+      .send({
+        name: "Ontario Travel Group",
+        email: "yurii@totaladvantage.com",
+        category: "Services",
+        subcategory: "Туристичний консультант",
+        phone: "416-301-3864"
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.id).toBe("mock-apply-id");
+    expect(mockDocAdd).toHaveBeenCalled();
   });
 
   it("Create a new specialist", async () => {

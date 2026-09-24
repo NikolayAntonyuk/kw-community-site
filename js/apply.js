@@ -56,7 +56,29 @@ form.addEventListener("submit", async (e) => {
   }
 
   try {
-    const docRef = await addDoc(collection(db, "pending_specialists"), specialistData);
+    let docId = "app_" + Date.now();
+    try {
+      const response = await fetch('/api/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(specialistData)
+      });
+      if (response.ok) {
+        const result = await response.json();
+        if (result && result.id) {
+          docId = result.id;
+        }
+      } else {
+        throw new Error(`Server returned ${response.status}`);
+      }
+    } catch (apiErr) {
+      console.warn("Backend /api/apply failed, trying direct Firestore fallback:", apiErr);
+      const docRef = await addDoc(collection(db, "pending_specialists"), {
+        ...specialistData,
+        createdAt: serverTimestamp()
+      });
+      docId = docRef.id;
+    }
     
     try {
       const EMAILJS_SERVICE_ID = "service_e521b5c";
@@ -66,7 +88,7 @@ form.addEventListener("submit", async (e) => {
       if (window.emailjs) {
         emailjs.init(EMAILJS_PUBLIC_KEY);
         const currentHost = window.location.origin;
-        const adminUrl = `${currentHost}/admin.html?id=${docRef.id}`;
+        const adminUrl = `${currentHost}/admin.html?id=${docId}`;
         const catalogUrl = `${currentHost}/catalog.html`;
         const messageText = [
           `Підкатегорія: ${specialistData.subcategory}`,
@@ -96,7 +118,7 @@ form.addEventListener("submit", async (e) => {
           category: specialistData.category,
           message: messageText,
           admin_link: adminUrl,
-          spec_id: docRef.id
+          spec_id: docId
         });
       } else {
         console.warn("EmailJS Template ID для нових заявок не встановлено. Лист адміну не відправлено.");
@@ -105,15 +127,15 @@ form.addEventListener("submit", async (e) => {
       console.error("Помилка відправки email адміну: ", e);
     }
 
-    formMessage.textContent = window.t ? window.t("apply_success") : "Ваша заявка успішно відправлена та очікує на модерацію!";
+    formMessage.textContent = window.t ? window.t("apply_success", "Ваша заявка успішно відправлена та очікує на модерацію!") : "Ваша заявка успішно відправлена та очікує на модерацію!";
     formMessage.classList.add("success");
     form.reset();
   } catch (error) {
     console.error("Помилка відправлення заявки: ", error);
-    formMessage.textContent = window.t ? window.t("apply_error") : "Сталася помилка при відправленні. Спробуйте пізніше.";
+    formMessage.textContent = window.t ? window.t("apply_error", "Сталася помилка при відправленні. Спробуйте пізніше.") : "Сталася помилка при відправленні. Спробуйте пізніше.";
     formMessage.classList.add("error");
   } finally {
     submitBtn.disabled = false;
-    submitBtn.textContent = window.t ? window.t("apply_submit") : "Відправити заявку";
+    submitBtn.textContent = window.t ? window.t("apply_submit", "Відправити заявку") : "Відправити заявку";
   }
 });
