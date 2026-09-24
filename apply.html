@@ -171,6 +171,9 @@
           <label for="f-address" data-i18n="apply_address">Точна адреса (якщо є)</label>
           <input type="text" id="f-address" maxlength="150" />
         </div>
+        <div class="form-group" style="margin-top: 1.5rem; margin-bottom: 0.5rem;">
+          <p style="font-weight: 600; color: #1a1a1a; margin: 0;" data-i18n="apply_contacts_hint">Контакти для клієнтів (вкажіть хоча б один спосіб зв'язку) *</p>
+        </div>
         <div class="form-group">
           <label for="f-phone" data-i18n="apply_phone">Телефон</label>
           <input type="tel" id="f-phone" maxlength="20" pattern="^[\d\s\+\-\(\)]+$" title="Тільки цифри, пробіли та символи + - ( )" />
@@ -188,10 +191,10 @@
           <input type="url" id="f-facebook" maxlength="200" />
         </div>
         <div class="form-group">
-        <div class="form-group">
           <label for="f-youtube" data-i18n="apply_youtube">YouTube (лінк або нікнейм)</label>
           <input type="text" id="f-youtube" maxlength="200" />
         </div>
+        <div class="form-group">
           <label for="f-website" data-i18n="apply_web">Вебсайт (лінк)</label>
           <input type="url" id="f-website" maxlength="200" />
         </div>
@@ -217,6 +220,6 @@
 
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script type="module" src="js/apply.js"></script>
-<script src="js/i18n.js?v=2"></script>
+<script src="js/i18n.js?v=3"></script>
 </body>
 </html>

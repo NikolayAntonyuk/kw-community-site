@@ -56,22 +56,33 @@ window.dictionary = {
     "apply_cat_opt_legal": "Юридичні послуги",
     "apply_cat_opt_real_estate": "Нерухомість",
     "apply_cat_opt_food": "Їжа та Кондитери",
+    "apply_cat_opt_photo": "Фото/Відео",
+    "apply_cat_opt_it": "IT",
+    "apply_cat_opt_housing": "Житло (рієлтор, прибирання, ремонт)",
+    "apply_cat_opt_doctors": "Лікарі/ветеринари",
+    "apply_cat_opt_translator": "Перекладач",
+    "apply_cat_opt_seamstress": "Швеї",
     "apply_subcat": "Підкатегорія (наприклад: Перукар, Юрист) *",
     "apply_desc_short": "Короткий опис послуг *",
     "apply_loc": "Місто (Kitchener, Waterloo, Cambridge, Guelph тощо) *",
     "apply_address": "Точна адреса (якщо є)",
+    "apply_contacts_hint": "Контакти для клієнтів (вкажіть хоча б один спосіб зв'язку) *",
     "apply_phone": "Телефон",
     "apply_telegram": "Telegram (лінк або нікнейм)",
     "apply_instagram": "Instagram (лінк)",
     "apply_facebook": "Facebook (лінк)",
+    "apply_youtube": "YouTube (лінк або нікнейм)",
     "apply_web": "Вебсайт (лінк)",
+    "apply_info": "Опис послуг",
     "apply_price": "Орієнтовна ціна",
     "apply_notes": "Додаткові нотатки / Опис",
     "apply_submit": "Відправити заявку",
     "apply_sending": "Відправлення...",
     "apply_success": "Ваша заявка успішно відправлена та очікує на модерацію!",
     "apply_error": "Сталася помилка при відправленні. Спробуйте пізніше.",
+    "apply_no_contacts_error": "Будь ласка, вкажіть хоча б один контакт для зв'язку (Телефон, Telegram, Instagram, Facebook, YouTube або Вебсайт).",
     "nav_catalog_back": "← Назад до каталогу",
+    "school_more": "Дізнатися більше",
     "lang_toggle": "<img src=\"assets/flags/ca.svg\" alt=\"English\" width=\"24\" height=\"16\">"
   },
   en: {
@@ -131,32 +142,44 @@ window.dictionary = {
     "apply_cat_opt_legal": "Legal Services",
     "apply_cat_opt_real_estate": "Real Estate",
     "apply_cat_opt_food": "Food & Confectioners",
+    "apply_cat_opt_photo": "Photo/Video",
+    "apply_cat_opt_it": "IT",
+    "apply_cat_opt_housing": "Housing (Realtor, Cleaning, Renovation)",
+    "apply_cat_opt_doctors": "Doctors / Veterinarians",
+    "apply_cat_opt_translator": "Translator / Interpretation",
+    "apply_cat_opt_seamstress": "Seamstress / Tailoring",
     "apply_subcat": "Subcategory (e.g. Hairdresser, Lawyer) *",
     "apply_desc_short": "Short description of services *",
     "apply_loc": "City (Kitchener, Waterloo, Cambridge, Guelph etc.) *",
     "apply_address": "Exact Address (if any)",
+    "apply_contacts_hint": "Client contact info (please provide at least one contact method) *",
     "apply_phone": "Phone number",
     "apply_telegram": "Telegram (link or username)",
     "apply_instagram": "Instagram (link)",
     "apply_facebook": "Facebook (link)",
+    "apply_youtube": "YouTube (link or username)",
     "apply_web": "Website (link)",
+    "apply_info": "Service Description",
     "apply_price": "Approximate price",
     "apply_notes": "Additional notes / Description",
     "apply_submit": "Submit Application",
     "apply_sending": "Sending...",
     "apply_success": "Your application has been successfully submitted and is awaiting moderation!",
     "apply_error": "An error occurred while submitting. Please try again later.",
+    "apply_no_contacts_error": "Please provide at least one contact method (Phone, Telegram, Instagram, Facebook, YouTube or Website).",
     "nav_catalog_back": "← Back to directory",
+    "school_more": "Learn more",
     "lang_toggle": "<img src=\"assets/flags/ua.svg\" alt=\"Українська\" width=\"24\" height=\"16\">"
   }
 };
 
 window.currentLang = localStorage.getItem('kw_lang') || 'ua';
 
-window.t = function(key) {
-  return window.dictionary[window.currentLang] && window.dictionary[window.currentLang][key] 
-    ? window.dictionary[window.currentLang][key] 
-    : key;
+window.t = function(key, fallback) {
+  if (window.dictionary && window.dictionary[window.currentLang] && window.dictionary[window.currentLang][key]) {
+    return window.dictionary[window.currentLang][key];
+  }
+  return fallback !== undefined ? fallback : (key || "");
 };
 
 window.applyLanguage = function(lang) {

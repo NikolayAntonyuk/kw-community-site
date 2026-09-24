@@ -45,10 +45,13 @@ form.addEventListener("submit", async (e) => {
   ].some(contact => contact && contact.trim() !== "");
 
   if (!hasContact) {
-    formMessage.textContent = window.t ? window.t("apply_no_contacts_error") || "Будь ласка, вкажіть хоча б один контакт (Телефон, Telegram, Instagram, Facebook, YouTube або Вебсайт)." : "Будь ласка, вкажіть хоча б один контакт (Телефон, Telegram, Instagram, Facebook, YouTube або Вебсайт).";
+    const errorMsg = window.t
+      ? window.t("apply_no_contacts_error", "Будь ласка, вкажіть хоча б один контакт (Телефон, Telegram, Instagram, Facebook, YouTube або Вебсайт).")
+      : "Будь ласка, вкажіть хоча б один контакт (Телефон, Telegram, Instagram, Facebook, YouTube або Вебсайт).";
+    formMessage.textContent = errorMsg;
     formMessage.classList.add("error");
     submitBtn.disabled = false;
-    submitBtn.textContent = window.t ? window.t("apply_submit") : "Відправити заявку";
+    submitBtn.textContent = window.t ? window.t("apply_submit", "Відправити заявку") : "Відправити заявку";
     return;
   }
 
