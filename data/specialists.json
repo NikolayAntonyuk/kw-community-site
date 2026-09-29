@@ -1577,5 +1577,43 @@
     "id": "99",
     "youtube": "",
     "updatedAt": "2026-09-19T14:34:22.636Z"
+  },
+  {
+    "youtube": "",
+    "website": "",
+    "address": "",
+    "notes": "Туристична агенція Ontario Travel Group пропонує консультації з питань подорожей, є партнером Total Advantage Travel & Tours, TICO #4374724. Спеціалізуємося в продажі авіаквитків, турів, готелів, туристичних пакетів, екскурсій. \nOntario Travel Group travel agency offers travel consulting, is a partner of Total Advantage Travel & Tours, TICO #4374724. We specialize in selling air tickets, tours, hotels, travel packages, and excursions.",
+    "facebook": "https://www.facebook.com/OntarioTravelGroup/",
+    "description": "Авіаквитки, тури, готелі, туристичні пакети, круїзи, екскурсії",
+    "locationType": "Guelph",
+    "telegram": "",
+    "instagram": "",
+    "phone": "416-301-3864",
+    "price": "",
+    "name": "Ontario Travel Group",
+    "id": "100",
+    "category": "Services",
+    "subcategory": "Туристичний консультант",
+    "updatedAt": "2026-09-28T17:17:47.488Z"
+  },
+  {
+    "id": "101",
+    "email": "mariakostyukova@gmail.com",
+    "name": "Марія",
+    "subcategory": "Викладач з фортепіано",
+    "description": "Навчання гри на фортепіано, Музична грамота та сольфеджіо,Підбір персонального репертуару,Комплексний музичний розвиток",
+    "locationType": "Cambridge",
+    "address": "13 Sparrow Ave",
+    "phone": "2269664246",
+    "telegram": "",
+    "instagram": "",
+    "facebook": "",
+    "youtube": "",
+    "website": "",
+    "notes": "Фортепіано без нудної теорії! Індивідуальні уроки вдома 🎵\nМузична грамота та сольфеджіо можуть бути цікавими, а гра на фортепіано — приносити радість з перших занять! Запрошую дітей та дорослих на приватні уроки будь-якого рівня.\nУ програмі:\n Гра на інструменті: від постановки рук до впевненого виконання.\n Музичний базис: сольфеджіо, нотна грамота, ритм і теорія — доступно й зрозуміло.\n Брейн-тренінг: розвиток музичного слуху, пам'яті, уваги та відчуття часу.\n Власний репертуар: класика, сучасні хіти або саундтреки.\nЗаняття проходять у мене вдома. Записатися на перший урок або поставити запитання можна в особистих повідомленнях!",
+    "createdAt": "2026-09-28T16:34:28.886Z",
+    "price": "50$",
+    "category": "",
+    "updatedAt": "2026-09-28T19:39:47.149Z"
   }
 ]
