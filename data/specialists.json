@@ -1500,7 +1500,7 @@
   },
   {
     "instagram": "https://www.instagram.com/victoria.usik",
-    "locationType": "Kitchener",
+    "locationType": "Kitchener and whole Waterloo region ",
     "phone": "",
     "description": "Фуд-фотографія для ресторанів та меню. Затишні сімейні лайвстайл-зйомки та індивідуальні портрети",
     "name": "Victoria Usik",
@@ -1515,8 +1515,9 @@
     "address": "",
     "createdAt": "2026-09-04T19:42:33.473Z",
     "status": "approved",
-    "id": 97,
-    "updatedAt": "2026-09-08T17:59:21.061Z"
+    "id": "97",
+    "updatedAt": "2026-11-13T20:26:27.287Z",
+    "youtube": ""
   },
   {
     "locationType": "По всьому Waterloo регіону",
