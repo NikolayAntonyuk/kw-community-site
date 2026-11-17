@@ -643,11 +643,12 @@
     "instagram": "",
     "facebook": "https://www.facebook.com/valeria.kolesnitska",
     "website": "",
-    "price": "25 CAD per hour",
-    "notes": "",
-    "id": 42,
+    "price": "40 CAD per hour",
+    "notes": "Викладач англійської.\n Офіційний інструктор з підготовки до CELPIP. Також готую до IELTS (General і Academic).",
+    "id": "42",
     "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-08-13T12:00:00.000Z"
+    "updatedAt": "2026-11-16T22:07:48.786Z",
+    "youtube": ""
   },
   {
     "category": "Education",
@@ -1013,7 +1014,7 @@
   {
     "category": "Photo/Video",
     "subcategory": "Фотограф",
-    "name": "Olena Kharlova, @olena_kharlova",
+    "name": "Olena Kharlova",
     "description": "Cімейний фотограф",
     "locationType": "По всьому Waterloo регіону",
     "address": "",
@@ -1024,9 +1025,10 @@
     "website": "",
     "price": "250 CAD",
     "notes": "",
-    "id": 66,
+    "id": "66",
     "createdAt": "2026-08-13T12:00:00.000Z",
-    "updatedAt": "2026-08-13T12:00:00.000Z"
+    "updatedAt": "2026-11-16T21:36:29.766Z",
+    "youtube": ""
   },
   {
     "category": "Photo/Video",
@@ -1500,7 +1502,7 @@
   },
   {
     "instagram": "https://www.instagram.com/victoria.usik",
-    "locationType": "Kitchener and whole Waterloo region ",
+    "locationType": "По всьому регіону Waterloo",
     "phone": "",
     "description": "Фуд-фотографія для ресторанів та меню. Затишні сімейні лайвстайл-зйомки та індивідуальні портрети",
     "name": "Victoria Usik",
@@ -1516,7 +1518,7 @@
     "createdAt": "2026-09-04T19:42:33.473Z",
     "status": "approved",
     "id": "97",
-    "updatedAt": "2026-11-13T20:26:27.287Z",
+    "updatedAt": "2026-11-16T22:05:06.700Z",
     "youtube": ""
   },
   {
@@ -1661,22 +1663,22 @@
   },
   {
     "id": "106",
-    "email": "silencen533@gmail.com",
-    "name": "Наталія Захарченко",
-    "category": "Services",
-    "subcategory": "Астролог",
-    "description": "Надаю астрологічні послуги",
-    "locationType": "Kitchener",
+    "email": "byalla.ph@gmail.com",
+    "name": "Alla Kalinichenko",
+    "category": "Photo/Video",
+    "subcategory": "Photography",
+    "description": "Проводжу сімейні, дитячі, індивідуальні фотосесії, Love Story та творчі зйомки. Якщо у вас є цікава ідея — із задоволенням допоможу її втілити. Також доступні сезонні студійні фотосесії.",
+    "locationType": "По всьому регіону Waterloo",
     "address": "",
     "phone": "",
-    "telegram": "",
-    "instagram": "https://www.instagram.com/astrosoul_n?cplk=MWxna3htMXZ0bTk3bg%3D%3D&utm_source=qr",
+    "telegram": "https://t.me/myattka",
+    "instagram": "https://www.instagram.com/byalla.ph",
     "facebook": "",
     "youtube": "",
     "website": "",
-    "price": "",
-    "notes": "",
-    "createdAt": "2026-11-04T00:06:51.124Z",
-    "updatedAt": "2026-11-05T02:11:40.764Z"
+    "price": "200",
+    "notes": "🎁 A little Christmas gift for new clients — 10% OFF!\n\nFor a 1-hour session, you receive 50–70 fully edited photos, plus all the best shots from your session.\n\n🎄Book by December 31, 2026. Your photoshoot can take place on a later date.\n\n📍Kitchener, Waterloo, Cambridge & surrounding areas",
+    "createdAt": "2026-11-16T14:41:33.305Z",
+    "updatedAt": "2026-11-16T21:28:46.583Z"
   }
 ]
